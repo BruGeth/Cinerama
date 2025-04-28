@@ -6,6 +6,7 @@ import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.AuthService;
+import com.cinerama.backend.util.EmailService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +21,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final EmailService emailService;
 
     @Override
     public User register(RegisterRequest request) {
@@ -35,7 +37,11 @@ public class AuthServiceImpl implements AuthService {
                 .verificationCode(UUID.randomUUID().toString())
                 .build();
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        emailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getVerificationCode());
+
+        return savedUser;
     }
 
     @Override
