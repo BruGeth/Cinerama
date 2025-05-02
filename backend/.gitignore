@@ -34,3 +34,6 @@ build/
 
 ### Logs ###
 /logs/
+
+# sensitive user config
+src/main/resources/application-local.yml
