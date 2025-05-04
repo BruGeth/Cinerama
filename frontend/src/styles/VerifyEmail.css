@@ -1,0 +1,27 @@
+.verify-container {
+    max-width: 400px;
+    margin: 3rem auto;
+    padding: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .verify-container input {
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+  }
+  
+  .verify-container button {
+    padding: 0.8rem 1.5rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
