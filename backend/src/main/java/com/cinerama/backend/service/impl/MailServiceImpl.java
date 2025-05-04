@@ -17,9 +17,15 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendEmail(String to, String subject, String body) {
+    public void sendVerificationEmail(String toEmail, String verificationCode) {
+        String subject = "Cinerama - Account Verification";
+        String body = "Hello,\n\n" +
+                "Please verify your account using the following code:\n\n" +
+                verificationCode + "\n\n" +
+                "Thank you for registering with Cinerama!";
+
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
+        message.setTo(toEmail);
         message.setSubject(subject);
         message.setText(body);
         mailSender.send(message);
