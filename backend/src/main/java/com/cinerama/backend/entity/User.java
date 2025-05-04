@@ -34,7 +34,7 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = false;
 
-    @Column(length = 64)
+    @Column(length = 6)
     private String verificationCode;
 
     @CreationTimestamp

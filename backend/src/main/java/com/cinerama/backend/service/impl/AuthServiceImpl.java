@@ -7,6 +7,7 @@ import com.cinerama.backend.entity.User;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.AuthService;
 import com.cinerama.backend.service.MailService;
+import com.cinerama.backend.util.CodeGenerator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final MailService mailService;
+    private final CodeGenerator codeGenerator;
 
     @Override
     public User register(RegisterRequest request) {
@@ -36,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword())) // Encrypt the password
                 .enabled(false) // Set the account as disabled until verification
-                .verificationCode(UUID.randomUUID().toString()) // Generate a unique verification code
+                .verificationCode(codeGenerator.generateCode()) // Generate a unique verification code
                 .build();
 
         // Save the user to the database
