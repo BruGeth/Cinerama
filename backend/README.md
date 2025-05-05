@@ -12,6 +12,7 @@ This is the backend service for the **Cinerama** project, built with **Spring Bo
 - Spring Security
 - MySQL Driver
 - Logback for logging
+- Spring Mail (for sending emails via SMTP)
 
 ---
 
@@ -26,23 +27,51 @@ This is the backend service for the **Cinerama** project, built with **Spring Bo
 ## 🚀 Running the Backend Locally
 
 1. Make sure you have **MySQL** installed and running.
-2. Create a database called `cinerama` (or adjust the database name in `application.yml`).
-3. Configure the database credentials inside `src/main/resources/application.yml`:
+2. Create a database called `cinerama_db` (or adjust the name in `application.yml`).
+3. Configure your local environment using a personal `application-local.yml` file.
+
+---
+
+## 🔐 Local Configuration (`application-local.yml`)
+
+Create a new file in:
+
+```bash
+src/main/resources/application-local.yml
+```
+
+Use the following structure:
 
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/cinerama
     username: your_mysql_user
     password: your_mysql_password
+
+  mail:
+    username: your_email@gmail.com
+    password: your_gmail_app_password
 ```
 
-4. Run the backend server:
+>Do not commit this file. It is ignored by `.gitignore` for security.
+
+You can use the provided `application-local-example.yml` as a template.
+
+---
+
+## 📫 Email Configuration (Gmail SMTP)
+Make sure to [create an App Password in Gmail](https://myaccount.google.com/apppasswords
+) and enable 2FA.
+
+The backend will use `JavaMailSender` to send real verification emails when the registration flow is triggered.
+
+---
+
+## ▶️ Start the application
 
 ```bash
 mvn spring-boot:run
 ```
-
 The backend should now be running at `http://localhost:8080`.
 
 ---
@@ -50,7 +79,7 @@ The backend should now be running at `http://localhost:8080`.
 ## 📋 Notes
 - Log files are generated under the `/logs` directory, separated by log levels (INFO, DEBUG, ERROR).
 
-- The `logs/` directory is excluded from version control (`.gitignore`).
+- The `logs/` directory is excluded from version control via (`.gitignore`).
 
 - Spring Security is configured with a basic setup. JWT authentication may be added later.
 
