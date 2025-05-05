@@ -1,24 +1,13 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import NotFound from "./pages/NotFound";
-import Navbar from "./Components/Navbar";
-import Footer from "./Components/Footer";
+import React from 'react';
+import AppRoutes from './routes/AppRouter';
+import './App.css';
 
-const App = () => {
+function App() {
   return (
-    <Router>
-      <Navbar />
-      <main style={{ padding: "2rem", minHeight: "80vh" }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-    </Router>
+    <div className="app">
+      <AppRoutes />
+    </div>
   );
-};
+}
 
 export default App;
