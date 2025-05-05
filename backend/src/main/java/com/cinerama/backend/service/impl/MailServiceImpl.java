@@ -1,33 +1,42 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.service.MailService;
+import com.cinerama.backend.service.mail.MailContentBuilder;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MailServiceImpl implements MailService {
 
     private final JavaMailSender mailSender;
+    private final MailContentBuilder contentBuilder;
 
     @Autowired
-    public MailServiceImpl(JavaMailSender mailSender) {
+    public MailServiceImpl(JavaMailSender mailSender, MailContentBuilder contentBuilder) {
         this.mailSender = mailSender;
+        this.contentBuilder = contentBuilder;
     }
 
     @Override
     public void sendVerificationEmail(String toEmail, String verificationCode) {
-        String subject = "Cinerama - Account Verification";
-        String body = "Hello,\n\n" +
-                "Please verify your account using the following code:\n\n" +
-                verificationCode + "\n\n" +
-                "Thank you for registering with Cinerama!";
+        String subject = "Verificación de Cuenta - Cinerama";
+        String content = contentBuilder.buildVerificationEmail(toEmail, verificationCode); // renders Thymeleaf template
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(toEmail);
-        message.setSubject(subject);
-        message.setText(body);
-        mailSender.send(message);
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(content, true); // true = HTML
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send verification email", e);
+        }
     }
 }
