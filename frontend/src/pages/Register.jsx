@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import '../styles/Register.css';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -67,27 +68,21 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const validationErrors = validate();
-    
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
-      // Here is where the API call to register the user would go.
-      // const response = await registerUser(formData);
       console.log('Formulario enviado:', formData);
-      
-      // We simulate a delay to observe the loading state.
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Here you could redirect the user or display a success message.
-      alert('¡Registro exitoso!');
-      
+
+      navigate('/verify', { state: { email: formData.email } });
+
     } catch (error) {
       console.error('Error al registrar:', error);
       setErrors({ submit: 'Error al procesar el registro. Inténtalo nuevamente.' });
@@ -95,7 +90,6 @@ const Register = () => {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="register-container">
       <div className="register-form-container">

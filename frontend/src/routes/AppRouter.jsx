@@ -6,6 +6,7 @@ import About from '../pages/About';
 import NotFound from '../pages/NotFound';
 import Register from "../pages/Register";
 import Login from "../pages/Login";
+import VerifyEmail from '../pages/VerifyEmail';
 
 const AppRouter = () => {
   return (
@@ -18,6 +19,7 @@ const AppRouter = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<NotFound />} />
+          <Route path='/verify' element={<VerifyEmail/>}/>
         </Routes>
       </main>
       <Footer />
