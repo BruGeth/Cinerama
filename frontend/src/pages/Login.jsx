@@ -120,7 +120,7 @@ const Login = () => {
           </button>
           
           <div className="register-link">
-            ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
+            ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
           </div>
         </form>
       </div>
