@@ -1,11 +1,13 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import "../styles/VerifyEmail.css"
+import userService from "../services/userService"
 
 const VerifyEmail = () => {
   const [code, setCode] = useState(Array(6).fill(""))
   const [activeIndex, setActiveIndex] = useState(0)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const handleChange = (index, value) => {
     if (value.match(/^[0-9]$/) || value === "") {
@@ -20,17 +22,28 @@ const VerifyEmail = () => {
     }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    const finalCode = code.join("")
-    console.log("Verifying code:", finalCode)
-
-    if (finalCode.length === 6) {
-      navigate("/")
-    } else {
-      alert("Por favor, ingresa un código de 6 números.")
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const finalCode = code.join("");
+  
+    if (finalCode.length !== 6) {
+      alert("Por favor, ingresa un código de 6 números.");
+      return;
+    }
+  
+    try {
+      const email = location.state?.email; 
+      console.log("Email recibido en verify:", email);
+      await userService.verifyUser({ email, verificationCode: finalCode });
+  
+      console.log("Verificación exitosa.");
+      navigate("/login"); // pagina inicio con el inicio de sesión
+    } catch (error) {
+      console.error("Error al verificar:", error.message);
+      alert("Código inválido o expirado. Inténtalo de nuevo.");
     }
   }
+  
 
   return (
     <div className="verify-email-page">

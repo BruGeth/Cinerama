@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
+import userService from '../services/userService'; 
 
 const Login = () => {
   const [credentials, setCredentials] = useState({
@@ -38,28 +39,31 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!validateForm()) return;
-    
+  
     setIsLoading(true);
     setError('');
-
-    // Simulación de autenticación
-    setTimeout(() => {
-      const { email, password } = credentials;
-      if (email === 'admin@cinerama.com' && password === '123456') {
-        localStorage.setItem('token', 'fake-jwt-token');
-        if (rememberMe) {
-          localStorage.setItem('userEmail', email);
-        } else {
-          localStorage.removeItem('userEmail');
-        }
-        navigate('/');
+  
+    try {
+      const user = await userService.loginUser(credentials);
+  
+      // Puedes guardar el usuario o token en localStorage si lo deseas
+      localStorage.setItem('user', JSON.stringify(user));
+  
+      if (rememberMe) {
+        localStorage.setItem('userEmail', credentials.email);
       } else {
-        setError('Credenciales inválidas. Inténtalo nuevamente.');
+        localStorage.removeItem('userEmail');
       }
+  
+      navigate('/');
+    } catch (err) {
+      console.error("Login error:", err.message);
+      setError('Credenciales inválidas. Inténtalo nuevamente.');
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
