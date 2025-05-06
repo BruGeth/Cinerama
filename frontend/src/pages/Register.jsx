@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import '../styles/Register.css';
+import userService from '../services/userService'; 
 
 const Register = () => {
   const navigate = useNavigate();
@@ -68,28 +69,29 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     try {
-      console.log('Formulario enviado:', formData);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
+      const user = await userService.registerUser(formData);
+      console.log('Usuario registrado:', user);
+  
+      // Redirect to verification page with email as state
       navigate('/verify', { state: { email: formData.email } });
-
     } catch (error) {
       console.error('Error al registrar:', error);
-      setErrors({ submit: 'Error al procesar el registro. Inténtalo nuevamente.' });
+      setErrors({ submit: error.message || 'Error al procesar el registro. Inténtalo nuevamente.' });
     } finally {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="register-container">
       <div className="register-form-container">
