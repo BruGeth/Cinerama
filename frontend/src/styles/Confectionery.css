@@ -1,0 +1,108 @@
+.confectionery-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .confectionery-title {
+    text-align: center;
+    color: #d70000;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  
+  .confectionery-description {
+    text-align: center;
+    color: #555;
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+  }
+  
+  .category-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  
+  .category-button {
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: #eee;
+    color: #333;
+  }
+  
+  .category-button.active {
+    background-color: #d70000;
+    color: white;
+  }
+  
+  .category-button:hover {
+    background-color: #f6cccc;
+  }
+  
+  .products-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  
+  .product-card {
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s;
+  }
+  
+  .product-card:hover {
+    transform: scale(1.02);
+  }
+  
+  .product-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    margin-bottom: 15px;
+  }
+  
+  .product-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  
+  .product-card p {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
+  .product-price {
+    color: #d70000;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .add-button {
+    background-color: #d70000;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .add-button:hover {
+    background-color: #b80000;
+  }
+  
