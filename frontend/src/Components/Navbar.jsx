@@ -43,13 +43,13 @@ const Navbar = () => {
           {user ? (
             <>
               <Link to="/profile" className="btn btn-login">
-                <span className="user-greeting">Hi, {user.name.split(" ")[0]}</span>
+                <span className="user-greeting">Hola, {user.name.split(" ")[0]}</span>
               </Link>
               <button
                 className="btn btn-register"
                 onClick={handleLogout}
               >
-                LOG OUT
+                Cerrar Sesion
               </button>
             </>
           ) : (

@@ -1,31 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import '../styles/Profile.css'; 
+import React, { useContext } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import '../styles/Profile.css';
+import { AuthContext } from '../context/AuthContext';
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { user, logout, loading } = useContext(AuthContext);
   
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
-  
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    window.location.href = '/';
-  };
+  if (loading) {
+    return <div className="profile-container">Cargando perfil...</div>;
+  }
   
   if (!user) {
-    return (
-      <div className="profile-container">
-        <h2>No has iniciado sesión</h2>
-        <p>Por favor, inicia sesión para ver tu perfil.</p>
-        <Link to="/login" className="btn-edit-profile">Iniciar Sesión</Link>
-      </div>
-    );
+    return <Navigate to="/login" />;
   }
+  
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/';
+  };
   
   return (
     <div className="profile-container">

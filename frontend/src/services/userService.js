@@ -51,21 +51,32 @@ const userService = {
     // Si no hay token, no se puede obtener el usuario
     if (!token) return null;
 
-    const response = await fetch(`${API_BASE_URL}/user/me`, {
-      method: "GET",
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      credentials: 'include' 
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/me`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
 
-    if (!response.ok) {
-      localStorage.removeItem("token"); // Token inválido
+      if (!response.ok) {
+        localStorage.removeItem("token"); // Token inválido
+        localStorage.removeItem("user"); // También eliminar el usuario
+        return null;
+      }
+
+      const userData = await response.json();
+      // Guardar el usuario en localStorage
+      localStorage.setItem("user", JSON.stringify(userData));
+      return userData; // Retorna el usuario
+    } catch (error) {
+      console.error("Error getting current user:", error);
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       return null;
     }
-
-    return await response.json(); // Retorna el usuario
   },
 
   verifyUser: async (verificationData) => {
