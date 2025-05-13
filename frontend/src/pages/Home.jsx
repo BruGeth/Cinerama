@@ -5,7 +5,8 @@ import PromoSlider from "../Components/PromoSlider";
 
 const Home = () => {
 
-  /*{ for video but no }*/
+        /*{/* for video but no }*/
+
 
   // const [showModal, setShowModal] = useState(false);
   // const [trailerUrl, setTrailerUrl] = useState('');
