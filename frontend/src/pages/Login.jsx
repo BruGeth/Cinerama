@@ -60,13 +60,13 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
-        <h1 className="login-title">Login</h1>
+        <h1 className="login-title">Iniciar sesión</h1>
 
         {error && <div className="login-error">{error}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="email">Email address</label>
+            <label htmlFor="email">Correo electrónico</label>
             <input
               type="email"
               id="email"
@@ -74,12 +74,12 @@ const Login = () => {
               value={credentials.email}
               onChange={handleChange}
               className="form-control"
-              placeholder="Enter your email"
+              placeholder="Introduce tu correo electrónico"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Contraseña</label>
             <input
               type="password"
               id="password"
@@ -87,7 +87,7 @@ const Login = () => {
               value={credentials.password}
               onChange={handleChange}
               className="form-control"
-              placeholder="Enter your password"
+              placeholder="Introduce tu contraseña"
             />
           </div>
 
@@ -99,19 +99,19 @@ const Login = () => {
                 checked={rememberMe}
                 onChange={() => setRememberMe(!rememberMe)}
               />
-              <label htmlFor="rememberMe">Remember me</label>
+              <label htmlFor="rememberMe">Recordarme</label>
             </div>
             <Link to="/recover-password" className="forgot-password">
-              Forgot your password?
+              ¿Olvidaste tu contraseña?
             </Link>
           </div>
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? "Loading..." : "Login"}
+            {isLoading ? "Cargando..." : "Iniciar sesión"}
           </button>
 
           <div className="register-link">
-            Don't have an account? <Link to="/register">Sign up</Link>
+            ¿No tienes una cuenta? <Link to="/register">Regístrate</Link>
           </div>
         </form>
       </div>
