@@ -1,6 +1,7 @@
 package com.cinerama.backend.controller;
 
 import com.cinerama.backend.dto.LoginRequest;
+import com.cinerama.backend.dto.LoginResponse;
 import com.cinerama.backend.dto.RegisterRequest;
 import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.User;
@@ -30,8 +31,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@Valid @RequestBody LoginRequest request) {
-        User loggedInUser = authService.login(request);
-        return ResponseEntity.ok(loggedInUser);
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse loginResponse = authService.login(request);
+        return ResponseEntity.ok(loginResponse);
     }
 }

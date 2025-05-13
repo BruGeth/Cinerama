@@ -1,3 +1,39 @@
+/* Añade estos estilos a tu Navbar.css */
+
+.logo-ciner {
+  color: #ffc107;
+}
+
+.logo-ama {
+  color: #e50914;
+}
+
+.user-greeting {
+  display: inline-block;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Mejora para el botón de cerrar sesión */
+.navbar-buttons button.btn {
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Estilo para cuando el usuario está logueado */
+.navbar-buttons .btn-login:has(.user-greeting) {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.navbar-buttons .btn-login:has(.user-greeting)::before {
+  content: "👤";
+  font-size: 14px;
+}
 
 .navbar {
   background-color: #000;

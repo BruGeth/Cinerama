@@ -1,6 +1,7 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.LoginRequest;
+import com.cinerama.backend.dto.LoginResponse;
 import com.cinerama.backend.dto.RegisterRequest;
 import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.User;
@@ -8,8 +9,10 @@ import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.AuthService;
 import com.cinerama.backend.service.MailService;
 import com.cinerama.backend.util.CodeGenerator;
+import com.cinerama.backend.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +21,14 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final MailService mailService;
     private final CodeGenerator codeGenerator;
+    private final JwtUtil jwtUtil;
 
     @Override
     public User register(RegisterRequest request) {
@@ -68,21 +73,29 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User login(LoginRequest request) {
-        // Find the user by email or throw an exception if not found
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+    public LoginResponse login(LoginRequest request) {
+        log.info("Login attempt for email: {}", request.getEmail());
 
-        // Check if the provided password matches the stored encrypted password
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> {
+                    log.error("No user found with email {}", request.getEmail());
+                    return new IllegalArgumentException("Invalid email or password");
+                });
+
+        log.info("User found: {}", user.getEmail());
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            log.warn("Password mismatch for user {}", user.getEmail());
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        // Check if the user account is verified
         if (!user.isEnabled()) {
+            log.warn("User {} is not verified", user.getEmail());
             throw new IllegalStateException("Account is not verified");
         }
 
-        return user;
+        String token = jwtUtil.generateToken(user.getEmail());
+        log.info("Token generated successfully for {}", user.getEmail());
+        return new LoginResponse(user.getName(), token);
     }
 }
