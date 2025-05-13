@@ -1,7 +1,7 @@
-import React from 'react';
-import '../styles/Home.css';
-import Slider from '../Components/Slider';
-import PromoSlider from '../Components/PromoSlider';
+import React from "react";
+import "../styles/Home.css";
+import Slider from "../Components/Slider";
+import PromoSlider from "../Components/PromoSlider";
 
 const Home = () => {
 
