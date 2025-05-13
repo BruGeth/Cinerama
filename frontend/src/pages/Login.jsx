@@ -1,37 +1,34 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import '../styles/Login.css';
-import userService from '../services/userService'; 
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/Login.css";
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
+  const { login } = useContext(AuthContext); // 👈 Using the login function from context
   const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [rememberMe, setRememberMe] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCredentials({
-      ...credentials,
-      [name]: value
-    });
-  };
-
-  const handleRememberMe = () => {
-    setRememberMe(!rememberMe);
+    setCredentials((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const validateForm = () => {
     if (!credentials.email) {
-      setError('Correo electrónico es requerido');
+      setError("Email is required");
       return false;
     }
     if (!credentials.password) {
-      setError('Contraseña es requerida');
+      setError("Password is required");
       return false;
     }
     return true;
@@ -39,28 +36,22 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     if (!validateForm()) return;
-  
+
     setIsLoading(true);
-    setError('');
-  
+    setError("");
+
     try {
-      const user = await userService.loginUser(credentials);
-  
-      // Puedes guardar el usuario o token en localStorage si lo deseas
-      localStorage.setItem('user', JSON.stringify(user));
-  
+      await login(credentials); // 👈 Login function updates context + user state
       if (rememberMe) {
-        localStorage.setItem('userEmail', credentials.email);
+        localStorage.setItem("userEmail", credentials.email);
       } else {
-        localStorage.removeItem('userEmail');
+        localStorage.removeItem("userEmail");
       }
-  
-      navigate('/');
+      navigate("/");
     } catch (err) {
       console.error("Login error:", err.message);
-      setError('Credenciales inválidas. Inténtalo nuevamente.');
+      setError("Invalid credentials. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -69,10 +60,10 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
-        <h1 className="login-title">Iniciar Sesión</h1>
-        
+        <h1 className="login-title">Iniciar sesión</h1>
+
         {error && <div className="login-error">{error}</div>}
-        
+
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label htmlFor="email">Correo electrónico</label>
@@ -83,10 +74,10 @@ const Login = () => {
               value={credentials.email}
               onChange={handleChange}
               className="form-control"
-              placeholder=""
+              placeholder="Introduce tu correo electrónico"
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="password">Contraseña</label>
             <input
@@ -96,35 +87,31 @@ const Login = () => {
               value={credentials.password}
               onChange={handleChange}
               className="form-control"
-              placeholder=""
+              placeholder="Introduce tu contraseña"
             />
           </div>
-          
+
           <div className="form-options">
             <div className="remember-me">
               <input
                 type="checkbox"
                 id="rememberMe"
                 checked={rememberMe}
-                onChange={handleRememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
               />
               <label htmlFor="rememberMe">Recordarme</label>
             </div>
-            <Link to="/recuperar-password" className="forgot-password">
-              ¿OLVIDASTE TU CONTRASEÑA?
+            <Link to="/recover-password" className="forgot-password">
+              ¿Olvidaste tu contraseña?
             </Link>
           </div>
-          
-          <button 
-            type="submit" 
-            className="login-button"
-            disabled={isLoading}
-          >
-            {isLoading ? 'CARGANDO...' : 'INICIAR SESIÓN'}
+
+          <button type="submit" className="login-button" disabled={isLoading}>
+            {isLoading ? "Cargando..." : "Iniciar sesión"}
           </button>
-          
+
           <div className="register-link">
-            ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
+            ¿No tienes una cuenta? <Link to="/register">Regístrate</Link>
           </div>
         </form>
       </div>

@@ -1,0 +1,179 @@
+.festarama-container {
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.festarama-container.fade-in {
+  opacity: 1;
+  transition: opacity 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Banner FestaRama */
+.festarama-banner {
+  background-color: red;
+  color: white;
+  padding: 20px 20px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0; 
+  position: relative;
+  margin-top: 0; 
+  text-align: center; 
+}
+
+.festarama-banner .banner-content {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center;
+}
+
+.festarama-banner .banner-icon {
+  font-size: 3rem; 
+  margin-bottom: 0.5rem; 
+}
+
+.festarama-banner .banner-title {
+  font-size: 2rem; 
+  font-weight: bold;
+  margin-bottom: 0.5rem; 
+}
+
+.festarama-banner .banner-description {
+  font-size: 1.2rem; 
+  margin-top: 10px;
+  max-width: 600px; 
+  line-height: 1.4;
+}
+
+/* Volver Button */
+.festarama-back-button {
+  background: none;
+  border: 2px solid #ff4d4f;
+  color: #ff4d4f;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  border-radius: 25px;
+}
+
+.festarama-back-button:hover {
+  background-color: #ff4d4f;
+  color: #fff;
+}
+
+/* Main Content */
+.festarama-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.festarama-birthday-card {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #ffefef;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: fadeIn 0.8s ease-in;
+}
+
+.festarama-birthday-info {
+  flex: 1 1 55%;
+  padding: 2rem;
+}
+
+.festarama-birthday-title {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #ff4d4f;
+}
+
+.festarama-feature-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.festarama-feature-item {
+  font-size: 1rem;
+  background-color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+  color: #444;
+  transition: transform 0.2s ease;
+}
+
+.festarama-feature-item:hover {
+  transform: translateX(5px);
+}
+
+.festarama-reserve-button {
+  margin-top: 1rem;
+  background-color: #ff4d4f;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.festarama-reserve-button:hover {
+  background-color: #e04143;
+}
+
+/* Birthday Image */
+.festarama-birthday-image {
+  flex: 1 1 45%;
+}
+
+.festarama-birthday-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* Icons for features */
+.festarama-feature-item svg {
+  margin-right: 10px;
+  font-size: 1.5rem;
+  vertical-align: middle;
+}
+
+/* Icons styles */
+.festarama-feature-item span {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Redesigned FestaRama feature icons (emoji version) */
+.festarama-feature-item span:before {
+  content: '';
+  font-size: 1.8rem;
+  margin-right: 10px;
+  font-family: 'Segoe UI Emoji', sans-serif;
+}
