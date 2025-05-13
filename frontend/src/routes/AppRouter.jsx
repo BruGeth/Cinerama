@@ -7,6 +7,7 @@ import NotFound from '../pages/NotFound';
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import VerifyEmail from '../pages/VerifyEmail';
+import Confectionery from '../pages/Confectionery';
 
 const AppRouter = () => {
   return (
@@ -20,6 +21,7 @@ const AppRouter = () => {
           <Route path="/register" element={<Register />} />
           <Route path="*" element={<NotFound />} />
           <Route path='/verify' element={<VerifyEmail/>}/>
+          <Route path='/confiteria' element={<Confectionery/>}/>
         </Routes>
       </main>
       <Footer />
