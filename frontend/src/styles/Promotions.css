@@ -1,0 +1,424 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+.promotions-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Promo Slider Section */
+.promo-slider-container {
+  margin-bottom: 30px;
+}
+
+/* Promotions Section */
+.promotions-section {
+  margin-bottom: 40px;
+}
+
+.promotions-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Tabs */
+.promo-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  gap: 10px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  min-width: 100px;
+}
+
+.tab-button:hover {
+  background-color: #555;
+}
+
+.tab-button.active {
+  background-color: #ff0080;
+}
+
+/* Promotions Grid */
+.promotions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.promo-card {
+  background-color: #222;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.promo-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.promo-icon {
+  padding: 20px;
+  text-align: center;
+  color: #ff0080;
+  font-size: 2rem;
+}
+
+.promo-content {
+  padding: 0 20px;
+  flex-grow: 1;
+}
+
+.promo-content h3 {
+  color: white;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.promo-content p {
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.view-details-btn {
+  background-color: #ff0080;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 25px;
+  cursor: pointer;
+  margin: 0 20px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.view-details-btn:hover {
+  background-color: #d6006d;
+}
+
+/* Modal Styles */
+.promo-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.promo-modal {
+  background-color: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #333;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.modal-header {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.promo-icon.large {
+  font-size: 2.5rem;
+  margin-right: 15px;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ff0080;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.6rem;
+}
+
+.promo-description-container {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-left: 4px solid #ff0080;
+}
+
+.promo-description {
+  font-size: 1.1rem;
+  color: #444;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.promo-conditions h3, .promo-faqs h3 {
+  color: #333;
+  margin-top: 25px;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.promo-conditions h3::after, .promo-faqs h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: #ff0080;
+}
+
+.promo-conditions ul {
+  padding-left: 20px;
+  color: #555;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 15px 15px 15px 35px;
+}
+
+.promo-conditions li {
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.promo-conditions li::before {
+  content: '•';
+  color: #ff0080;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+/* Estilo mejorado para FAQs en el modal */
+.modal-faqs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.modal-faq-item {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-top: 3px solid #ff0080;
+}
+
+.modal-faq-item h4 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.modal-faq-item p {
+  color: #555;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.modal-footer {
+  text-align: center;
+  padding-top: 25px;
+  margin-top: 25px;
+  border-top: 1px solid #eee;
+}
+
+.redeem-btn {
+  background-color: #ff0080;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(255, 0, 128, 0.2);
+}
+
+.redeem-btn:hover {
+  background-color: #d6006d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(255, 0, 128, 0.3);
+}
+
+/* FAQ Section - Con ordenamiento horizontal */
+.faq-section {
+  background-color: #f5f5f5;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.faq-section h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.faq-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 20px;
+}
+
+/* Nueva clase para FAQs en horizontal */
+.faq-container.horizontal {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.faq-container .faq-item {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-container h3 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.faq-container p {
+  color: #555;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+  .faq-container.horizontal {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .wednesday-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px;
+  }
+  
+  .wednesday-banner h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .big-text {
+    font-size: 3rem;
+  }
+  
+  .banner-text {
+    text-align: center;
+    flex-direction: column;
+  }
+  
+  .phone-outline {
+    margin: 15px auto 0;
+  }
+  
+  .promo-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab-button {
+    flex: 1 1 40%;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 576px) {
+  .faq-container.horizontal {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .wednesday-banner h1 {
+    font-size: 1.5rem;
+  }
+  
+  .big-text {
+    font-size: 2.5rem;
+  }
+  
+  .highlight-text {
+    font-size: 1.2rem;
+  }
+  
+  .tab-button {
+    flex: 1 1 100%;
+  }
+  
+  .promotions-grid {
+    grid-template-columns: 1fr;
+  }
+}

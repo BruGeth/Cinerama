@@ -28,7 +28,7 @@ const Navbar = () => {
           <Link to="/cines" className="nav-link">
             CINES
           </Link>
-          <Link to="/promociones" className="nav-link">
+          <Link to="/promotions" className="nav-link">
             PROMOCIONES
           </Link>
           <Link to="/confiteria" className="nav-link">
