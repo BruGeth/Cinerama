@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { Navigate } from 'react-router-dom';
 import '../styles/Profile.css';
 import { AuthContext } from '../context/AuthContext';
 
