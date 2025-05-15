@@ -162,24 +162,30 @@
 }
 
 .modal-content {
-  padding: 20px;
+  padding: 30px;
+  text-align: center;
+  max-width: 90%;
+  margin: 0 auto;
 }
 
 .modal-header {
   border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-  margin-bottom: 20px;
+  padding-bottom: 20px;
+  margin-bottom: 25px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
 }
 
 .promo-icon.large {
   font-size: 2.5rem;
-  margin-right: 15px;
+  margin: 0 auto 15px;
   background-color: #f5f5f5;
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -189,15 +195,19 @@
 .modal-header h2 {
   margin: 0;
   color: #333;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
+  text-align: center;
+  width: 100%;
 }
 
 .promo-description-container {
   background-color: #f9f9f9;
   border-radius: 6px;
-  padding: 15px;
-  margin-bottom: 20px;
+  padding: 20px;
+  margin: 0 auto 25px;
   border-left: 4px solid #ff0080;
+  max-width: 90%;
+  text-align: left;
 }
 
 .promo-description {
@@ -209,19 +219,21 @@
 
 .promo-conditions h3, .promo-faqs h3 {
   color: #333;
-  margin-top: 25px;
-  margin-bottom: 15px;
-  font-size: 1.3rem;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
   position: relative;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
+  text-align: center;
 }
 
 .promo-conditions h3::after, .promo-faqs h3::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
   height: 3px;
   background-color: #ff0080;
 }
@@ -231,7 +243,10 @@
   color: #555;
   background-color: #f9f9f9;
   border-radius: 6px;
-  padding: 15px 15px 15px 35px;
+  padding: 20px 20px 20px 40px;
+  max-width: 85%;
+  margin: 0 auto;
+  text-align: left;
 }
 
 .promo-conditions li {
@@ -252,15 +267,18 @@
 .modal-faqs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 15px;
+  gap: 20px;
+  max-width: 90%;
+  margin: 0 auto;
 }
 
 .modal-faq-item {
   background-color: #f9f9f9;
-  padding: 15px;
+  padding: 20px;
   border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-top: 3px solid #ff0080;
+  text-align: left;
 }
 
 .modal-faq-item h4 {
