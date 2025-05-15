@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Navbar.css";
@@ -6,58 +6,79 @@ import "../styles/Navbar.css";
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/");
+    setMenuOpen(false);
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const closeMenu = () => {
+    setMenuOpen(false);
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="navbar-logo">
-          <Link to="/">
-            <span className="logo-ciner">CINER</span>
-            <span className="logo-ama">AMA</span>
-          </Link>
-        </div>
-        <div className="navbar-links">
-          <Link to="/cartelera" className="nav-link">
-            CARTELERA
-          </Link>
-          <Link to="/cines" className="nav-link">
-            CINES
-          </Link>
-          <Link to="/promotions" className="nav-link">
-            PROMOCIONES
-          </Link>
-          <Link to="/confiteria" className="nav-link">
-            CONFITERÍA
-          </Link>
-          <Link to="/corporate" className="nav-link">
-            CORPORATIVO
-          </Link>
+        <div className="navbar-mobile-top">
+          <div className="navbar-logo">
+            <Link to="/" onClick={closeMenu}>
+              <span className="logo-ciner">CINER</span>
+              <span className="logo-ama">AMA</span>
+            </Link>
+          </div>
+          
+          <button className="menu-toggle" onClick={toggleMenu} aria-label="Toggle menu">
+            <span className={`menu-bar ${menuOpen ? 'open' : ''}`}></span>
+            <span className={`menu-bar ${menuOpen ? 'open' : ''}`}></span>
+            <span className={`menu-bar ${menuOpen ? 'open' : ''}`}></span>
+          </button>
         </div>
 
-        <div className="navbar-buttons">
-          {user ? (
-            <>
-              <Link to="/profile" className="btn btn-login">
-                <span className="user-greeting">Hola, {user.name.split(" ")[0]}</span>
-              </Link>
-              <button
-                className="btn btn-register"
-                onClick={handleLogout}
-              >
-                Cerrar Sesion
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="btn btn-login">Iniciar Sesion</Link>
-              <Link to="/register" className="btn btn-register">Registrarse</Link>
-            </>
-          )}
+        <div className={`navbar-mobile-menu ${menuOpen ? 'open' : ''}`}>
+          <div className="navbar-links">
+            <Link to="/cartelera" className="nav-link" onClick={closeMenu}>
+              CARTELERA
+            </Link>
+            <Link to="/cines" className="nav-link" onClick={closeMenu}>
+              CINES
+            </Link>
+            <Link to="/promociones" className="nav-link" onClick={closeMenu}>
+              PROMOCIONES
+            </Link>
+            <Link to="/confiteria" className="nav-link" onClick={closeMenu}>
+              CONFITERÍA
+            </Link>
+            <Link to="/corporate" className="nav-link" onClick={closeMenu}>
+              CORPORATIVO
+            </Link>
+          </div>
+
+          <div className="navbar-buttons">
+            {user ? (
+              <>
+                <Link to="/profile" className="btn btn-login" onClick={closeMenu}>
+                  <span className="user-greeting">Hola, {user.name.split(" ")[0]}</span>
+                </Link>
+                <button
+                  className="btn btn-register"
+                  onClick={handleLogout}
+                >
+                  Cerrar Sesion
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="btn btn-login" onClick={closeMenu}>Iniciar Sesion</Link>
+                <Link to="/register" className="btn btn-register" onClick={closeMenu}>Registrarse</Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </nav>
