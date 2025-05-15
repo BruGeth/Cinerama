@@ -15,6 +15,7 @@ import FestaRamaPage from '../pages/FestaRamaPage';
 import FestaRamaPackages from '../pages/FestaRamaPackages';
 import Profile from '../pages/Profile';
 import PrivateRoute from '../utils/PrivateRoute';
+import Cines from '../pages/Cines';
 
 const AppRouter = () => {
   return (
@@ -41,6 +42,7 @@ const AppRouter = () => {
           <Route path='/corporate' element={<Corporate/>}/>
           <Route path="/festaramapage" element={<FestaRamaPage />} />
           <Route path="/festarama/packages" element={<FestaRamaPackages />} />
+          <Route path="/cines" element={<Cines />} /> 
 
         </Routes>
       </main>
