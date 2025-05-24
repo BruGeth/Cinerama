@@ -1,6 +1,7 @@
 ---
 name: 🚀 Feature Development
 about: Define a development-ready feature with implementation tasks
+title: ""
 labels: enhancement
 assignees: ''
 ---

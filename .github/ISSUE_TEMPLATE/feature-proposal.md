@@ -1,6 +1,7 @@
 ---
 name: ✨ Feature Proposal
 about: Suggest a new feature or improvement idea
+title: ""
 labels: enhancement
 assignees: ''
 ---
