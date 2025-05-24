@@ -1,4 +1,4 @@
-// Cines.jsx
+
 import React from "react";
 import "../styles/Cines.css";
 
@@ -26,11 +26,13 @@ const CineCard = ({ cine }) => (
 );
 
 const Cines = () => (
-  <div className="cine-list">
-    {cines.map((cine, index) => (
-      <CineCard key={index} cine={cine} />
-    ))}
+  <div className="cine-page">
+    <h1 className="page-title">NUESTRAS SEDES</h1>
+    <div className="cine-list">
+      {cines.map((cine, index) => (
+        <CineCard key={index} cine={cine} />
+      ))}
+    </div>
   </div>
 );
-
 export default Cines;

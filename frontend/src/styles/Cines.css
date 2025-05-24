@@ -5,26 +5,36 @@ body {
   font-family: Arial, sans-serif;
 }
 
+.cine-page {
+  background-color: #ffffff;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.page-title {
+  color: #e60000;
+  font-size: 3em;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+
 .cine-list {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 40px;
-  padding: 60px 20px;
-  box-sizing: border-box;
+  gap: 60px;
 }
 
 .cine-card {
-  width: 90%;
-  max-width: 900px;
-  border-radius: 10px;
+  width: 95%;
+  max-width: 1000px;
+  border-radius: 32px;
   overflow: hidden;
   background-color: #ffffff;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  text-align: center;
-  transition: transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.5s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  padding: 0;
 }
 
 .cine-card:hover {
@@ -33,37 +43,38 @@ body {
 
 .cine-card img {
   width: 100%;
-  height: 300px; /* Imagen más grande */
+  height: 350px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 10px 10px 0 0;
+  display: block;
 }
 
-.cine-card h2 {
-  font-size: 1.8em;
-  font-weight: bold;
-  color: #b40000;
-  margin-top: 20px;
-}
-
-.cine-card p {
-  font-size: 1.1em;
-  color: #000000;
-  margin-top: 12px;
-}
 .cine-info-box {
-  background-color: #e04949; /* Rojo fuerte */
-  padding: 20px;
-  border-radius: 8px;
-  margin-top: 20px;
+  background-color: #e04949;
+  padding: 24px 28px;
+  border-radius: 0 0 10px 10px;
+  margin-top: 24px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  margin: 0;
 }
 
 .cine-info-box h2 {
   color: white;
-  margin-bottom: 10px;
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
 .cine-info-box p {
-  color: #000000; /* Negro */
-  font-weight: 500;
+  color: #000000;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 0;
+}
+.cine-info-box p {
+  color: #000000;
+  font-size: 1.5em;
+  font-weight: bold; /* cambiaste de 500 a bold */
   margin: 0;
 }
