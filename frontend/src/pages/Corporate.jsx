@@ -62,7 +62,7 @@ const Corporate = () => {
               <div className="corporate-card-content corporate-red">
                 <h2>FestaRama</h2>
                 <p>Festeja celebrando momentos de película con tu talento y amigos, nosotros te ofrecemos la experiencia, permitiendo que tu grupo disfrute videojuegos y comer con un toque especial.</p>
-              <button className="corporate-product-button"onClick={() => navigate('/festaramapage')}>Cotizar</button>
+              <button className="corporate-product-button"onClick={() => navigate('/festarama')}>Cotizar</button>
               </div>
             </div>
           </div>

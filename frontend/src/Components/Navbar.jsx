@@ -42,16 +42,16 @@ const Navbar = () => {
 
         <div className={`navbar-mobile-menu ${menuOpen ? 'open' : ''}`}>
           <div className="navbar-links">
-            <Link to="/cartelera" className="nav-link" onClick={closeMenu}>
+            <Link to="/movies" className="nav-link" onClick={closeMenu}>
               CARTELERA
             </Link>
-            <Link to="/cines" className="nav-link" onClick={closeMenu}>
+            <Link to="/cinemas" className="nav-link" onClick={closeMenu}>
               CINES
             </Link>
-            <Link to="/promociones" className="nav-link" onClick={closeMenu}>
+            <Link to="/promotions" className="nav-link" onClick={closeMenu}>
               PROMOCIONES
             </Link>
-            <Link to="/confiteria" className="nav-link" onClick={closeMenu}>
+            <Link to="/confectionery" className="nav-link" onClick={closeMenu}>
               CONFITERÍA
             </Link>
             <Link to="/corporate" className="nav-link" onClick={closeMenu}>

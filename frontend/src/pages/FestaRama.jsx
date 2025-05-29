@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/FestaRamaPage.css';
+import '../styles/FestaRama.css';
 import { useNavigate } from 'react-router-dom';
 
-const FestaRamaPage = () => {
+const FestaRama = () => {
   const navigate = useNavigate();
   const [fadeIn, setFadeIn] = useState(false);
 
@@ -80,4 +80,4 @@ const FestaRamaPage = () => {
   );
 };
 
-export default FestaRamaPage;
+export default FestaRama;
