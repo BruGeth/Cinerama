@@ -42,7 +42,7 @@ const Navbar = () => {
 
         <div className={`navbar-mobile-menu ${menuOpen ? 'open' : ''}`}>
           <div className="navbar-links">
-            <Link to="/cartelera" className="nav-link" onClick={closeMenu}>
+            <Link to="/movies" className="nav-link" onClick={closeMenu}>
               CARTELERA
             </Link>
             <Link to="/cinemas" className="nav-link" onClick={closeMenu}>
