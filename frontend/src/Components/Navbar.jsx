@@ -51,7 +51,7 @@ const Navbar = () => {
             <Link to="/promotions" className="nav-link" onClick={closeMenu}>
               PROMOCIONES
             </Link>
-            <Link to="/confiteria" className="nav-link" onClick={closeMenu}>
+            <Link to="/confectionery" className="nav-link" onClick={closeMenu}>
               CONFITERÍA
             </Link>
             <Link to="/corporate" className="nav-link" onClick={closeMenu}>
