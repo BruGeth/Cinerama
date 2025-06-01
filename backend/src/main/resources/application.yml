@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT}
 
 spring:
   application:
@@ -17,7 +17,7 @@ spring:
         format_sql: true
 
   datasource:
-    url: jdbc:mysql://localhost:3306/cinerama_db?useSSL=false&serverTimezone=UTC
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -36,7 +36,7 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-
+  expiration: 86400000 # 24 hours in seconds
 logging:
   level:
     org.springframework: INFO
