@@ -43,14 +43,20 @@ src/main/resources/application-local.yml
 Use the following structure:
 
 ```yaml
+server:
+    port: 8080 # Change if needed
 spring:
   datasource:
+    url: jdbc:mysql://localhost:PORT/cinerama_db?useSSL=false&serverTimezone=America/Lima # Adjust the URL as needed
     username: your_mysql_user
     password: your_mysql_password
 
   mail:
     username: your_email@gmail.com
     password: your_gmail_app_password
+    
+jwt:
+    secret: your_jwt_secret 
 ```
 
 >Do not commit this file. It is ignored by `.gitignore` for security.
