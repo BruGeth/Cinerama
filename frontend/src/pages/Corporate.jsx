@@ -20,7 +20,7 @@ const Corporate = () => {
               <div className="corporate-card-content corporate-yellow">
                 <h2>Eventos</h2>
                 <p>Vive la experiencia de alquilar una sala para tener en línea, documentales, conciertos o cualquier otro tipo de streaming desde nuestras áreas a tu disposición.</p>
-                <button className="corporate-product-button">Cotizar</button>
+                <button className="corporate-product-button"onClick={() => navigate('/events')}>Cotizar</button>
               </div>
             </div>
           </div>

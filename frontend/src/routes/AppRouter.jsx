@@ -17,6 +17,8 @@ import Profile from '../pages/Profile';
 import PrivateRoute from '../utils/PrivateRoute';
 import Cines from '../pages/Cines';
 import Promotions from '../pages/Promotions';
+import Events from '../pages/Events';
+
 
 const AppRouter = () => {
   return (
@@ -45,6 +47,7 @@ const AppRouter = () => {
           <Route path="/festarama/packages" element={<FestaRamaPackages />} />
           <Route path="/cinemas" element={<Cines />} /> 
           <Route path='/promotions' element={<Promotions/>} />
+          <Route path='/events' element={<Events/>} />
         </Routes>
       </main>
       <Footer />

@@ -14,7 +14,7 @@ const FestaRamaPackages = () => {
   }, []);
 
   const handleBack = () => {
-    navigate('/festaramapage'); 
+    navigate('/festarama'); 
   };
 
   const handleSelectPackage = (packageName) => {
