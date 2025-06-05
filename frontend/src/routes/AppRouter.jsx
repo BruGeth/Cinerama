@@ -17,6 +17,7 @@ import Profile from '../pages/Profile';
 import PrivateRoute from '../utils/PrivateRoute';
 import Cines from '../pages/Cines';
 import Promotions from '../pages/Promotions';
+import TicketPurchase from '../pages/TicketPurchase';
 
 const AppRouter = () => {
   return (
@@ -40,6 +41,7 @@ const AppRouter = () => {
           <Route path="/movies" element={<Cartelera />} />
           <Route path="/about" element={<About />} />
           <Route path="/cartelera/:id" element={<MovieDetail/>} />
+          <Route path="/purchase/:id/:showtime" element={<TicketPurchase />} />
           <Route path='/corporate' element={<Corporate/>}/>
           <Route path="/festarama" element={<FestaRama />} />
           <Route path="/festarama/packages" element={<FestaRamaPackages />} />
