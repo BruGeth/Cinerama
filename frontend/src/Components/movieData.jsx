@@ -6,7 +6,9 @@ export const MOVIES = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/thunderbolts-poster-66f184dbe403e.jpg',
     duration: 120,
     genre: 'Acción',
-    showtimes: ['13:30', '16:10', '18:50', '21:30']
+    showtimes:{
+    0:['13:30', '16:10', '18:50', '21:30']
+    }
   },
   {
     id: 2,
@@ -15,8 +17,10 @@ export const MOVIES = [
     image: '/images/Home1.jpg',
     duration: 95,
     genre: 'Terror',
-    showtimes: ['14:00', '16:30', '19:00', '21:30']
-  },
+    showtimes: {
+    0:['14:00', '16:30', '19:00', '21:30']
+    }
+    },
   {
     id: 3,
     title: 'Karate Kid Leyendas',
@@ -24,7 +28,9 @@ export const MOVIES = [
     image: '/images/Home3.jpg',
     duration: 110,
     genre: 'Drama',
-    showtimes: ['12:40', '15:10', '17:40', '20:10']
+    showtimes: {
+      0:['12:40', '15:10', '17:40', '20:10']
+    }
   },
   {
     id: 4,
@@ -33,8 +39,10 @@ export const MOVIES = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/star_wars_episode_iii_revenge_of_the_sith-477144354-large.jpg',
     duration: 140,
     genre: 'Ciencia Ficción',
-    showtimes: ['13:00', '15:50', '18:40', '21:30']
-  },
+    showtimes: {
+      0:['13:00', '15:50', '18:40', '21:30']
+    }
+    },
   {
     id: 5,
     title: 'THE AMATHEUR: OPERACIÓN VENGANZA',
@@ -42,7 +50,9 @@ export const MOVIES = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/amateur.jpg',
     duration: 105,
     genre: 'Thriller',
-    showtimes: ['14:30', '17:00', '19:30', '22:00']
+    showtimes: {
+      0:['14:30', '17:00', '19:30', '22:00']
+    }
   },
   {
     id: 6,
@@ -51,6 +61,8 @@ export const MOVIES = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/until_dawn-880447124-large.jpg',
     duration: 100,
     genre: 'Suspenso',
-    showtimes: ['13:20', '15:50', '18:20', '20:50']
+    showtimes: {
+      0:['13:20', '15:50', '18:20', '20:50']
+    }
   },
 ];
