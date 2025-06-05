@@ -17,6 +17,7 @@ import Profile from '../pages/Profile';
 import PrivateRoute from '../utils/PrivateRoute';
 import Cines from '../pages/Cines';
 import Promotions from '../pages/Promotions';
+import MoreInformation from "../Components/MoreInformation";
 
 const AppRouter = () => {
   return (
@@ -45,6 +46,7 @@ const AppRouter = () => {
           <Route path="/festarama/packages" element={<FestaRamaPackages />} />
           <Route path="/cinemas" element={<Cines />} /> 
           <Route path='/promotions' element={<Promotions/>} />
+          <Route path="/more-information/:id" element={<MoreInformation/>} />
         </Routes>
       </main>
       <Footer />
