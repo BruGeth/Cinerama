@@ -1,85 +1,99 @@
+/* Main container for the register page: centers the content and adds a background */
 .register-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     padding: 2rem;
-    background-image: url('/public/images/cinema-bg.jpg');
+    background-image: url('/public/images/cinema-bg.jpg'); /* Background image */
     background-size: cover;
     background-position: center;
-    background-color: rgba(239, 239, 239, 0.5); 
-    background-blend-mode: overlay; 
+    background-color: rgba(239, 239, 239, 0.5); /* Semi-transparent overlay color */
+    background-blend-mode: overlay; /* Blends image and background color */
 }
-  .register-form-container {
+
+/* Form container: white box with padding, rounded corners and shadow */
+.register-form-container {
     background-color: white;
     border-radius: 8px;
     padding: 2rem;
     width: 100%;
     max-width: 500px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .register-form-container h1 {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft box shadow */
+}
+
+/* Title of the form */
+.register-form-container h1 {
     text-align: center;
     margin-bottom: 1.5rem;
     font-size: 1.8rem;
     font-weight: bold;
-  }
-  
-  .form-group {
+}
+
+/* Margin between form fields */
+.form-group {
     margin-bottom: 1.2rem;
-  }
-  
-  .form-group label {
+}
+
+/* Label styling for form inputs */
+.form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
-  }
-  
-  .form-group input[type="text"],
-  .form-group input[type="email"],
-  .form-group input[type="password"] {
+}
+
+/* Input fields for text, email and password */
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
     width: 100%;
     padding: 0.8rem;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
-  }
-  
-  .checkbox-group {
+}
+
+/* Checkbox group: aligns checkbox and label horizontally */
+.checkbox-group {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  
-  .checkbox-group input[type="checkbox"] {
+}
+
+/* Size for checkbox inputs */
+.checkbox-group input[type="checkbox"] {
     width: 18px;
     height: 18px;
-  }
-  
-  .checkbox-group label {
+}
+
+/* Removes bottom margin for checkbox labels */
+.checkbox-group label {
     margin-bottom: 0;
-  }
-  
-  .input-error {
+}
+
+/* Red border for inputs with validation errors */
+.input-error {
     border-color: #ff0000 !important;
-  }
-  
-  .error-message {
+}
+
+/* Error message text styling */
+.error-message {
     color: #ff0000;
     font-size: 0.8rem;
     margin-top: 0.3rem;
     display: block;
-  }
-  
-  .general-error {
+}
+
+/* General error messages aligned to center */
+.general-error {
     text-align: center;
     margin: 0.5rem 0;
-  }
-  
-  .register-button {
+}
+
+/* Submit button styling */
+.register-button {
     width: 100%;
-    background-color: #e50914;
+    background-color: #e50914; /* Netflix red */
     color: white;
     border: none;
     border-radius: 4px;
@@ -89,29 +103,33 @@
     cursor: pointer;
     transition: background-color 0.3s;
     margin-top: 1rem;
-  }
-  
-  .register-button:hover {
+}
+
+/* Hover effect for the register button */
+.register-button:hover {
     background-color: #b8000d;
-  }
-  
-  .register-button:disabled {
+}
+
+/* Disabled state for the register button */
+.register-button:disabled {
     background-color: #888;
     cursor: not-allowed;
-  }
-  
-  .login-link {
+}
+
+/* Container for the login link */
+.login-link {
     text-align: center;
     margin-top: 1.5rem;
-  }
-  
-  .login-link a {
+}
+
+/* Styling for login anchor link */
+.login-link a {
     color: #e50914;
     text-decoration: none;
     font-weight: 500;
-  }
-  
-  .login-link a:hover {
+}
+
+/* Hover effect for login link */
+.login-link a:hover {
     text-decoration: underline;
-  }
- 
+}
