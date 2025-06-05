@@ -1,12 +1,16 @@
-import React from 'react';
-
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
 import { MOVIES } from '../Components/movieData';
 import '../styles/MovieDetail.css';
+import { useParams, useNavigate } from 'react-router-dom';
+
 
 const MovieDetail = () => {
   const { id } = useParams();
   const movie = MOVIES.find((m) => m.id === Number(id));
+
+  const navigate = useNavigate();
+
+  const [selectedDate, setSelectedDate] = useState(0);
 
   if (!movie) return <h2 style={{ color: 'white' }}>Película no encontrada</h2>;
 
@@ -14,12 +18,9 @@ const MovieDetail = () => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     return {
-      short: date.toLocaleDateString('es-PE', {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-      }),
-      full: date.toLocaleDateString('es-PE'),
+      id: i,
+      dayName: date.toLocaleDateString('es-PE', { weekday: 'short' }).slice(0, 3).toUpperCase(),
+      formattedDate: `${date.toLocaleDateString('es-PE', { day: '2-digit' })} ${date.toLocaleDateString('es-PE', { month: 'short' }).replace('.', '')}. ${date.getFullYear()}`,
     };
   });
 
@@ -37,22 +38,30 @@ const MovieDetail = () => {
         <p><strong>Género:</strong> {movie.genre}</p>
 
         <div className="date-selector">
-          {days.map((day, index) => (
-            <div key={index} className="date-box">
-              <p>{day.short}</p>
-            </div>
+          {days.map((day) => (
+            <button
+              key={day.id}
+              className={`date-box ${selectedDate === day.id ? 'active' : ''}`}
+              onClick={() => setSelectedDate(day.id)}
+            >
+              <p style={{ fontWeight: 'bold', fontSize: '16px' }}>{day.dayName}</p>
+              <p style={{ fontSize: '14px', color: '#ccc' }}>{day.formattedDate}</p>
+            </button>
           ))}
         </div>
 
-        <div className="cinema-info">
-          <p className="cinema-name">Cinerama Miraflores</p>
-          <p>Edificio El Pacífico, Av. José Pardo 121, Miraflores Lima 18</p>
-        </div>
-
-        <div className="showtimes">
-          {movie.showtimes.map((time, idx) => (
-            <button key={idx} className="showtime-button">{time}</button>
-          ))}
+        <div className={`showtimes ${selectedDate !== null ? 'active' : ''}`}>
+          {Array.isArray(movie.showtimes[selectedDate]) ?
+            movie.showtimes[selectedDate].map((time, idx) => (
+              <button
+                key={idx}
+                className="showtime-button"
+                onClick={() => navigate(`/purchase/${movie.id}/${time}`)}
+              >
+                {time}
+              </button>
+            ))
+            : <p style={{ color: "#ccc" }}>No hay horarios disponibles</p>} 
         </div>
       </div>
     </div>
