@@ -1,0 +1,205 @@
+.seat-selection-container {
+  text-align: center;
+  background-color: #000;
+  color: white;
+  padding: 40px;
+}
+
+.screen {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #444;
+  color: #ffcc00;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.seat-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px;
+  background-color: #111;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(255, 34, 34, 0.2);
+}
+
+.seat-row {
+  display: flex;
+  gap: 5px;
+}
+
+.seat {
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+  border: 2px solid #ffcc00;
+  background-color: #222;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 35px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.3s ease;
+}
+
+.seat.selected {
+  background-color: #ff2222;
+  border-color: #fff;
+  transform: scale(1.1);
+}
+
+.seat:hover {
+  background-color: #ff5500;
+}
+
+.confirm-button {
+  margin-top: 15px;
+  background-color: #ff2222;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.confirm-button:hover {
+  background-color: #ff5500;
+  transform: scale(1.05);
+}
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Botón para volver */
+.back-button {
+  background-color: #555;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #777;
+}
+
+
+.cinema-screen {
+  width: 80%;
+  height: 60px;
+  background-color: #444;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.2);
+}
+/* Contenedor general que agrupa la pantalla y los asientos */
+.cinema-container {
+  width: 90%;
+  background-color: #222;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Pantalla grande del cine */
+.cinema-screen {
+  width: 80%;
+  height: 60px;
+  background-color: #444;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.2);
+}
+
+/* Grid de asientos ahora ocupa el mismo ancho que la pantalla */
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr); /* Divide el espacio en 20 columnas */
+  gap: 10px; /* Aumenta la separación entre los asientos */
+  padding: 20px;
+  width: 80%; /* Igual al ancho de la pantalla */
+}
+
+/* Cada fila se ajusta automáticamente */
+.seat-row {
+  display: contents; /* Evita que las filas agrupen los elementos */
+}
+
+/* Asientos con más separación */
+.seat {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid #ffcc00;
+  background-color: #222;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.3s ease;
+}
+
+/* Efecto al seleccionar un asiento */
+.seat.selected {
+  background-color: #ff2222;
+  border-color: #fff;
+  transform: scale(1.1);
+}
+
+/* Efecto al pasar el mouse sobre los asientos */
+.seat:hover {
+  background-color: #ff5500;
+}
+.empty-space {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+}
+.payment-button {
+  margin-top: 15px;
+  background-color: #008CBA;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.payment-button:hover {
+  background-color: #005f7f;
+  transform: scale(1.05);
+}
