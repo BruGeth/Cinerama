@@ -31,6 +31,10 @@ public class User {
     @NotBlank(message = "Password is mandatory")
     private String password;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
     @Column(nullable = false)
     private boolean enabled = false;
 
