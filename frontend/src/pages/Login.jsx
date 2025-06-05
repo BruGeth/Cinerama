@@ -4,16 +4,23 @@ import "../styles/Login.css";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
-  const { login } = useContext(AuthContext); // 👈 Using the login function from context
+  // Accessing the login function from the authentication context
+  const { login } = useContext(AuthContext); 
+  // State to hold the email and password input values
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
   });
+  // State to manage the "Remember me" checkbox
   const [rememberMe, setRememberMe] = useState(false);
+   // State to display any login error messages
   const [error, setError] = useState("");
+  // State to indicate if login is in progress
   const [isLoading, setIsLoading] = useState(false);
+  // Hook for programmatic navigation after login
   const navigate = useNavigate();
 
+  // Handle input changes and update the credentials state
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({
@@ -22,6 +29,7 @@ const Login = () => {
     }));
   };
 
+  // Validate form inputs before submitting
   const validateForm = () => {
     if (!credentials.email) {
       setError("Email is required");
@@ -34,6 +42,7 @@ const Login = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -42,12 +51,16 @@ const Login = () => {
     setError("");
 
     try {
-      await login(credentials); // 👈 Login function updates context + user state
+      // Attempt login using the provided credentials
+      await login(credentials); 
+      // Store email in local storage if "Remember me" is checked
       if (rememberMe) {
         localStorage.setItem("userEmail", credentials.email);
       } else {
         localStorage.removeItem("userEmail");
       }
+
+       // Redirect to homepage after successful login
       navigate("/");
     } catch (err) {
       console.error("Login error:", err.message);
@@ -56,7 +69,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
