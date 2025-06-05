@@ -1,3 +1,4 @@
+/* Container with fade-in animation and spacing */
 .festarama-packages-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -8,17 +9,20 @@
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
+/* Fade-in effect applied */
 .festarama-packages-container.fade-in {
   opacity: 1;
   transform: translateY(0);
 }
 
+/* Header styling with centered text and back button */
 .packages-header {
   text-align: center;
   margin-bottom: 3rem;
   position: relative;
 }
 
+/* Back button positioned absolutely */
 .packages-back-button {
   position: absolute;
   left: 0;
@@ -37,6 +41,7 @@
   transform: translateX(-3px);
 }
 
+/* Title with underline gradient decoration */
 .packages-title {
   font-size: 2.5rem;
   color: #333;
@@ -63,7 +68,7 @@
   margin-top: 1rem;
 }
 
-/* Packages Grid */
+/* Grid layout for packages - flexible row with gaps and wrapping */
 .packages-grid {
   display: flex;
   flex-direction: row;
@@ -73,6 +78,7 @@
   flex-wrap: wrap;
 }
 
+/* Individual package card with shadow and rounded corners */
 .package-card {
   background-color: white;
   border-radius: 12px;
@@ -91,7 +97,7 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-/* Package Card  */
+/* Package header color variations based on package type */
 .package-header {
   padding: 1.5rem;
   color: white;
@@ -127,7 +133,7 @@
   margin-top: 0.5rem;
 }
 
-/* Ribbon for Popular Package */
+/* Ribbon badge for the popular package */
 .ribbon {
   position: absolute;
   top: 0;
@@ -141,12 +147,12 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Package Body */
 .package-body {
   padding: 1.5rem;
   flex-grow: 1;
 }
 
+/* Package features list styles */
 .package-features {
   list-style-type: none;
   padding: 0;
@@ -166,7 +172,7 @@
   font-weight: bold;
 }
 
-/* Package Footer */
+/* Package footer and select button styling */
 .package-footer {
   padding: 1.5rem;
   text-align: center;
@@ -184,6 +190,7 @@
   font-size: 1rem;
 }
 
+/* Buttons color variations with hover states */
 .basic-button {
   background-color: #6c757d;
   color: white;
@@ -211,7 +218,7 @@
   background-color: #e0a800;
 }
 
-/* FAQ Section */
+/* FAQ section with centered heading and grid layout */
 .faq-section {
   margin: 4rem 0;
   text-align: center;
@@ -271,7 +278,7 @@
   margin-bottom: 0;
 }
 
-/* Contact Section */
+/* Contact section with flex layout for contact methods */
 .contact-section {
   background-color: #f8f9fa;
   padding: 3rem;
@@ -311,7 +318,7 @@
   font-size: 1.2rem;
 }
 
-/* Modal Styles */
+/* Modal styles with fade-in animation and buttons */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -395,7 +402,7 @@
   background-color: #218838;
 }
 
-/* Responsive Styles */
+/* Responsive design: adapt layout and sizes for smaller screens */
 @media (max-width: 1200px) {
   .packages-grid {
     flex-wrap: wrap;

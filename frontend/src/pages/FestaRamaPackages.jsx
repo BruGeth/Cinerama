@@ -14,7 +14,7 @@ const FestaRamaPackages = () => {
   }, []);
 
   const handleBack = () => {
-    navigate('/festaramapage'); 
+    navigate('/festaramapage'); // Navigate back to FestaRama main page
   };
 
   const handleSelectPackage = (packageName) => {
@@ -30,7 +30,7 @@ const FestaRamaPackages = () => {
   };
 
   const closeModal = () => {
-    setShowModal(false);
+    setShowModal(false); // Close confirmation modal
   };
 
   const confirmPackage = () => {
@@ -49,7 +49,7 @@ const FestaRamaPackages = () => {
       </div>
 
       <div className="packages-grid">
-        {/* Paquete Básico */}
+      {/* Basic Package */}
         <div className="package-card basic">
           <div className="package-header">
             <h2>Paquete Básico</h2>
@@ -74,7 +74,7 @@ const FestaRamaPackages = () => {
           </div>
         </div>
 
-        {/* Paquete Premium */}
+      {/* Premium Package */}
         <div className="package-card premium">
           <div className="package-header">
             <div className="ribbon">Popular</div>
@@ -102,7 +102,7 @@ const FestaRamaPackages = () => {
           </div>
         </div>
 
-        {/* Paquete Deluxe */}
+      {/* Deluxe Package */}
         <div className="package-card deluxe">
           <div className="package-header">
             <h2>Paquete Deluxe</h2>
@@ -131,7 +131,7 @@ const FestaRamaPackages = () => {
         </div>
       </div>
 
-      {/* FAQ Section */}
+    {/* FAQ Section */}
       <div className="faq-section">
         <h2>Preguntas Frecuentes</h2>
         <div className="faq-grid">
@@ -154,7 +154,7 @@ const FestaRamaPackages = () => {
         </div>
       </div>
 
-      {/* Confirmation Modal */}
+    {/* Confirmation Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -171,7 +171,7 @@ const FestaRamaPackages = () => {
         </div>
       )}
 
-      {/* Contact Section */}
+    {/* Contact Section */}
       <div className="contact-section">
         <h2>¿Tienes dudas adicionales?</h2>
         <p>Nuestro equipo está listo para ayudarte a crear la fiesta perfecta</p>
