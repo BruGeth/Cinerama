@@ -8,7 +8,7 @@ const Cartelera = () => {
   const navigate = useNavigate(); 
 
   const handleBuyClick = (id) => {
-    navigate(`/cartelera/${id}`);
+    navigate(`/billboard/${id}`);
   };
 
   return (
