@@ -2,9 +2,12 @@ package com.cinerama.backend.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "movie_show")
 public class Show {
     @Id
     private Long id;
