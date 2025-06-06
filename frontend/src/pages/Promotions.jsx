@@ -379,8 +379,6 @@ const Promotions = () => {
     setIsRedeeming(false)
   }
 
-  // Handle redirect to movies page
-
   return (
     <div className="min-h-screen bg-white text-gray-900 p-6">
       {/* Stats Section - Horizontal Layout */}
@@ -465,20 +463,21 @@ const Promotions = () => {
           {getFilteredPromotions.map((promo) => (
             <div
               key={promo.id}
-              className={`bg-gray-800 rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 relative ${
+              className={`promo-card bg-white rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 relative border ${
                 promo.statusInfo.status === "active"
-                  ? "ring-2 ring-green-500"
+                  ? "ring-2 ring-green-500 border-green-200"
                   : promo.statusInfo.status === "expired"
-                    ? "opacity-60"
-                    : ""
+                    ? "opacity-60 border-gray-200"
+                    : "border-gray-200"
               }`}
             >
+              {/* Status Badge - Positioned to not overlap title */}
               <div
-                className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${
+                className={`status-badge absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-semibold z-10 shadow-sm ${
                   promo.statusInfo.status === "active"
                     ? "bg-green-500 text-white"
                     : promo.statusInfo.status === "upcoming"
-                      ? "bg-yellow-500 text-black"
+                      ? "bg-yellow-500 text-white"
                       : promo.statusInfo.status === "expired"
                         ? "bg-red-500 text-white"
                         : "bg-gray-500 text-white"
@@ -487,41 +486,51 @@ const Promotions = () => {
                 {promo.statusInfo.message}
               </div>
 
-              <div className="p-6 promo-content">
-                <div className="flex items-center mb-4">
+              {/* Card Content */}
+              <div className="card-content p-6 flex flex-col h-full">
+                {/* Header with Icon and Title */}
+                <div className="card-header flex items-start mb-4 pt-2">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
+                    className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl flex-shrink-0 ${
                       promo.statusInfo.status === "active" ? "bg-green-100 text-green-600" : "bg-gray-100 text-gray-600"
                     }`}
                   >
                     <i className={getIconClass(promo.icon)}></i>
                   </div>
-                  <h3 className="text-xl font-bold text-white ml-4">{promo.title}</h3>
+                  <div className="ml-4 flex-1 pr-16">
+                    <h3 className="card-title text-xl font-bold text-gray-800 leading-tight">{promo.title}</h3>
+                  </div>
                 </div>
 
-                <p className="text-gray-300 mb-4 leading-relaxed">{promo.description}</p>
+                {/* Description */}
+                <div className="flex-1 mb-4">
+                  <p className="card-description text-gray-600 leading-relaxed text-sm">{promo.description}</p>
+                </div>
 
                 {/* Discount Badge */}
-                <div className="flex items-center justify-between mb-6">
-                  <span className="text-sm text-gray-400">Descuento:</span>
-                  <div className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-bold">
+                <div className="discount-section flex items-center justify-between mb-6 bg-gray-50 p-3 rounded-lg">
+                  <span className="text-sm font-medium text-gray-700">Descuento:</span>
+                  <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm">
                     {promo.discount}
                   </div>
                 </div>
 
-                <button
-                  className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
-                    promo.statusInfo.status === "active"
-                      ? "bg-green-600 hover:bg-green-700 text-white"
-                      : promo.statusInfo.status === "expired"
-                        ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700 text-white"
-                  }`}
-                  onClick={() => openPromotionDetails(promo)}
-                  disabled={promo.statusInfo.status === "expired"}
-                >
-                  {promo.statusInfo.status === "active" ? "Canjear Ahora" : "Ver Detalles"}
-                </button>
+                {/* Action Button */}
+                <div className="card-footer mt-auto">
+                  <button
+                    className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-300 ${
+                      promo.statusInfo.status === "active"
+                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        : promo.statusInfo.status === "expired"
+                          ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+                          : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
+                    onClick={() => openPromotionDetails(promo)}
+                    disabled={promo.statusInfo.status === "expired"}
+                  >
+                    {promo.statusInfo.status === "active" ? "Canjear Ahora" : "Ver Detalles"}
+                  </button>
+                </div>
               </div>
             </div>
           ))}
@@ -574,27 +583,21 @@ const Promotions = () => {
         </div>
       </div>
 
-      {/* Promotion Details Modal */}
+      {/* Promotion Details Modal - FIXED RESPONSIVE DESIGN */}
       {selectedPromotion && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={closePromotionDetails}
-        >
-          <div
-            className="bg-gray-800 rounded-xl max-w-2xl w-full max-h-90vh overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-6">
+        <div className="modal-overlay-fixed fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+          <div className="modal-content-fixed bg-white rounded-xl w-full max-w-md max-h-[80vh] flex flex-col shadow-2xl">
+            {/* Modal Header - Fixed */}
+            <div className="modal-header-fixed p-4 border-b border-gray-200 flex-shrink-0 relative">
               <button
-                className="float-right text-gray-400 hover:text-white text-2xl font-bold"
+                className="close-button-fixed absolute right-3 top-3 text-gray-400 hover:text-gray-600 text-2xl font-bold w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
                 onClick={closePromotionDetails}
               >
                 ×
               </button>
-
-              <div className="text-center mb-6">
+              <div className="flex items-center justify-center w-full">
                 <div
-                  className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 ${
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl mr-3 ${
                     selectedPromotion.statusInfo.status === "active"
                       ? "bg-green-100 text-green-600"
                       : "bg-gray-100 text-gray-600"
@@ -602,61 +605,69 @@ const Promotions = () => {
                 >
                   <i className={getIconClass(selectedPromotion.icon)}></i>
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2">{selectedPromotion.title}</h2>
-                <div
-                  className={`inline-block px-4 py-2 rounded-full text-sm font-medium ${
-                    selectedPromotion.statusInfo.status === "active"
-                      ? "bg-green-500 text-white"
-                      : selectedPromotion.statusInfo.status === "upcoming"
-                        ? "bg-yellow-500 text-black"
-                        : selectedPromotion.statusInfo.status === "expired"
-                          ? "bg-red-500 text-white"
-                          : "bg-gray-500 text-white"
-                  }`}
-                >
-                  {selectedPromotion.statusInfo.message}
+                <div className="text-center">
+                  <h2 className="text-xl font-bold text-gray-800">{selectedPromotion.title}</h2>
+                  <div
+                    className={`inline-block px-3 py-1 rounded-full text-xs font-medium mt-1 ${
+                      selectedPromotion.statusInfo.status === "active"
+                        ? "bg-green-500 text-white"
+                        : selectedPromotion.statusInfo.status === "upcoming"
+                          ? "bg-yellow-500 text-white"
+                          : selectedPromotion.statusInfo.status === "expired"
+                            ? "bg-red-500 text-white"
+                            : "bg-gray-500 text-white"
+                    }`}
+                  >
+                    {selectedPromotion.statusInfo.message}
+                  </div>
                 </div>
               </div>
+            </div>
 
+            {/* Modal Body - Scrollable */}
+            <div className="modal-body-fixed flex-1 overflow-y-auto p-6">
               <div className="mb-6">
-                <p className="text-gray-300 text-lg leading-relaxed">{selectedPromotion.description}</p>
+                <p className="text-gray-600 text-base leading-relaxed">{selectedPromotion.description}</p>
               </div>
 
               {/* Discount Info */}
               <div className="mb-6 text-center">
-                <div className="bg-red-100 text-red-700 px-6 py-3 rounded-lg inline-block">
+                <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-lg inline-block shadow-sm">
                   <span className="text-sm font-medium">Descuento: </span>
                   <span className="text-xl font-bold">{selectedPromotion.discount}</span>
                 </div>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-white mb-4">Términos y Condiciones</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-3">Términos y Condiciones</h3>
                 <ul className="space-y-2">
                   {selectedPromotion.conditions.map((condition, index) => (
-                    <li key={index} className="text-gray-300 flex items-start">
-                      <span className="text-red-500 mr-2">•</span>
-                      {condition}
+                    <li key={index} className="text-gray-600 flex items-start text-sm">
+                      <span className="text-red-500 mr-2 flex-shrink-0">•</span>
+                      <span>{condition}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-white mb-4">Preguntas Frecuentes</h3>
-                <div className="space-y-4">
+                <h3 className="text-lg font-bold text-gray-800 mb-3">Preguntas Frecuentes</h3>
+                <div className="space-y-3">
                   {selectedPromotion.faqs.map((faq, index) => (
-                    <div key={index} className="bg-gray-700 p-4 rounded-lg">
-                      <h4 className="font-bold text-white mb-2">{faq.question}</h4>
-                      <p className="text-gray-300">{faq.answer}</p>
+                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                      <h4 className="font-bold text-gray-800 mb-2 text-sm">{faq.question}</h4>
+                      <p className="text-gray-600 text-sm leading-relaxed">{faq.answer}</p>
                     </div>
                   ))}
                 </div>
               </div>
+            </div>
 
+            {/* Modal Footer - Fixed */}
+            <div className="modal-footer-fixed p-4 border-t border-gray-200 flex-shrink-0">
               <div className="text-center">
                 <button
-                  className={`px-8 py-3 rounded-lg font-medium text-lg transition-all duration-300 ${
+                  className={`px-8 py-3 rounded-lg font-medium text-base transition-all duration-300 ${
                     selectedPromotion.statusInfo.status === "active"
                       ? "bg-green-600 hover:bg-green-700 text-white"
                       : "bg-gray-600 text-gray-400 cursor-not-allowed"
@@ -683,8 +694,8 @@ const Promotions = () => {
 
       {/* Redemption Success Modal */}
       {showRedemptionModal && redeemedPromotion && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay-fixed fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+          <div className="success-modal-fixed bg-white rounded-xl max-w-md w-full shadow-2xl">
             <div className="p-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
