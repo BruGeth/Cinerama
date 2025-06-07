@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -94,7 +93,7 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalStateException("Account is not verified");
         }
 
-        String token = jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().getName());
         log.info("Token generated successfully for {}", user.getEmail());
         return new LoginResponse(user.getName(), token);
     }
