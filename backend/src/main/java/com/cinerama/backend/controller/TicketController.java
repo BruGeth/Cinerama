@@ -19,7 +19,7 @@ public class TicketController {
 
     @PostMapping
     public ResponseEntity<TicketPurchaseResponse> purchaseTicket(@RequestBody TicketPurchaseRequest request) {
-        Long userId = 1L; // Simulado por ahora
+        Long userId = 1L; // Replace with authenticated user ID
         return ResponseEntity.ok(ticketService.purchaseTicket(userId, request));
     }
 }
