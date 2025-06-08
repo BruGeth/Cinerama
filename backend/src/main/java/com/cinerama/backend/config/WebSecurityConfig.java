@@ -94,6 +94,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints for user authentication (register, login, verify)
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/user/", "/api/tickets/**").authenticated()
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
