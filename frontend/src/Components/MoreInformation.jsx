@@ -16,7 +16,7 @@ const MoreInformation = () => {
   if (!movie) {
     return (
       <section className="more-info-wrapper">
-        <h2>Película no encontrada</h2>
+        <h2>Película no hubicada</h2>
       </section>
     );
   }
