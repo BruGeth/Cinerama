@@ -3,13 +3,14 @@ import { MOVIES } from '../Components/movieData';
 import '../styles/MovieDetail.css';
 import { useParams, useNavigate } from 'react-router-dom';
 
-
 const MovieDetail = () => {
   const { id } = useParams();
   const movie = MOVIES.find((m) => m.id === Number(id));
+  const handleSelectShowtime = (format, time) => {
+    navigate(`/purchase/${movie.id}/${time}/${format}`);
+};
 
   const navigate = useNavigate();
-
   const [selectedDate, setSelectedDate] = useState(0);
 
   if (!movie) return <h2 style={{ color: 'white' }}>Película no encontrada</h2>;
@@ -50,19 +51,29 @@ const MovieDetail = () => {
           ))}
         </div>
 
-        <div className={`showtimes ${selectedDate !== null ? 'active' : ''}`}>
-          {Array.isArray(movie.showtimes[selectedDate]) ?
-            movie.showtimes[selectedDate].map((time, idx) => (
-              <button
-                key={idx}
-                className="showtime-button"
-                onClick={() => navigate(`/purchase/${movie.id}/${time}`)}
-              >
-                {time}
-              </button>
-            ))
-            : <p style={{ color: "#ccc" }}>No hay horarios disponibles</p>} 
+        <div className={`showtime-grid ${selectedDate !== null ? 'active' : ''}`}>
+    {["2D", "3D", "XD"].map((format) => (
+        <div key={format} className="format-container">
+            <h3>{format}</h3>
+            <div className="showtime-buttons">
+                {Array.isArray(movie.showtimes[format]) && movie.showtimes[format].length > 0 ? (
+                    movie.showtimes[format].map((time, idx) => (
+                        <button
+                            key={idx}
+                            className="showtime-button"
+                            onClick={() => handleSelectShowtime(format, time)}
+                        >
+                            {time}
+                        </button>
+                    ))
+                ) : (
+                    <p className="no-showtime">No disponible</p>
+                )}
+            </div>
         </div>
+    ))}
+</div>
+
       </div>
     </div>
   );
