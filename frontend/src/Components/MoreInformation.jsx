@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { movies} from "./Movies"; // Make sure the path is correct
+import { movies} from "./movieData"; // Make sure the path is correct
 import { FaTicketAlt } from "react-icons/fa";
 import "../styles/MoreInformation.css";
 
