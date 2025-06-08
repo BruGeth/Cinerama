@@ -1,12 +1,11 @@
 import React from 'react';
-
 import { useParams } from 'react-router-dom';
-import { MOVIES } from '../Components/movieData';
+import { movies } from '../Components/DataMovie';
 import '../styles/MovieDetail.css';
 
 const MovieDetail = () => {
   const { id } = useParams();
-  const movie = MOVIES.find((m) => m.id === Number(id));
+  const movie = movies.find((m) => m.id === Number(id));
 
   if (!movie) return <h2 style={{ color: 'white' }}>Película no encontrada</h2>;
 
