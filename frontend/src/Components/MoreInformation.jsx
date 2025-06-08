@@ -1,13 +1,13 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { MOVIES } from "./movies"; // Make sure the path is correct
+import { movies} from "./Movies"; // Make sure the path is correct
 import { FaTicketAlt } from "react-icons/fa";
 import "../styles/MoreInformation.css";
 
 const MoreInformation = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const movie = MOVIES.find((m) => m.id === parseInt(id));
+  const movie = movies.find((m) => m.id === parseInt(id));
 
   const handleBuyClick = () => {
     navigate(`/cartelera/${movie.id}`);
