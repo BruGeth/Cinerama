@@ -3,8 +3,8 @@ import "../styles/Home.css";
 import Slider from "../Components/Slider";
 import PromoSlider from "../Components/PromoSlider";
 import { Link } from "react-router-dom";
-import { movies } from "../Components/movieData";
-const Home = () => {
+import { movies } from '../Components/DataMovie';
+function Home() {
   return (
     <section className='home-wrapper'>
       <Slider />
@@ -23,10 +23,10 @@ const Home = () => {
 
             {movies.map((movie) => (
               <div key={movie.id} className="home-card">
-                    <img src={movie.image} alt={movie.title} className="home-card-image" />
+                <img src={movie.image} alt={movie.title} className="home-card-image" />
                 <div className="home-card-text">
                   <h3>{movie.title}</h3>
-                  <p>{movie.description}</p>
+                  <p>{movie.description_movie}</p>
                   <Link to={`/more-information/${movie.id}`}>
                     <button className="home-details-button">
                       <i className="fa fa-info-circle"></i> Más detalles
@@ -41,6 +41,6 @@ const Home = () => {
       </div>
     </section>
   );
-};
+}
 
 export default Home;
