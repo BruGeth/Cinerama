@@ -1,70 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/PromoSlider.css'; 
+import React, { useState, useEffect, useCallback } from 'react';
+import '../styles/PromoSlider.css';
 
 const PromoSlider = () => {
-    const slides = [
-        {
-            image: '/images/PromoSlider1.jpeg',
-        },
-        {
-            image: '/images/PromoSlider2.jpg',
-        },
-    ];
+  const slides = [
+    { image: '/images/PromoSlider1.jpeg' },
+    { image: '/images/PromoSlider2.jpg' },
+  ];
 
-    const [animating, setAnimating] = useState(false); // Prevents multiple animations at the same time
-    const [current, setCurrent] = useState(0); // Tracks the current slide index
+  const [animating, setAnimating] = useState(false);
+  const [current, setCurrent] = useState(0);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (!animating) {
-                nextSlide(); // Move to the next slide if not animating
-            }
-        }, 3000); // Slide changes every 3 seconds
+  const nextSlide = useCallback(() => {
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+      setAnimating(false);
+    }, 300);
+  }, [slides.length]);
 
-        return () => clearInterval(interval); // Clear the interval on unmount
-    }, [animating]);
+  const prevSlide = () => {
+    setAnimating(true);
+    setTimeout(() => {
+      setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+      setAnimating(false);
+    }, 300);
+  };
 
-    const nextSlide = () => {
-        setAnimating(true); // Set animation flag to true
-        setTimeout(() => {
-            setCurrent((prev) => (prev + 1) % slides.length); // Advance to the next slide
-            setAnimating(false); // Reset animation flag
-        }, 300); // Transition time
-    };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!animating) nextSlide();
+    }, 3000);
 
-    const prevSlide = () => {
-        setAnimating(true); // Set animation flag to true
-        setTimeout(() => {
-            setCurrent((prev) => (prev - 1 + slides.length) % slides.length); // Go to the previous slide
-            setAnimating(false); // Reset animation flag
-        }, 300); // Transition time
-    };
+    return () => clearInterval(interval);
+  }, [animating, nextSlide]);
 
-    return (
-        <div className="slider promotions-slider">
-            <button className="slider-button prev" onClick={prevSlide}>
-                &#10094;
-            </button>
+  return (
+    <div className="slider promotions-slider">
+      <button className="slider-button prev" onClick={prevSlide}>&#10094;</button>
 
-            <div className="slider-content">
-                <img
-                    src={slides[current].image}
-                    alt={`Promoción ${current + 1}`}
-                    className={`promo-image ${animating ? 'fade-out' : 'fade-in'}`} // Apply fade-in/out class based on animation state
-                />
-                <button 
-                    className="buy-button"
-                    onClick={() => window.location.href = '/promotions'} // Redirect to promotions page
-                >
-                    Más información
-                </button>
-            </div>
+      <div className="slider-content">
+        <img
+          src={slides[current].image}
+          alt={`Promoción ${current + 1}`}
+          className={`promo-image ${animating ? 'fade-out' : 'fade-in'}`}
+        />
+        <button
+          className="buy-button"
+          onClick={() => window.location.href = '/promotions'}
+        >
+          Más información
+        </button>
+      </div>
 
-            <button className="slider-button next" onClick={nextSlide}>
-                &#10095;
-            </button>
-        </div>
-    );
+      <button className="slider-button next" onClick={nextSlide}>&#10095;</button>
+    </div>
+  );
 };
 
 export default PromoSlider;
