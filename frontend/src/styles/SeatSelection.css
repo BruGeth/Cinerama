@@ -77,26 +77,10 @@
 .button-container {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  align-items: center;
+  gap: 20px; 
   margin-top: 20px;
 }
-
-/* Botón para volver */
-.back-button {
-  background-color: #555;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.back-button:hover {
-  background-color: #777;
-}
-
 
 .cinema-screen {
   width: 80%;
@@ -112,7 +96,6 @@
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.2);
 }
-/* Contenedor general que agrupa la pantalla y los asientos */
 .cinema-container {
   width: 90%;
   background-color: #222;
@@ -125,7 +108,6 @@
   align-items: center;
 }
 
-/* Pantalla grande del cine */
 .cinema-screen {
   width: 80%;
   height: 60px;
@@ -187,19 +169,20 @@
   background-color: transparent;
 }
 .payment-button {
-  margin-top: 15px;
-  background-color: #008CBA;
-  color: white;
-  padding: 12px 24px;
-  font-size: 18px;
-  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 16px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.1s ease;
+  transition: background-color 0.3s ease;
+}
+
+
+.payment-button {
+  background-color: #ff2222;
+  color: white;
 }
 
 .payment-button:hover {
-  background-color: #005f7f;
-  transform: scale(1.05);
+  background-color: #ff5500;
 }
