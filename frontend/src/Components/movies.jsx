@@ -37,7 +37,7 @@ export const movies = [
   {
     id: 6,
     title: 'UNTIL DAWN: NOCHE DE TERROR',
-    description: 'La historia sigue a un grupo de amigos que se ven atrapados en un ciclo de terror...',
+    description: 'La historia sigue a un grupo de amigos que se ven atrapados en un ciclo de terror donde todo se pondrá tenebroso al pasar el tiempo',
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/until_dawn-880447124-large.jpg',
     trailer: 'https://www.youtube.com/embed/cAlkA3BwLYg'
   },
