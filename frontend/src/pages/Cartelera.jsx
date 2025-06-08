@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import { FaTicketAlt } from 'react-icons/fa';
-import { MOVIES } from '../Components/movieData';
+import { movies } from '../Components/DataMovie';
 import '../styles/Cartelera.css'; 
 
 const Cartelera = () => {
@@ -15,11 +15,11 @@ const Cartelera = () => {
     <div className="cartelera-container">
       <h1 className="cartelera-title">Cartelera</h1>
       <div className="cartelera-grid">
-        {MOVIES.map((movie) => (
+        {movies.map((movie) => (
           <div key={movie.id} className="cartelera-card">
             <img src={movie.image} alt={movie.title} className="cartelera-image" />
             <h2 className="cartelera-movie-title">{movie.title}</h2>
-            <p className="cartelera-description">{movie.description}</p>
+            <p className="cartelera-description">{movie.description_showtimes}</p>
             <button className="buy-button" onClick={() => handleBuyClick(movie.id)}>
               <FaTicketAlt style={{ marginRight: '8px' }} />
               Comprar
