@@ -20,7 +20,8 @@ public class JwtUtil {
 
     private SecretKey secretKey;
 
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
+    @Value("${jwt.expiration}")
+    private long expirationTime;
 
     @PostConstruct
     public void init() {
@@ -30,6 +31,9 @@ public class JwtUtil {
             log.info("[JWT] Secret loaded successfully ✅");
             this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         }
+        if (expirationTime <= 0) {
+            log.error("[JWT] Expiration time must be positive ❌");
+        }
     }
 
     public String generateToken(String email, String role) {
@@ -37,23 +41,33 @@ public class JwtUtil {
                 .setSubject(email)
                 .claim("roles", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public String extractEmail(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            log.warn("Error extracting email from token: {}", e.getMessage());
+            return null;
+        }
     }
 
     public String extractRole(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("roles", String.class);
+        try {
+            Claims claims = extractAllClaims(token);
+            return claims.get("roles", String.class);
+        } catch (Exception e) {
+            log.warn("Error extracting role from token: {}", e.getMessage());
+            return null;
+        }
     }
 
     private Claims extractAllClaims(String token) {
