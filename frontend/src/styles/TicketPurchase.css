@@ -101,18 +101,58 @@
 }
 .ticket-inputs {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 15px;
-  justify-content: center;
   margin-top: 15px;
 }
 
 .ticket-inputs label {
   color: white;
-  font-size: 16px;
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
 }
 
-.ticket-inputs input {
+.ticket-counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.counter-button {
+  width: 35px;
+  height: 35px;
+  background-color: #ffcc00;
+  color: black;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.counter-button:hover {
+  background-color: #ff9900;
+}
+
+.ticket-input {
   width: 80px;
+  text-align: center;
+  font-size: 16px;
+  padding: 5px;
+  border: 2px solid #ffcc00;
+  border-radius: 5px;
+  background-color: #222;
+  color: white;
+}
+.ticket-inputs input {
+  width: 100px;
   text-align: center;
   font-size: 16px;
   padding: 5px;
