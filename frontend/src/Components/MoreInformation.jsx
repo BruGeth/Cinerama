@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { movies} from "./movieData"; // Make sure the path is correct
+import { movies } from '../Components/DataMovie';
 import { FaTicketAlt } from "react-icons/fa";
 import "../styles/MoreInformation.css";
 
@@ -45,7 +45,7 @@ const MoreInformation = () => {
         />
         <div className="more-info-text">
           <h1>{movie.title}</h1>
-          <p>{movie.description}</p>
+          <p>{movie.description_movie}</p>
           <button className="buy-button" onClick={handleBuyClick}>
             <FaTicketAlt style={{ marginRight: '8px' }} />
             Comprar
