@@ -1,0 +1,610 @@
+/* Override header for SpecialFunctions */
+.events-header .events-icon {
+  animation: rotate 3s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Cinema Info Display */
+.cinema-info {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(251, 191, 36, 0.05));
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin: 1.5rem 0;
+  border: 2px solid rgba(220, 38, 38, 0.2);
+  text-align: center;
+}
+
+.cinema-info h3 {
+  color: #dc2626;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.cinema-info h3::before {
+  content: "🎬";
+  font-size: 1.5rem;
+}
+
+/* Selected Items Summary */
+.details-summary {
+  background: #f8f9fa;
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 2px solid #e5e7eb;
+}
+
+.selected-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.selected-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  border: 2px solid rgba(220, 38, 38, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.selected-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(220, 38, 38, 0.15);
+}
+
+.selected-item h4 {
+  color: #dc2626;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+}
+
+.selected-item p {
+  color: #1f2937;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Movies Carousel and Grid */
+.movies-carousel {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.movies-grid {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem 0;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Enhanced Movie Card Styles */
+.movie-card {
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 3px solid #e5e7eb;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Proporción de poster cinematográfico */
+  width: 320px;
+  height: 480px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transform-style: preserve-3d;
+  margin: 0 auto;
+}
+
+.movie-card:hover {
+  transform: translateY(-20px) scale(1.05);
+  border-color: #dc2626;
+  box-shadow: 0 40px 80px rgba(220, 38, 38, 0.3), 0 0 0 1px rgba(220, 38, 38, 0.1), inset 0 1px 0
+    rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #fef7f7 100%);
+}
+
+.movie-card.selected {
+  border-color: #dc2626;
+  background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+  box-shadow: 0 30px 60px rgba(220, 38, 38, 0.4), 0 0 0 4px rgba(220, 38, 38, 0.2), inset 0 1px 0
+    rgba(255, 255, 255, 0.2);
+  transform: translateY(-15px) scale(1.03);
+}
+
+.movie-card.selected::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, #dc2626, #fbbf24, #dc2626, #fbbf24);
+  border-radius: 24px;
+  z-index: -1;
+  animation: smoothRotate 4s linear infinite;
+  opacity: 0.7;
+}
+
+/* Movie Poster Container */
+.movie-poster {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.movie-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  display: block;
+  border: none;
+  outline: none;
+}
+
+.movie-card:hover .movie-img {
+  transform: scale(1.1) rotate(0.5deg);
+}
+
+/* Movie Badges - Solo Fan Event */
+.movie-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 3;
+  color: white;
+  padding: 0.5rem 1.2rem;
+  border-radius: 25px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation: badgeFloat 3s ease-in-out infinite;
+  backdrop-filter: blur(10px);
+}
+
+.movie-badge.fan-event {
+  background: linear-gradient(45deg, #dc2626, #fbbf24);
+  animation-delay: 0s;
+}
+
+.movie-badge span {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Información fija en la parte inferior */
+.movie-info-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+  color: white;
+  padding: 1.5rem 1rem 1rem;
+  z-index: 2;
+}
+
+.movie-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.movie-description {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Overlay con información al hacer hover */
+.movie-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.movie-card:hover .movie-overlay {
+  opacity: 1;
+}
+
+.movie-overlay h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.movie-overlay p {
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Detalles de la película */
+.movie-details-info {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.movie-details-info span {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+
+/* Indicador de selección */
+.movie-selection-indicator {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  background: #fbbf24;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
+}
+
+.movie-selection-indicator::after {
+  content: "✓";
+  color: #000;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+/* Enhanced Form Styles */
+.events-form {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border: 3px solid #f1f5f9;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+.events-form .form-group input:focus,
+.events-form .form-group select:focus,
+.events-form .form-group textarea:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.15);
+  transform: translateY(-2px);
+}
+
+/* Enhanced Summary Card */
+.summary-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+  border: 3px solid #f1f5f9;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #dc2626, #fbbf24);
+  animation: shimmer 3s ease-in-out infinite alternate;
+}
+
+.summary-section {
+  transition: all 0.3s ease;
+  border-radius: 15px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-section:hover {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.02), rgba(251, 191, 36, 0.01));
+  transform: translateX(10px);
+}
+
+.summary-section h3 {
+  animation: fadeInLeft 0.6s ease-out;
+}
+
+@keyframes fadeInLeft {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.summary-details {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-left: 4px solid #dc2626;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+.summary-details:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.1);
+}
+
+/* Enhanced Action Buttons */
+.events-actions {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.events-btn-primary,
+.events-btn-secondary {
+  padding: 0.75rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  font-size: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.events-btn-primary {
+  background: linear-gradient(45deg, #dc2626, #fbbf24);
+  color: white;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.events-btn-secondary {
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+
+.events-btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+}
+
+.events-btn-secondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.events-btn-primary.disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.events-btn-primary::after {
+  content: "✨";
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.events-btn-primary:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.2);
+}
+
+/* Animaciones */
+@keyframes badgeFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes smoothRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Special animations for SpecialFunctions */
+@keyframes movieSlideIn {
+  from {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.movie-card {
+  animation: movieSlideIn 0.6s ease-out;
+}
+
+.movie-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.movie-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.movie-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .movies-grid {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .movie-card {
+    width: 280px;
+    height: 420px;
+  }
+
+  .movie-info-bottom {
+    padding: 1rem 0.8rem 0.8rem;
+  }
+
+  .movie-title {
+    font-size: 1rem;
+  }
+
+  .movie-description {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .selected-items {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .cinema-info {
+    padding: 1rem;
+  }
+
+  .movie-overlay {
+    padding: 1rem;
+  }
+
+  .movie-overlay h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .movie-overlay p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .movie-card {
+    width: 260px;
+    height: 390px;
+  }
+
+  .movie-info-bottom {
+    padding: 0.8rem 0.6rem 0.6rem;
+  }
+
+  .movie-title {
+    font-size: 0.9rem;
+  }
+
+  .movie-description {
+    font-size: 0.75rem;
+  }
+
+  .movie-badge {
+    top: 8px;
+    right: 8px;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.65rem;
+  }
+
+  .events-actions {
+    gap: 1rem;
+  }
+
+  .events-btn-primary,
+  .events-btn-secondary {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Accessibility improvements */
+.movie-card:focus,
+.events-btn-primary:focus,
+.events-btn-secondary:focus {
+  outline: 3px solid rgba(220, 38, 38, 0.4);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .movie-card,
+  .movie-badge,
+  .summary-section,
+  .events-header .events-icon {
+    animation: none;
+  }
+
+  .movie-card:hover,
+  .events-btn-primary:hover,
+  .events-btn-secondary:hover {
+    transform: none;
+  }
+}
