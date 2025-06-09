@@ -1,163 +1,183 @@
+/* Main container for the confectionery section */
 .confectionery-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-    font-family: 'Segoe UI', sans-serif;
+  max-width: 1200px; /* Limits the width of the container */
+  margin: 0 auto; /* Centers the container horizontally */
+  padding: 40px 20px; /* Adds padding inside the container */
+  font-family: 'Segoe UI', sans-serif; /* Font style */
+}
+
+/* Title of the section */
+.confectionery-title {
+  text-align: center; /* Center the text */
+  color: #d70000; /* Red color */
+  font-size: 2.5rem; /* Large font size */
+  font-weight: 800; /* Very bold text */
+  margin-bottom: 10px; /* Space below the title */
+}
+
+/* Subtitle or description text */
+.confectionery-description {
+  text-align: center; /* Center the text */
+  color: #555; /* Medium gray color */
+  font-size: 1.1rem; /* Slightly larger font */
+  margin-bottom: 30px; /* Space below the description */
+}
+
+/* Container for all category buttons */
+.category-buttons {
+  display: flex; /* Arrange buttons in a row */
+  justify-content: center; /* Center the buttons horizontally */
+  gap: 12px; /* Space between buttons */
+  flex-wrap: wrap; /* Allow wrapping to the next line on small screens */
+  margin-bottom: 30px; /* Space below the button group */
+}
+
+/* Style for each category button */
+.category-button {
+  padding: 10px 20px; /* Padding inside the button */
+  border-radius: 999px; /* Makes the button pill-shaped */
+  font-weight: 600; /* Semi-bold text */
+  border: none; /* No border */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s; /* Smooth background transition */
+  background-color: #eee; /* Light gray background */
+  color: #333; /* Dark gray text */
+}
+
+/* Style for the active (selected) category button */
+.category-button.active {
+  background-color: #d70000; /* Red background */
+  color: white; /* White text */
+}
+
+/* Hover effect for category buttons */
+.category-button:hover {
+  background-color: #f6cccc; /* Light red background on hover */
+}
+
+/* Grid layout for displaying products */
+.product-grid {
+  display: grid; /* CSS grid layout */
+  gap: 24px; /* Space between grid items */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
+}
+
+/* Horizontal layout used when a category is selected */
+.product-grid.horizontal {
+  display: flex; /* Flex layout instead of grid */
+  flex-wrap: nowrap; /* No wrapping, horizontal scrolling */
+  overflow-x: auto; /* Enable horizontal scroll */
+  gap: 16px; /* Space between items */
+  padding-bottom: 1rem; /* Bottom padding for scroll space */
+  scroll-snap-type: x mandatory; /* Snap to item horizontally */
+}
+
+/* Individual card settings in horizontal mode */
+.product-grid.horizontal .product-card {
+  min-width: 280px; /* Minimum width of card */
+  flex-shrink: 0; /* Prevent shrinking */
+  scroll-snap-align: start; /* Align card to start when snapped */
+}
+
+/* General card styling for each product */
+.product-card {
+  background-color: white; /* White background */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+  border-radius: 12px; /* Rounded corners */
+  overflow: hidden; /* Hide overflowing content */
+  text-align: center; /* Centered text */
+  padding: 20px; /* Inner padding */
+  transition: transform 0.3s; /* Smooth scaling on hover */
+}
+
+/* Hover effect for product card */
+.product-card:hover {
+  transform: scale(1.02); /* Slightly enlarge on hover */
+}
+
+/* Product image style */
+.product-card img {
+  width: 100%; /* Full width */
+  height: 180px; /* Fixed height */
+  object-fit: contain; /* Keep aspect ratio */
+  margin-bottom: 15px; /* Space below image */
+}
+
+/* Product name */
+.product-card h3 {
+  font-size: 1.1rem; /* Medium-large text */
+  font-weight: 700; /* Bold text */
+  margin-bottom: 6px; /* Space below title */
+}
+
+/* Product description */
+.product-card p {
+  font-size: 0.95rem; /* Slightly smaller text */
+  color: #555; /* Gray text */
+}
+
+/* Product price style */
+.product-price {
+  color: #d70000; /* Red color for price */
+  font-weight: bold; /* Bold price */
+  margin: 10px 0; /* Vertical spacing */
+}
+
+/* Button for each product (e.g., "Add" button) */
+.product-button {
+  position: relative; /* Allows positioning pseudo-elements */
+  padding: 10px 24px; /* Button padding */
+  border: none; /* No border */
+  border-radius: 50px; /* Rounded button */
+  font-weight: 600; /* Semi-bold text */
+  font-size: 0.95rem; /* Medium size text */
+  color: white; /* White text */
+  background: linear-gradient(135deg, #ff4e4e, #cc0000); /* Red gradient */
+  cursor: pointer; /* Pointer on hover */
+  overflow: hidden; /* Hide animated glow overflow */
+  z-index: 0; /* Base layer */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth effects */
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3); /* Subtle red shadow */
+}
+
+/* Glowing shimmer background effect */
+.product-button::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 1;
+}
+
+/* Activate shimmer effect on hover */
+.product-button:hover::before {
+  opacity: 1;
+  animation: shimmer 1s infinite linear; /* Infinite rotating animation */
+}
+
+/* Button hover effect */
+.product-button:hover {
+  transform: translateY(-2px); /* Move button slightly up */
+  box-shadow: 0 8px 18px rgba(255, 0, 0, 0.5); /* Stronger shadow */
+}
+
+/* Click effect */
+.product-button:active {
+  transform: scale(0.95); /* Slight shrink on click */
+  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.3); /* Lighter shadow */
+}
+
+/* Shimmer keyframe animation */
+@keyframes shimmer {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
   }
-  
-  .confectionery-title {
-    text-align: center;
-    color: #d70000;
-    font-size: 2.5rem;
-    font-weight: 800;
-    margin-bottom: 10px;
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
-  
-  .confectionery-description {
-    text-align: center;
-    color: #555;
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-  }
-  
-  .category-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-bottom: 30px;
-  }
-  
-  .category-button {
-    padding: 10px 20px;
-    border-radius: 999px;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    background-color: #eee;
-    color: #333;
-  }
-  
-  .category-button.active {
-    background-color: #d70000;
-    color: white;
-  }
-  
-  .category-button:hover {
-    background-color: #f6cccc;
-  }
-  
-  .product-grid {
-    display: grid;
-    gap: 24px;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  }
-  
-  /* Mostrar productos en fila horizontal cuando se filtra */
-  .product-grid.horizontal {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    gap: 16px;
-    padding-bottom: 1rem;
-    scroll-snap-type: x mandatory;
-  }
-  
-  .product-grid.horizontal .product-card {
-    min-width: 280px;
-    flex-shrink: 0;
-    scroll-snap-align: start;
-  }
-  
-  .product-card {
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
-    border-radius: 12px;
-    overflow: hidden;
-    text-align: center;
-    padding: 20px;
-    transition: transform 0.3s;
-  }
-  
-  .product-card:hover {
-    transform: scale(1.02);
-  }
-  
-  .product-card img {
-    width: 100%;
-    height: 180px;
-    object-fit: contain;
-    margin-bottom: 15px;
-  }
-  
-  .product-card h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
-  
-  .product-card p {
-    font-size: 0.95rem;
-    color: #555;
-  }
-  
-  .product-price {
-    color: #d70000;
-    font-weight: bold;
-    margin: 10px 0;
-  }
-  
-  .product-button {
-    position: relative;
-    padding: 10px 24px;
-    border: none;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: white;
-    background: linear-gradient(135deg, #ff4e4e, #cc0000);
-    cursor: pointer;
-    overflow: hidden;
-    z-index: 0;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
-  }
-  
-  .product-button::before {
-    content: "";
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    z-index: 1;
-  }
-  
-  .product-button:hover::before {
-    opacity: 1;
-    animation: shimmer 1s infinite linear;
-  }
-  
-  .product-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(255, 0, 0, 0.5);
-  }
-  
-  .product-button:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 6px rgba(255, 0, 0, 0.3);
-  }
-  
-  /* Brillo animado */
-  @keyframes shimmer {
-    0% {
-      transform: translate(-50%, -50%) rotate(0deg);
-    }
-    100% {
-      transform: translate(-50%, -50%) rotate(360deg);
-    }
-  }
+}

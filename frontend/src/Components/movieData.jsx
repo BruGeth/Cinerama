@@ -1,12 +1,13 @@
+// Array of movie objects, each containing metadata like title, description, image, duration, genre, and showtimes.
 export const MOVIES = [
   {
-    id: 1,
+    id: 1,// Unique identifier for the movie
     title: 'Thunderbolts',
     description: 'Un mundo sin Vengadores no significa que no haya un grupo de superhéroes. Hay un grupo y se llaman Thunderbolts.',
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/thunderbolts-poster-66f184dbe403e.jpg',
     duration: 120,
     genre: 'Acción',
-    showtimes: ['13:30', '16:10', '18:50', '21:30']
+    showtimes: ['13:30', '16:10', '18:50', '21:30']// Available screening times
   },
   {
     id: 2,
