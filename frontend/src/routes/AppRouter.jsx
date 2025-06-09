@@ -18,7 +18,8 @@ import PrivateRoute from '../utils/PrivateRoute';
 import Cines from '../pages/Cines';
 import Promotions from '../pages/Promotions';
 import Events from '../pages/Events';
-
+import SpecialFunctions from '../pages/SpecialFunctions';
+import Advertising from '../pages/Advertising';
 
 const AppRouter = () => {
   return (
@@ -48,6 +49,8 @@ const AppRouter = () => {
           <Route path="/cinemas" element={<Cines />} /> 
           <Route path='/promotions' element={<Promotions/>} />
           <Route path='/events' element={<Events/>} />
+          <Route path='/specialfunctions' element={<SpecialFunctions/>} />
+          <Route path='/advertising' element={<Advertising/>} />
         </Routes>
       </main>
       <Footer />

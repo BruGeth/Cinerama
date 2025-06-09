@@ -47,7 +47,7 @@ const Corporate = () => {
                 <div className="corporate-content-wrapper">
                   <h2>Funciones Especiales</h2>
                   <p>Disfruta de salas exclusivas para ti y tus invitados, con películas de estreno, contenido alternativo y mucho más.</p>
-                  <button className="corporate-product-button">
+                  <button className="corporate-product-button" onClick={() => navigate('/specialfunctions')}>
                     Cotizar
                   </button>
                 </div>
@@ -91,7 +91,7 @@ const Corporate = () => {
                 <div className="corporate-content-wrapper">
                   <h2>Publicidad</h2>
                   <p>Promociona tus elementos para ampliar tu marca, dependes un mayor impacto desde asociación de marca y difusión.</p>
-                  <button className="corporate-product-button">
+                  <button className="corporate-product-button" onClick={() => navigate('/advertising')} >
                     Cotizar
                   </button>
                 </div>
