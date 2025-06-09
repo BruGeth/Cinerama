@@ -26,61 +26,55 @@ const Events = () => {
   const eventTypes = useMemo(() => [
     {
       id: 'conferencia',
-      name: 'Conferencias',
+      name: ' 🎤 Conferencias',
       description: 'Espacios ideales para presentaciones corporativas y académicas con tecnología de vanguardia',
       image: '/images/conference.jpg', 
       backgroundClass: 'conference-bg',
-      icon: '🎤',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)',
       accentColor: '#dc2626'
     },
     {
       id: 'capacitacion',
-      name: 'Capacitación',
+      name: ' 📚 Capacitación',
       description: 'Ambientes perfectos para sesiones de entrenamiento y formación profesional inmersiva',
       image: '/images/training.jpg', 
       backgroundClass: 'training-bg',
-      icon: '📚',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #fcd34d 100%)',
       accentColor: '#ef4444'
     },
     {
       id: 'lanzamiento',
-      name: 'Lanzamiento',
+      name: ' 🚀 Lanzamiento',
       description: 'Eventos espectaculares para presentar productos y servicios con máximo impacto visual',
       image: '/images/launch.jpg', 
       backgroundClass: 'launch-bg',
-      icon: '🚀',
       gradient: 'linear-gradient(135deg, #b91c1c 0%, #f59e0b 100%)',
       accentColor: '#b91c1c'
     },
     {
       id: 'presentaciones',
-      name: 'Presentaciones',
+      name: ' 📊 Presentaciones',
       description: 'Salas equipadas para demostraciones y exhibiciones profesionales de alto nivel',
       image: '/images/presentation.jpg', 
       backgroundClass: 'presentation-bg',
-      icon: '📊',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)',
       accentColor: '#dc2626'
     },
     {
       id: 'club-fans',
-      name: 'Club de Fans',
+      name: ' ⭐ Club de Fans',
       description: 'Experiencias exclusivas para comunidades y seguidores con contenido premium',
       image: '/images/fanclub.jpg', 
       backgroundClass: 'fanclub-bg',
-      icon: '⭐',
       gradient: 'linear-gradient(135deg, #991b1b 0%, #d97706 100%)',
       accentColor: '#991b1b'
     },
     {
       id: 'zona-gamer',
-      name: 'Zona Gamer',
+      name: ' 🎮 Zona Gamer',
       description: 'Experiencias gaming épicas con pantallas gigantes y torneos competitivos de última generación',
       image: '/images/gaming.jpg', 
       backgroundClass: 'gaming-bg',
-      icon: '🎮',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #fbbf24 50%, #ef4444 100%)',
       accentColor: '#dc2626',
       isNew: true
@@ -96,7 +90,6 @@ const Events = () => {
       capacity: '180 personas',
       features: ['4K Projection', '2D ', '3D ', 'XD', 'IMAX'],
       image: 'https://www.cinerama.com.pe/_admin/assets/images/cines/pacifico.jpg',
-      icon: '🎬',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)',
       location: 'Miraflores'
     },
@@ -107,7 +100,6 @@ const Events = () => {
       capacity: '220 personas',
       features: ['HD Projection', '3D', 'XD', 'IMAX'],
       image: 'https://www.cinerama.com.pe/_admin/assets/images/cines/minka.jpg',
-      icon: '🎞️',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #fcd34d 100%)',
       location: 'Callao'
     }
