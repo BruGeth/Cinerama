@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../styles/Promotions.css';
-import PromoSlider from '../Components/PromoSlider';
+import PromoSlider from '../components/PromoSlider';
 
 const Promotions = () => {
   const [activeTab, setActiveTab] = useState('all');

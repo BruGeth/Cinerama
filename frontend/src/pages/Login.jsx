@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
-  const { login } = useContext(AuthContext); // 👈 Using the login function from context
+  const { login, isAdmin } = useContext(AuthContext); // 👈 Using the login function from context
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -42,20 +42,30 @@ const Login = () => {
     setError("");
 
     try {
-      await login(credentials); // 👈 Login function updates context + user state
-      if (rememberMe) {
-        localStorage.setItem("userEmail", credentials.email);
-      } else {
-        localStorage.removeItem("userEmail");
-      }
-      navigate("/");
-    } catch (err) {
-      console.error("Login error:", err.message);
-      setError("Invalid credentials. Please try again.");
-    } finally {
-      setIsLoading(false);
+    console.log("Intentando login con:", credentials);
+    await login(credentials);
+    console.log("Login exitoso, isAdmin:", isAdmin());
+    if (rememberMe) {
+      localStorage.setItem("userEmail", credentials.email);
+    } else {
+      localStorage.removeItem("userEmail");
     }
-  };
+    setTimeout(() => {
+      if (isAdmin()) {
+        console.log("Redirigiendo a dashboard");
+        navigate("/admin/dashboard");
+      } else {
+        console.log("Redirigiendo a home");
+        navigate("/");
+      }
+    }, 100);
+  } catch (err) {
+    console.error("Login error:", err.message);
+    setError("Invalid credentials. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="login-container">

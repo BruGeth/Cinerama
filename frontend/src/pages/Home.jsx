@@ -1,25 +1,8 @@
-import React from "react";
 import "../styles/Home.css";
-import Slider from "../Components/Slider";
-import PromoSlider from "../Components/PromoSlider";
+import Slider from "../components/Slider";
+import PromoSlider from "../components/PromoSlider";
 
 const Home = () => {
-
-        /*{/* for video but no }*/
-
-
-  // const [showModal, setShowModal] = useState(false);
-  // const [trailerUrl, setTrailerUrl] = useState('');
-
-  // const openTrailer = (url) => {
-  //   setTrailerUrl(url);
-  //   setShowModal(true);
-  // };
-
-  // const closeModal = () => {
-  //   setShowModal(false);
-  //   setTrailerUrl('');
-  // };
 
   return (
     <section className='home-wrapper'>
@@ -128,25 +111,6 @@ const Home = () => {
 
           </div>
         </section>
-
-        {/* for video but no */}
-        {/* {showModal && (
-          <div className="modal-overlay" onClick={closeModal}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <iframe
-                width="560"
-                height="315"
-                src={trailerUrl}
-                title="Tráiler"
-                frameBorder="0"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-              ></iframe>
-              <button className="close-button" onClick={closeModal}>Cerrar</button>
-            </div>
-          </div>
-        )} */}
-
       </div>
     </section>
   );
