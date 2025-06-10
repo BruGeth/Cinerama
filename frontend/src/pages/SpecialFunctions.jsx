@@ -1,13 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { movies } from "../components/DataMovie"
-import "../styles/FestaRamaPackages.css"
-import confetti from "canvas-confetti"
+import { movies } from '../components/DataMovie';
+import "../styles/SpecialFunctions.css"
 
-const FestaRamaPackages = () => {
+const SpecialFunctions = () => {
   const navigate = useNavigate()
-  const [fadeIn, setFadeIn] = useState(false)
-  const [selectedPackage, setSelectedPackage] = useState(null)
   const [selectedCinema, setSelectedCinema] = useState("")
   const [selectedMovie, setSelectedMovie] = useState("")
   const [currentStep, setCurrentStep] = useState(1)
@@ -15,74 +12,23 @@ const FestaRamaPackages = () => {
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
-    package: "",
     cinema: "",
     movie: "",
-    eventDate: "",
-    eventTime: "",
-    numberOfKids: "",
-    specialRequests: "",
-    parentName: "",
-    parentEmail: "",
-    parentPhone: "",
-    childName: "",
-    childAge: "",
+    institutionType: "",
+    capacity: "",
+    date: "",
+    time: "",
+    duration: "",
+    attendees: "",
+    requirements: "",
+    contactName: "",
+    contactEmail: "",
+    contactPhone: "",
+    company: "",
     message: "",
   })
 
-  // Packages data
-  const packages = [
-    {
-      id: "basic",
-      name: "Paquete Básico",
-      price: 500,
-      features: [
-        "Sala privada por 3 horas",
-        "Película a elección",
-        "Palomitas y refrescos para 15 niños",
-        "Invitaciones digitales",
-        "Decoración básica",
-      ],
-      maxKids: 15,
-      gradient: "linear-gradient(135deg, #6c757d, #495057)",
-    },
-    {
-      id: "premium",
-      name: "Paquete Premium",
-      price: 1000,
-      features: [
-        "Sala privada por 4 horas",
-        "Película a elección",
-        "Palomitas y refrescos para 30 niños",
-        "Pastel temático",
-        "Decoración temática completa",
-        "Animador por 2 horas",
-        "Invitaciones físicas y digitales",
-      ],
-      maxKids: 30,
-      gradient: "linear-gradient(135deg, #dc3545, #b02a37)",
-      popular: true,
-    },
-    {
-      id: "deluxe",
-      name: "Paquete Deluxe",
-      price: 1500,
-      features: [
-        "Sala VIP privada por 5 horas",
-        "Película a elección",
-        "Menú completo para 50 niños",
-        "Pastel temático personalizado",
-        "Decoración premium",
-        "2 Animadores por 3 horas",
-        "Sesión de fotos profesional",
-        "Recuerdos para invitados",
-      ],
-      maxKids: 50,
-      gradient: "linear-gradient(135deg, #ffc107, #cc9a06)",
-    },
-  ]
-
-  // Cinema options
+  // Cinema options - same as Events component
   const cinemaOptions = useMemo(
     () => [
       {
@@ -118,8 +64,6 @@ const FestaRamaPackages = () => {
       Drama: "linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)",
       Thriller: "linear-gradient(135deg, #374151 0%, #6b7280 100%)",
       Suspenso: "linear-gradient(135deg, #581c87 0%, #7c3aed 100%)",
-      Infantil: "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)",
-      Familiar: "linear-gradient(135deg, #10b981 0%, #3b82f6 100%)",
     }
     return gradients[genre] || "linear-gradient(135deg, #6b7280 0%, #9ca3af 100%)"
   }, [])
@@ -132,7 +76,7 @@ const FestaRamaPackages = () => {
         throw new Error("No se pudieron cargar los datos de películas")
       }
 
-      // Filter only the 3 specific movies requested (same as SpecialFunctions)
+      // Filter only the 3 specific movies requested
       const targetMovies = [
         "Destino Final: Lazos de Sangre",
         "Star Wars: Episodio III - La venganza de los Sith",
@@ -178,10 +122,27 @@ const FestaRamaPackages = () => {
     }
   }, [getMovieGradient])
 
+  // Institution types for the details form
+  const institutionTypes = [
+    { value: "empresa", label: "Empresa" },
+    { value: "colegio", label: "Colegio" },
+    { value: "asociaciones", label: "Asociaciones" },
+    { value: "otros", label: "Otros" },
+  ]
+
+  // Capacity options
+  const capacityOptions = [
+    { value: "50", label: "Hasta 50 personas" },
+    { value: "100", label: "Hasta 100 personas" },
+    { value: "150", label: "Hasta 150 personas" },
+    { value: "200", label: "Hasta 200 personas" },
+    { value: "200+", label: "Más de 200 personas" },
+  ]
+
   const steps = [
-    { number: 1, title: "Paquete", active: currentStep >= 1 },
-    { number: 2, title: "Cines", active: currentStep >= 2 },
-    { number: 3, title: "Película", active: currentStep >= 3 },
+    { number: 1, title: "Cines", active: currentStep >= 1 },
+    { number: 2, title: "Película", active: currentStep >= 2 },
+    { number: 3, title: "Detalles", active: currentStep >= 3 },
     { number: 4, title: "Contacto", active: currentStep >= 4 },
     { number: 5, title: "Resumen", active: currentStep >= 5 },
   ]
@@ -221,102 +182,13 @@ const FestaRamaPackages = () => {
     }
   }, [])
 
-  useEffect(() => {
-    setTimeout(() => setFadeIn(true), 100)
-  }, [])
-
-  const handleBack = useCallback(() => {
-    try {
-      if (isAnimating) return
-
-      setIsAnimating(true)
-      setError(null)
-
-      if (currentStep > 1) {
-        setTimeout(() => {
-          setCurrentStep((prev) => prev - 1)
-          setIsAnimating(false)
-        }, 300)
-      } else {
-        navigate("/festarama")
-      }
-    } catch (err) {
-      console.error("Error navigating back:", err)
-      setError(`Error al regresar: ${err.message}`)
-      setIsAnimating(false)
-    }
-  }, [isAnimating, currentStep, navigate])
-
-  const handlePackageSelect = useCallback(
-    (packageData) => {
-      try {
-        if (isAnimating) return
-
-        setIsAnimating(true)
-        setError(null)
-        setSelectedPackage(packageData)
-        setFormData((prev) => ({ ...prev, package: packageData.id }))
-
-        // Trigger confetti effect
-        const duration = 3 * 1000
-        const animationEnd = Date.now() + duration
-
-        const randomInRange = (min, max) => {
-          return Math.random() * (max - min) + min
-        }
-
-        const interval = setInterval(() => {
-          const timeLeft = animationEnd - Date.now()
-
-          if (timeLeft <= 0) {
-            return clearInterval(interval)
-          }
-
-          const particleCount = 50 * (timeLeft / duration)
-
-          // Fire from the left
-          if (typeof confetti !== "undefined") {
-            confetti({
-              particleCount,
-              startVelocity: 30,
-              spread: 80,
-              origin: {
-                x: randomInRange(0.1, 0.3),
-                y: Math.random() - 0.2,
-              },
-            })
-
-            // Fire from the right
-            confetti({
-              particleCount,
-              startVelocity: 30,
-              spread: 80,
-              origin: {
-                x: randomInRange(0.7, 0.9),
-                y: Math.random() - 0.2,
-              },
-            })
-          }
-        }, 250)
-
-        setTimeout(() => {
-          setCurrentStep(2)
-          setIsAnimating(false)
-        }, 1000)
-      } catch (err) {
-        console.error("Error selecting package:", err)
-        setError(`Error al seleccionar el paquete: ${err.message}`)
-        setIsAnimating(false)
-      }
-    },
-    [isAnimating],
-  )
-
+  // Handle cinema selection with error handling
   const handleCinemaSelect = useCallback(
     (cinemaId) => {
       try {
         if (isAnimating) return
 
+        // Validate cinema exists
         const cinema = cinemaOptions.find((c) => c.id === cinemaId)
         if (!cinema) {
           throw new Error("Cine no válido seleccionado")
@@ -325,8 +197,13 @@ const FestaRamaPackages = () => {
         setIsAnimating(true)
         setError(null)
         setSelectedCinema(cinemaId)
-        setSelectedMovie("")
+        setSelectedMovie("") // Reset movie selection when cinema changes
         setFormData((prev) => ({ ...prev, cinema: cinemaId, movie: "" }))
+
+        // Haptic feedback if available
+        if (navigator.vibrate) {
+          navigator.vibrate(50)
+        }
 
         setTimeout(() => setIsAnimating(false), 300)
       } catch (err) {
@@ -338,9 +215,11 @@ const FestaRamaPackages = () => {
     [isAnimating, cinemaOptions],
   )
 
+  // Handle movie selection with error handling
   const handleMovieSelect = useCallback(
     (movieId) => {
       try {
+        // Validate movie exists
         const movie = movieOptions.find((m) => m.id === movieId)
         if (!movie) {
           throw new Error("Película no válida seleccionada")
@@ -349,6 +228,11 @@ const FestaRamaPackages = () => {
         setError(null)
         setSelectedMovie(movieId)
         setFormData((prev) => ({ ...prev, movie: movieId }))
+
+        // Haptic feedback if available
+        if (navigator.vibrate) {
+          navigator.vibrate(50)
+        }
       } catch (err) {
         console.error("Error selecting movie:", err)
         setError(`Error al seleccionar la película: ${err.message}`)
@@ -357,23 +241,25 @@ const FestaRamaPackages = () => {
     [movieOptions],
   )
 
+  // Handle form input changes with validation
   const handleInputChange = useCallback(
     (field, value) => {
       try {
         setError(null)
 
+        // Validate field exists
         if (!field || typeof field !== "string") {
           throw new Error("Campo inválido")
         }
 
         // Real-time validation for specific fields
-        if (field === "parentEmail" && value) {
+        if (field === "contactEmail" && value) {
           if (!isValidEmail(value)) {
             setError("Por favor ingresa un email válido")
           }
         }
 
-        if (field === "parentPhone" && value) {
+        if (field === "contactPhone" && value) {
           if (!isValidPhone(value)) {
             setError("Por favor ingresa un teléfono válido (mínimo 9 dígitos)")
           }
@@ -381,9 +267,9 @@ const FestaRamaPackages = () => {
 
         // Character limits
         const characterLimits = {
-          parentName: 100,
-          childName: 100,
-          specialRequests: 500,
+          contactName: 100,
+          company: 100,
+          requirements: 500,
           message: 500,
         }
 
@@ -401,37 +287,34 @@ const FestaRamaPackages = () => {
     [isValidEmail, isValidPhone],
   )
 
+  // Handle continue to next step with validation
   const handleContinue = useCallback(() => {
     try {
       if (isAnimating || loading) return
 
       setError(null)
 
+      // Step-specific validation
       let canContinue = false
       let errorMessage = ""
 
       switch (currentStep) {
         case 1:
-          canContinue = !!selectedPackage
-          errorMessage = "Por favor selecciona un paquete"
-          break
-        case 2:
           canContinue = !!selectedCinema
           errorMessage = "Por favor selecciona un cine"
           break
-        case 3:
+        case 2:
           canContinue = !!selectedMovie
           errorMessage = "Por favor selecciona una película"
           break
+        case 3:
+          canContinue = !!(formData.institutionType && formData.capacity)
+          errorMessage = "Por favor completa el tipo de institución y capacidad"
+          break
         case 4:
-          const hasRequiredFields = !!(
-            formData.parentName &&
-            formData.parentEmail &&
-            formData.parentPhone &&
-            formData.childName
-          )
-          const hasValidEmail = isValidEmail(formData.parentEmail)
-          const hasValidPhone = isValidPhone(formData.parentPhone)
+          const hasRequiredFields = !!(formData.contactName && formData.contactEmail && formData.contactPhone)
+          const hasValidEmail = isValidEmail(formData.contactEmail)
+          const hasValidPhone = isValidPhone(formData.contactPhone)
 
           canContinue = hasRequiredFields && hasValidEmail && hasValidPhone
 
@@ -466,42 +349,58 @@ const FestaRamaPackages = () => {
       setError(`Error al continuar: ${err.message}`)
       setIsAnimating(false)
     }
-  }, [
-    selectedPackage,
-    selectedCinema,
-    selectedMovie,
-    formData,
-    currentStep,
-    isAnimating,
-    loading,
-    isValidEmail,
-    isValidPhone,
-  ])
+  }, [selectedCinema, selectedMovie, formData, currentStep, isAnimating, loading, isValidEmail, isValidPhone])
 
+  // Handle back navigation with error handling
+  const handleBack = useCallback(() => {
+    try {
+      if (isAnimating) return
+
+      setIsAnimating(true)
+      setError(null)
+
+      if (currentStep > 1) {
+        setTimeout(() => {
+          setCurrentStep((prev) => prev - 1)
+          setIsAnimating(false)
+        }, 300)
+      } else {
+        navigate("/corporate")
+      }
+    } catch (err) {
+      console.error("Error navigating back:", err)
+      setError(`Error al regresar: ${err.message}`)
+      setIsAnimating(false)
+    }
+  }, [isAnimating, currentStep, navigate])
+
+  // Handle final submission with comprehensive error handling
   const handleSubmit = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
 
-      const requiredFields = ["parentName", "parentEmail", "parentPhone", "childName"]
+      // Comprehensive validation
+      const requiredFields = ["contactName", "contactEmail", "contactPhone", "institutionType", "capacity"]
       const missingFields = requiredFields.filter((field) => !formData[field])
 
       if (missingFields.length > 0) {
         throw new Error(`Campos requeridos faltantes: ${missingFields.join(", ")}`)
       }
 
-      if (!isValidEmail(formData.parentEmail)) {
+      if (!isValidEmail(formData.contactEmail)) {
         throw new Error("Email inválido")
       }
 
-      if (!isValidPhone(formData.parentPhone)) {
+      if (!isValidPhone(formData.contactPhone)) {
         throw new Error("Teléfono inválido")
       }
 
-      if (!selectedMovie || !selectedCinema || !selectedPackage) {
-        throw new Error("Selección incompleta")
+      if (!selectedMovie || !selectedCinema) {
+        throw new Error("Selección de película o cine incompleta")
       }
 
+      // Get selected movie and cinema details
       const selectedMovieData = movieOptions.find((m) => m.id === selectedMovie)
       const selectedCinemaData = cinemaOptions.find((c) => c.id === selectedCinema)
 
@@ -511,18 +410,19 @@ const FestaRamaPackages = () => {
 
       const submissionData = {
         ...formData,
-        packageDetails: selectedPackage,
         movieDetails: selectedMovieData,
         cinemaDetails: selectedCinemaData,
         timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
         sessionId: Math.random().toString(36).substr(2, 9),
       }
 
-      console.log("Submitting FestaRama booking:", submissionData)
+      console.log("Submitting special function data:", submissionData)
 
-      // Simulate API call
+      // Simulate API call with potential failure
       await new Promise((resolve, reject) => {
         setTimeout(() => {
+          // Simulate 95% success rate
           if (Math.random() > 0.05) {
             resolve()
           } else {
@@ -531,27 +431,17 @@ const FestaRamaPackages = () => {
         }, 1000)
       })
 
-      alert("¡Reserva de FestaRama enviada correctamente! Te contactaremos pronto para confirmar los detalles.")
-      navigate("/festarama")
+      alert("¡Función especial enviada correctamente! Te contactaremos pronto.")
+      navigate("/corporate")
     } catch (err) {
       console.error("Error submitting form:", err)
-      setError(err.message || "Error al enviar la reserva. Por favor intenta nuevamente.")
+      setError(err.message || "Error al enviar la solicitud. Por favor intenta nuevamente.")
     } finally {
       setLoading(false)
     }
-  }, [
-    formData,
-    selectedMovie,
-    selectedCinema,
-    selectedPackage,
-    movieOptions,
-    cinemaOptions,
-    navigate,
-    isValidEmail,
-    isValidPhone,
-  ])
+  }, [formData, selectedMovie, selectedCinema, movieOptions, cinemaOptions, navigate, isValidEmail, isValidPhone])
 
-  // Image error handling
+  // Image error handling with fallback
   const handleImageError = useCallback((e, backgroundClass = "cinema-bg") => {
     try {
       console.warn("Image failed to load:", e.target.src)
@@ -564,24 +454,109 @@ const FestaRamaPackages = () => {
     }
   }, [])
 
+  // Keyboard navigation with error handling
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      try {
+        if (currentStep === 1 && selectedCinema) {
+          const currentIndex = cinemaOptions.findIndex((cinema) => cinema.id === selectedCinema)
+          switch (e.key) {
+            case "ArrowUp":
+            case "ArrowLeft":
+              e.preventDefault()
+              if (currentIndex > 0) handleCinemaSelect(cinemaOptions[currentIndex - 1].id)
+              break
+            case "ArrowDown":
+            case "ArrowRight":
+              e.preventDefault()
+              if (currentIndex < cinemaOptions.length - 1) handleCinemaSelect(cinemaOptions[currentIndex + 1].id)
+              break
+            case "Enter":
+              e.preventDefault()
+              if (selectedCinema) handleContinue()
+              break
+            case "Escape":
+              e.preventDefault()
+              handleBack()
+              break
+            default:
+              break
+          }
+        }
+      } catch (err) {
+        console.error("Error in keyboard navigation:", err)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [currentStep, selectedCinema, handleCinemaSelect, handleContinue, handleBack, cinemaOptions])
+
   // Scroll to top on step change
   useEffect(() => {
     try {
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch (err) {
       console.error("Error scrolling to top:", err)
+      // Fallback for older browsers
       window.scrollTo(0, 0)
     }
   }, [currentStep])
 
+  // Error boundary effect
+  useEffect(() => {
+    const handleError = (event) => {
+      console.error("Global error caught:", event.error)
+      setError("Ha ocurrido un error inesperado. Por favor recarga la página.")
+    }
+
+    const handleUnhandledRejection = (event) => {
+      console.error("Unhandled promise rejection:", event.reason)
+      setError("Error de conexión. Por favor verifica tu conexión a internet.")
+    }
+
+    window.addEventListener("error", handleError)
+    window.addEventListener("unhandledrejection", handleUnhandledRejection)
+
+    return () => {
+      window.removeEventListener("error", handleError)
+      window.removeEventListener("unhandledrejection", handleUnhandledRejection)
+    }
+  }, [])
+
+  // Show error state if no movies could be loaded
+  if (error && movieOptions.length === 0) {
+    return (
+      <div className="events-container">
+        <div className="events-header">
+          <div className="events-header-content">
+            <div className="events-icon">⚠️</div>
+            <h1 className="events-title">Error</h1>
+            <p className="events-subtitle">{error}</p>
+          </div>
+        </div>
+        <div className="events-content">
+          <div className="events-actions">
+            <button className="events-btn-primary" onClick={() => window.location.reload()}>
+              Recargar Página
+            </button>
+            <button className="events-btn-secondary" onClick={() => navigate("/corporate")}>
+              Regresar
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className={`events-container ${fadeIn ? "fade-in" : ""}`}>
+    <div className="events-container">
       {/* Header Section */}
       <div className="events-header">
         <div className="events-header-content">
-          <div className="events-icon">🎉</div>
-          <h1 className="events-title">FestaRama - Fiestas Infantiles</h1>
-          <p className="events-subtitle">Crea la fiesta perfecta para tu hijos con nuestros paquetes especiales</p>
+          <div className="events-icon">🎭</div>
+          <h1 className="events-title">Funciones Especiales</h1>
+          <p className="events-subtitle">Disfruta de experiencias cinematográficas únicas y exclusivas</p>
         </div>
         <div className="events-header-overlay"></div>
       </div>
@@ -653,7 +628,7 @@ const FestaRamaPackages = () => {
               marginBottom: "16px",
             }}
           ></div>
-          <p>Enviando reserva...</p>
+          <p>Enviando solicitud...</p>
         </div>
       )}
 
@@ -675,80 +650,12 @@ const FestaRamaPackages = () => {
 
       {/* Main Content */}
       <div className="events-content">
-        {/* STEP 1: Package Selection */}
+        {/* STEP 1: Cinema Selection */}
         {currentStep === 1 && (
           <div className="events-selection-section">
             <div className="events-selection-header">
-              <h2>Elige el paquete perfecto para la celebración</h2>
-              <p>Selecciona el paquete que mejor se adapte a tus necesidades y presupuesto</p>
-            </div>
-
-            <div className="events-grid">
-              {packages.map((pkg) => (
-                <div
-                  key={pkg.id}
-                  className={`package-card ${pkg.id} ${selectedPackage?.id === pkg.id ? "selected" : ""}`}
-                  onClick={() => handlePackageSelect(pkg)}
-                  style={{ "--card-gradient": pkg.gradient }}
-                >
-                  <div className="package-header">
-                    {pkg.popular && (
-                      <div className="ribbon-popular">
-                        <span className="ribbon-text">¡MÁS VENDIDO!</span>
-                        <div className="ribbon-shine"></div>
-                      </div>
-                    )}
-                    <h2>{pkg.name}</h2>
-                    <div className="price-tag">S/. {pkg.price}</div>
-                  </div>
-                  <div className="package-body">
-                    <ul className="package-features">
-                      {pkg.features.map((feature, index) => (
-                        <li key={index}>
-                          <span className="check-icon">✓</span> {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="package-footer">
-                    <div className="package-capacity">
-                      <span>👥 Hasta {pkg.maxKids} niños</span>
-                    </div>
-                    {selectedPackage?.id === pkg.id && (
-                      <div className="package-selected-indicator">
-                        <span>✓ Seleccionado</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="events-actions">
-              <button className="events-btn-secondary" onClick={handleBack}>
-                ← Regresar
-              </button>
-              <button
-                className={`events-btn-primary ${!selectedPackage ? "disabled" : ""}`}
-                onClick={handleContinue}
-                disabled={!selectedPackage}
-              >
-                Continuar →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* STEP 2: Cinema Selection */}
-        {currentStep === 2 && (
-          <div className="events-selection-section">
-            <div className="events-selection-header">
-              <h2>Selecciona el cine para tu FestaRama</h2>
-              <p>Elige la ubicación que mejor te convenga para la fiesta</p>
-              <div className="selected-package-info">
-                <h3>Paquete seleccionado: {selectedPackage?.name}</h3>
-                <p>Precio: S/. {selectedPackage?.price}</p>
-              </div>
+              <h2>Selecciona el cine para tu función especial</h2>
+              <p>Elige la sala que mejor se adapte a tus necesidades y ubicación preferida</p>
             </div>
 
             <div className="events-grid">
@@ -763,7 +670,7 @@ const FestaRamaPackages = () => {
                     <img
                       src={cinema.image || "/placeholder.svg?height=200&width=300"}
                       alt={`${cinema.name} - Cinema`}
-                      className="packages-card-img"
+                      className="events-card-img"
                       loading="lazy"
                       onError={(e) => handleImageError(e, "cinema-bg")}
                     />
@@ -775,7 +682,7 @@ const FestaRamaPackages = () => {
 
                   <div className="events-card-content">
                     <div className="events-card-header">
-                      <div className="packages-card-icon-small">🎬</div>
+                      <div className="events-card-icon-small">🎬</div>
                       <h4>{cinema.name}</h4>
                     </div>
                     <p>{cinema.description}</p>
@@ -792,8 +699,8 @@ const FestaRamaPackages = () => {
                         ))}
                       </div>
                     </div>
-                    <div className={`packages-radio ${selectedCinema === cinema.id ? "checked" : ""}`}>
-                      <div className="packages-radio-inner"></div>
+                    <div className={`events-radio ${selectedCinema === cinema.id ? "checked" : ""}`}>
+                      <div className="events-radio-inner"></div>
                     </div>
                   </div>
                 </div>
@@ -815,14 +722,15 @@ const FestaRamaPackages = () => {
           </div>
         )}
 
-        {/* STEP 3: Movie Selection */}
-        {currentStep === 3 && (
+        {/* STEP 2: Movie Selection */}
+        {currentStep === 2 && (
           <div className="events-selection-section">
             <div className="events-selection-header">
-              <h2>Elige la película para la fiesta</h2>
-              <p>Selecciona una película apropiada para niños que todos puedan disfrutar</p>
+              <h2>Elige el contenido disponible en base a tu selección de cine</h2>
+              <p>*La fecha de estreno de la película no debe exceder los 3 meses.</p>
+              <p>**Validar con un ejecutivo si los Próximos Estrenos se proyectarán en el cine elegido.</p>
               <div className="cinema-info">
-                <h3>Cine: {cinemaOptions.find((c) => c.id === selectedCinema)?.name.replace("Cinerama ", "")}</h3>
+                <h3>Cines: {cinemaOptions.find((c) => c.id === selectedCinema)?.name.replace("Cinerama ", "")}</h3>
               </div>
             </div>
 
@@ -844,6 +752,8 @@ const FestaRamaPackages = () => {
                           loading="lazy"
                           onError={(e) => handleImageError(e, "movie-bg")}
                         />
+                        {movie.isFanEvent && <div className="movie-badge fan-event">FAN EVENT</div>}
+                        {movie.isComingSoon && <div className="movie-badge coming-soon">PRÓXIMAMENTE</div>}
                         <div className="movie-overlay">
                           <h4>{movie.title}</h4>
                           <p>{movie.description}</p>
@@ -858,9 +768,112 @@ const FestaRamaPackages = () => {
                   ))
                 ) : (
                   <div className="no-movies-message">
-                    <p>No hay películas familiares disponibles para este cine en este momento.</p>
+                    <p>No hay películas disponibles para este cine en este momento.</p>
                   </div>
                 )}
+              </div>
+            </div>
+
+            <div className="events-actions">
+              <button className="events-btn-secondary" onClick={handleBack}>
+                Regresar
+              </button>
+              <button
+                className={`events-btn-primary ${!selectedMovie ? "disabled" : ""}`}
+                onClick={handleContinue}
+                disabled={!selectedMovie}
+              >
+                Continuar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 3: Details Form */}
+        {currentStep === 3 && (
+          <div className="events-form-section">
+            <div className="events-selection-header">
+              <h2>Detalles de la Función</h2>
+              <p>Completa la información específica para tu función especial</p>
+            </div>
+
+            <div className="details-summary">
+              <div className="selected-items">
+                <div className="selected-item">
+                  <h4>Película</h4>
+                  <p>{movieOptions.find((m) => m.id === selectedMovie)?.title}</p>
+                </div>
+                <div className="selected-item">
+                  <h4>Cines</h4>
+                  <p>{cinemaOptions.find((c) => c.id === selectedCinema)?.name.replace("Cinerama ", "")}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="events-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Tipo de Institución: *</label>
+                  <select
+                    value={formData.institutionType}
+                    onChange={(e) => handleInputChange("institutionType", e.target.value)}
+                    required
+                  >
+                    <option value="">Selecciona una opción</option>
+                    {institutionTypes.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Capacidad: *</label>
+                  <select
+                    value={formData.capacity}
+                    onChange={(e) => handleInputChange("capacity", e.target.value)}
+                    required
+                  >
+                    <option value="">Selecciona capacidad</option>
+                    {capacityOptions.map((capacity) => (
+                      <option key={capacity.value} value={capacity.value}>
+                        {capacity.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Fecha Preferida</label>
+                  <input
+                    type="date"
+                    value={formData.date}
+                    onChange={(e) => handleInputChange("date", e.target.value)}
+                    min={new Date().toISOString().split("T")[0]}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Hora Preferida</label>
+                  <input
+                    type="time"
+                    value={formData.time}
+                    onChange={(e) => handleInputChange("time", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Requerimientos Especiales</label>
+                <textarea
+                  placeholder="Describe cualquier requerimiento especial para tu función..."
+                  value={formData.requirements}
+                  onChange={(e) => handleInputChange("requirements", e.target.value)}
+                  rows="4"
+                  maxLength="500"
+                ></textarea>
+                <small className="char-count">{formData.requirements.length}/500 caracteres</small>
               </div>
             </div>
 
@@ -869,9 +882,9 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!selectedMovie ? "disabled" : ""}`}
+                className={`events-btn-primary ${!formData.institutionType || !formData.capacity ? "disabled" : ""}`}
                 onClick={handleContinue}
-                disabled={!selectedMovie}
+                disabled={!formData.institutionType || !formData.capacity}
               >
                 Continuar →
               </button>
@@ -884,30 +897,29 @@ const FestaRamaPackages = () => {
           <div className="events-form-section">
             <div className="events-selection-header">
               <h2>Información de Contacto</h2>
-              <p>Completa los datos para confirmar la reserva de la FestaRama</p>
+              <p>Completa tus datos para que podamos contactarte y confirmar tu función especial</p>
             </div>
 
             <div className="events-form">
               <div className="form-row">
                 <div className="form-group">
-                  <label>Nombre del Padre/Madre *</label>
+                  <label>Nombre Completo *</label>
                   <input
                     type="text"
                     placeholder="Tu nombre completo"
-                    value={formData.parentName}
-                    onChange={(e) => handleInputChange("parentName", e.target.value)}
+                    value={formData.contactName}
+                    onChange={(e) => handleInputChange("contactName", e.target.value)}
                     required
                     maxLength="100"
                   />
                 </div>
                 <div className="form-group">
-                  <label>Nombre del Niño/a *</label>
+                  <label>Empresa/Institución</label>
                   <input
                     type="text"
-                    placeholder="Nombre del cumpleañero/a"
-                    value={formData.childName}
-                    onChange={(e) => handleInputChange("childName", e.target.value)}
-                    required
+                    placeholder="Nombre de tu empresa o institución"
+                    value={formData.company}
+                    onChange={(e) => handleInputChange("company", e.target.value)}
                     maxLength="100"
                   />
                 </div>
@@ -919,8 +931,8 @@ const FestaRamaPackages = () => {
                   <input
                     type="email"
                     placeholder="tu@email.com"
-                    value={formData.parentEmail}
-                    onChange={(e) => handleInputChange("parentEmail", e.target.value)}
+                    value={formData.contactEmail}
+                    onChange={(e) => handleInputChange("contactEmail", e.target.value)}
                     required
                   />
                 </div>
@@ -929,71 +941,23 @@ const FestaRamaPackages = () => {
                   <input
                     type="tel"
                     placeholder="+51 999 999 999"
-                    value={formData.parentPhone}
-                    onChange={(e) => handleInputChange("parentPhone", e.target.value)}
+                    value={formData.contactPhone}
+                    onChange={(e) => handleInputChange("contactPhone", e.target.value)}
                     required
                   />
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Edad del Niño/a</label>
-                  <select value={formData.childAge} onChange={(e) => handleInputChange("childAge", e.target.value)}>
-                    <option value="">Selecciona la edad</option>
-                    {Array.from({ length: 13 }, (_, i) => i + 3).map((age) => (
-                      <option key={age} value={age}>
-                        {age} años
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <label>Número de Niños</label>
-                  <select
-                    value={formData.numberOfKids}
-                    onChange={(e) => handleInputChange("numberOfKids", e.target.value)}
-                  >
-                    <option value="">Selecciona cantidad</option>
-                    {Array.from({ length: selectedPackage?.maxKids || 15 }, (_, i) => i + 1).map((num) => (
-                      <option key={num} value={num}>
-                        {num} niños
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Fecha Preferida</label>
-                  <input
-                    type="date"
-                    value={formData.eventDate}
-                    onChange={(e) => handleInputChange("eventDate", e.target.value)}
-                    min={new Date().toISOString().split("T")[0]}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Hora Preferida</label>
-                  <input
-                    type="time"
-                    value={formData.eventTime}
-                    onChange={(e) => handleInputChange("eventTime", e.target.value)}
-                  />
-                </div>
-              </div>
-
               <div className="form-group">
-                <label>Solicitudes Especiales</label>
+                <label>Mensaje Adicional</label>
                 <textarea
-                  placeholder="Describe cualquier solicitud especial para la fiesta (decoración temática, alergias alimentarias, etc.)"
-                  value={formData.specialRequests}
-                  onChange={(e) => handleInputChange("specialRequests", e.target.value)}
+                  placeholder="Cuéntanos más sobre tu función especial o cualquier pregunta específica..."
+                  value={formData.message}
+                  onChange={(e) => handleInputChange("message", e.target.value)}
                   rows="4"
                   maxLength="500"
                 ></textarea>
-                <small className="char-count">{formData.specialRequests.length}/500 caracteres</small>
+                <small className="char-count">{formData.message.length}/500 caracteres</small>
               </div>
             </div>
 
@@ -1002,9 +966,9 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!formData.parentName || !formData.parentEmail || !formData.parentPhone || !formData.childName ? "disabled" : ""}`}
+                className={`events-btn-primary ${!formData.contactName || !formData.contactEmail || !formData.contactPhone ? "disabled" : ""}`}
                 onClick={handleContinue}
-                disabled={!formData.parentName || !formData.parentEmail || !formData.parentPhone || !formData.childName}
+                disabled={!formData.contactName || !formData.contactEmail || !formData.contactPhone}
               >
                 Continuar →
               </button>
@@ -1016,24 +980,11 @@ const FestaRamaPackages = () => {
         {currentStep === 5 && (
           <div className="events-summary-section">
             <div className="events-selection-header">
-              <h2>Resumen de tu FestaRama</h2>
-              <p>Revisa todos los detalles antes de confirmar tu reserva</p>
+              <h2>Resumen de la Función Especial</h2>
+              <p>Revisa todos los detalles antes de enviar tu solicitud</p>
             </div>
 
             <div className="summary-card">
-              <div className="summary-section">
-                <h3>🎉 Paquete Seleccionado</h3>
-                <p>{selectedPackage?.name}</p>
-                <span className="summary-price">S/. {selectedPackage?.price}</span>
-                <div className="package-summary-features">
-                  {selectedPackage?.features.map((feature, index) => (
-                    <span key={index} className="feature-item">
-                      ✓ {feature}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
               <div className="summary-section">
                 <h3>🎬 Cine Seleccionado</h3>
                 <p>{cinemaOptions.find((c) => c.id === selectedCinema)?.name}</p>
@@ -1059,39 +1010,53 @@ const FestaRamaPackages = () => {
               </div>
 
               <div className="summary-section">
+                <h3>📋 Detalles de la Función</h3>
+                <div className="summary-details">
+                  <p>
+                    <strong>Tipo de Institución:</strong>{" "}
+                    {institutionTypes.find((t) => t.value === formData.institutionType)?.label}
+                  </p>
+                  <p>
+                    <strong>Capacidad:</strong> {capacityOptions.find((c) => c.value === formData.capacity)?.label}
+                  </p>
+                  {formData.date && (
+                    <p>
+                      <strong>Fecha:</strong> {new Date(formData.date).toLocaleDateString("es-ES")}
+                    </p>
+                  )}
+                  {formData.time && (
+                    <p>
+                      <strong>Hora:</strong> {formData.time}
+                    </p>
+                  )}
+                  {formData.requirements && (
+                    <p>
+                      <strong>Requerimientos:</strong> {formData.requirements}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="summary-section">
                 <h3>👤 Información de Contacto</h3>
                 <div className="summary-details">
                   <p>
-                    <strong>Padre/Madre:</strong> {formData.parentName}
+                    <strong>Nombre:</strong> {formData.contactName}
                   </p>
-                  <p>
-                    <strong>Niño/a:</strong> {formData.childName}
-                    {formData.childAge && ` (${formData.childAge} años)`}
-                  </p>
-                  <p>
-                    <strong>Email:</strong> {formData.parentEmail}
-                  </p>
-                  <p>
-                    <strong>Teléfono:</strong> {formData.parentPhone}
-                  </p>
-                  {formData.numberOfKids && (
+                  {formData.company && (
                     <p>
-                      <strong>Número de niños:</strong> {formData.numberOfKids}
+                      <strong>Empresa/Institución:</strong> {formData.company}
                     </p>
                   )}
-                  {formData.eventDate && (
+                  <p>
+                    <strong>Email:</strong> {formData.contactEmail}
+                  </p>
+                  <p>
+                    <strong>Teléfono:</strong> {formData.contactPhone}
+                  </p>
+                  {formData.message && (
                     <p>
-                      <strong>Fecha:</strong> {new Date(formData.eventDate).toLocaleDateString("es-ES")}
-                    </p>
-                  )}
-                  {formData.eventTime && (
-                    <p>
-                      <strong>Hora:</strong> {formData.eventTime}
-                    </p>
-                  )}
-                  {formData.specialRequests && (
-                    <p>
-                      <strong>Solicitudes especiales:</strong> {formData.specialRequests}
+                      <strong>Mensaje:</strong> {formData.message}
                     </p>
                   )}
                 </div>
@@ -1103,7 +1068,7 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button className="events-btn-primary" onClick={handleSubmit} disabled={loading}>
-                {loading ? "Enviando..." : "Confirmar Reserva 🎉"}
+                {loading ? "Enviando..." : "Enviar Solicitud ✨"}
               </button>
             </div>
           </div>
@@ -1121,4 +1086,4 @@ const FestaRamaPackages = () => {
   )
 }
 
-export default FestaRamaPackages;
+export default SpecialFunctions

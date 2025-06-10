@@ -7,8 +7,12 @@ export const movies = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/thunderbolts-poster-66f184dbe403e.jpg',
     duration: 120,
     genre: 'Acción',
-    showtimes: ['13:30', '16:10', '18:50', '21:30'],
+    showtimes: {
+      "2D": ['13:30', '16:10', '18:50', '21:30'],
+      "3D": ['14:00', '17:00', '20:00'],
+      "XD": ['15:00', '18:30', '22:00'],
     trailer: 'https://youtu.be/N1GAypxl3XE?si=UlOZIQuR_rkjnSn2'
+    }
   },
   {
     id: 2,
@@ -18,8 +22,12 @@ export const movies = [
     image: '/images/Home1.jpg',
     duration: 95,
     genre: 'Terror',
-    showtimes: ['14:00', '16:30', '19:00', '21:30'],
+    showtimes: {
+      "2D": ['14:00', '16:30', '19:00', '21:30'],
+      "3D": ['15:00', '18:00', '21:00'],
+      "XD": ['16:00', '19:30', '22:00'],
     trailer: 'https://www.youtube.com/watch?v=8FudANSsWNQ'
+    }
   },
   {
     id: 3,
@@ -29,8 +37,12 @@ export const movies = [
     image: '/images/Home3.jpg',
     duration: 110,
     genre: 'Drama',
-    showtimes: ['12:40', '15:10', '17:40', '20:10'],
+    showtimes: {
+      "2D": ['12:40', '15:10', '17:40', '20:10'],
+      "3D": ['13:30', '16:30', '19:30'],
+      "XD": ['14:30', '17:30', '20:30'],
     trailer: 'https://youtu.be/Y7KtgkvV95c?si=jLSvVuO1mn7I8v0O'
+    }
   },
   {
     id: 4,
@@ -40,8 +52,12 @@ export const movies = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/star_wars_episode_iii_revenge_of_the_sith-477144354-large.jpg',
     duration: 140,
     genre: 'Ciencia Ficción',
-    showtimes: ['13:00', '15:50', '18:40', '21:30'],
+    showtimes: {
+      "2D": ['13:00', '15:50', '18:40', '21:30'],
+      "3D": ['14:30', '17:30', '20:30'],
+      "XD": ['15:30', '18:30', '21:30'],
     trailer: 'https://www.youtube.com/embed/5UnjrG_N8hU'
+    }
   },
   {
     id: 5,
@@ -51,8 +67,12 @@ export const movies = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/amateur.jpg',
     duration: 105,
     genre: 'Thriller',
-    showtimes: ['14:30', '17:00', '19:30', '22:00'],
+    showtimes: {
+      "2D": ['14:30', '17:00', '19:30', '22:00'],
+      "3D": ['15:30', '18:30', '21:30'],
+      "XD": ['16:30', '19:30', '22:30'],
     trailer: 'https://youtu.be/Y7KtgkvV95c?si=jLSvVuO1mn7I8v0O'
+    }
   },
   {
     id: 6,
@@ -62,7 +82,11 @@ export const movies = [
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/until_dawn-880447124-large.jpg',
     duration: 100,
     genre: 'Suspenso',
-    showtimes: ['13:20', '15:50', '18:20', '20:50'],
+    showtimes: {
+      "2D": ['13:20', '15:50', '18:20', '20:50'],
+      "3D": ['14:20', '17:20', '20:20'],
+      "XD": ['15:20', '18:20', '21:20'],
     trailer: 'https://www.youtube.com/embed/cAlkA3BwLYg'
+    }
   },
 ];

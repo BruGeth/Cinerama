@@ -17,6 +17,10 @@ import Profile from '../pages/Profile';
 import PrivateRoute from '../utils/PrivateRoute';
 import Cines from '../pages/Cines';
 import Promotions from '../pages/Promotions';
+import Events from '../pages/Events';
+import SpecialFunctions from '../pages/SpecialFunctions';
+import Advertising from '../pages/Advertising';
+import TicketPurchase from '../pages/TicketPurchase';
 import MoreInformation from "../components/MoreInformation";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminRoute from "../utils/AdminRoute";
@@ -48,7 +52,8 @@ const AppRouter = () => {
                   <Route path="/confectionery" element={<Confectionery />} />
                   <Route path="/movies" element={<Cartelera />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/cartelera/:id" element={<MovieDetail />} />
+                  <Route path="/billboard/:id" element={<MovieDetail/>} />
+                  <Route path="/purchase/:id/:showtime/:format" element={<TicketPurchase />} />
                   <Route path="/corporate" element={<Corporate />} />
                   <Route path="/festarama" element={<FestaRama />} />
                   <Route
@@ -58,6 +63,9 @@ const AppRouter = () => {
                   <Route path="/cinemas" element={<Cines />} />
                   <Route path="/promotions" element={<Promotions />} />
                   <Route path="/more-information/:id" element={<MoreInformation/>} />
+                  <Route path='/events' element={<Events/>} />
+                  <Route path='/specialfunctions' element={<SpecialFunctions/>} />
+                  <Route path='/advertising' element={<Advertising/>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
