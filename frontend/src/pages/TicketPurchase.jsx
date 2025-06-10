@@ -1,8 +1,8 @@
 import React, { useState } from "react"; // Import React and useState for managing component state
 import { useParams, useNavigate } from "react-router-dom"; // Import hooks for routing
-import { movies } from "../Components/DataMovie"; // Import movie data
+import { movies } from "../components/DataMovie"; // Import movie data
 import "../styles/TicketPurchase.css"; // Import CSS for styling
-import SeatSelection from "../Components/SeatSelection"; // Import seat selection component
+import SeatSelection from "../components/SeatSelection"; // Import seat selection component
 
 const TicketPurchase = () => {
     const { id, showtime, format } = useParams(); // Extract movie ID, showtime, and format from URL parameters
