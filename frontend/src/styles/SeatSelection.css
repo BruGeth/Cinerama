@@ -135,15 +135,13 @@
   transition: transform 0.1s ease, background-color 0.3s ease;
 }
 
-/* Efecto al seleccionar un asiento */
-.seat.selected {
+.seat.selected {/* Effect of selecting a seat */
   background-color: #ff2222;
   border-color: #fff;
   transform: scale(1.1);
 }
 
-/* Efecto al pasar el mouse sobre los asientos */
-.seat:hover {
+.seat:hover {/* Effect when passing the mouse over the seats */
   background-color: #ff5500;
 }
 .empty-space {/* Makes certain seat gaps transparent */
@@ -161,7 +159,6 @@
   background-color: #ff2222;
   color: white;
 }
-
 
 .payment-button:hover {/* Changes color on hover for better feedback */
   background-color: #ff5500;
