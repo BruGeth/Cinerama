@@ -1,23 +1,23 @@
-.cartelera-container {
+.cartelera-container {/* Defines the main container with padding, background color, and full viewport height */
   padding: 2rem;
   background-color: #f0f0f0;
   min-height: 100vh;
 }
 
-.cartelera-title {
+.cartelera-title {/* Styles the title with font size, color, centering, and bottom margin */
   font-size: 2rem;
   text-align: center;
   color: #000;
   margin-bottom: 1.5rem;
 }
 
-.cartelera-grid {
+.cartelera-grid {/* Creates a responsive grid layout for movie cards */
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.5rem;
 }
 
-.cartelera-card {
+.cartelera-card {/* Styles individual movie cards with background color, shadow, flex layout, and minimum height */
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -29,28 +29,28 @@
   min-height: 500px;
 }
 
-.cartelera-image {
+.cartelera-image {/* Ensures proper sizing and rounding of movie poster images */
   width: 100%;
   height: 280px;
   object-fit: cover;
   border-radius: 8px;
 }
 
-.cartelera-movie-title {
+.cartelera-movie-title {/* Defines the title's appearance with bold font and centered alignment */
   font-size: 1.25rem;
   font-weight: bold;
   margin-top: 0.8rem;
   text-align: center;
 }
 
-.cartelera-description {
+.cartelera-description {/* Styles the description text with size, color, and spacing */
   font-size: 0.9rem;
   color: #444;
   margin: 0.5rem 0 1rem;
   text-align: center;
 }
 
-.buy-button {
+.buy-button {/* Styles the purchase button with color, padding, rounded edges, and hover effect */
   background-color: #e50914;
   color: white;
   padding: 0.5rem 1rem;
@@ -64,6 +64,6 @@
   margin-top: auto; 
 }
 
-.buy-button:hover {
+.buy-button:hover {/* Changes the button color on hover for interactive feedback */
   background-color: #c40812;
 }
