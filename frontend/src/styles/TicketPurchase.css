@@ -1,18 +1,18 @@
-.purchase-container {
+.purchase-container {/* Styles the main purchase section with centered content and dark background */
   text-align: center;
   background-color: #000;
   color: #fff;
   padding: 40px;
 }
 
-.room-options {
+.room-options {/* Arranges available room selection options in a flex container */
   display: flex;
   gap: 20px;
   justify-content: center;
   margin: 20px 0;
 }
 
-.room-button {
+.room-button {/* Defines buttons for selecting a room with padding, border, and bold text */
   background-color: #222;
   color: #fff;
   padding: 15px 30px;
@@ -23,11 +23,11 @@
   font-weight: bold;
 }
 
-.room-button:hover {
+.room-button:hover {/* Changes the button background color on hover for interactive feedback */
   background-color: #ff2222;
 }
 
-.ticket-options {
+.ticket-options {/* Styles the ticket selection box with padding, dark background, and shadow effect */
   margin-top: 20px;
   padding: 20px;
   background-color: #111;
@@ -35,18 +35,18 @@
   box-shadow: 0px 4px 8px rgba(255, 34, 34, 0.2);
 }
 
-.ticket-options h3 {
+.ticket-options h3 {/* Formats the title of the ticket selection section with distinct color */
   margin-bottom: 15px;
   color: #ffcc00;
 }
 
-.ticket-buttons {
+.ticket-buttons {/* Displays ticket selection buttons in a flex row with spacing */
   display: flex;
   gap: 15px;
   justify-content: center;
 }
 
-.ticket-buttons button {
+.ticket-buttons button {/* Defines ticket selection buttons with border and interactive styling */
   background-color: #222;
   color: white;
   padding: 10px 20px;
@@ -56,35 +56,35 @@
   font-size: 16px;
 }
 
-.ticket-buttons button:hover {
+.ticket-buttons button:hover {/* Changes the background and text color on hover for better visibility */
   background-color: #ffcc00;
   color: #222;
 }
 
-.summary {
+.summary {/* Styles the summary box with padding and semi-transparent background */
   margin-top: 20px;
   padding: 15px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 8px;
 }
 
-.summary h4 {
+.summary h4 {/* Formats the summary title with a distinct yellow color */
   margin-bottom: 10px;
   color: #ffcc00;
 }
 
-.summary ul {
+.summary ul {/* Removes default list styling for a clean appearance */
   list-style: none;
   padding: 0;
 }
 
-.summary ul li {
+.summary ul li {/* Styles individual summary items with white text and compact spacing */
   margin-bottom: 5px;
   color: white;
   font-size: 14px;
 }
 
-.confirm-button {
+.confirm-button {/* Defines the confirm purchase button with bold text and rounded corners */
   margin-top: 15px;
   background-color: #ff2222;
   color: white;
@@ -96,10 +96,10 @@
   cursor: pointer;
 }
 
-.confirm-button:hover {
+.confirm-button:hover {/* Changes the button background color when hovered for emphasis */
   background-color: #ff5500;
 }
-.ticket-inputs {
+.ticket-inputs {/* Arranges ticket input fields in a centered column layout with spacing */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,7 +107,7 @@
   margin-top: 15px;
 }
 
-.ticket-inputs label {
+.ticket-inputs label {/* Formats labels for ticket types with proper alignment and spacing */
   color: white;
   font-size: 18px;
   display: flex;
@@ -116,13 +116,13 @@
   gap: 5px;
 }
 
-.ticket-counter {
+.ticket-counter {/* Structures ticket increment/decrement controls in a flex row */
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.counter-button {
+.counter-button {/* Defines the plus/minus buttons for ticket adjustment with rounded shape */
   width: 35px;
   height: 35px;
   background-color: #ffcc00;
@@ -137,11 +137,11 @@
   align-items: center;
 }
 
-.counter-button:hover {
+.counter-button:hover {/* Adjusts button color on hover for interactive feedback */
   background-color: #ff9900;
 }
 
-.ticket-input {
+.ticket-input {/* Styles the ticket input fields with padding, border, and centered text */
   width: 80px;
   text-align: center;
   font-size: 16px;
@@ -151,7 +151,7 @@
   background-color: #222;
   color: white;
 }
-.ticket-inputs input {
+.ticket-inputs input {/* Ensures proper sizing and formatting for numerical ticket inputs */
   width: 100px;
   text-align: center;
   font-size: 16px;
@@ -162,18 +162,18 @@
   color: white;
 }
 
-.ticket-inputs input::placeholder {
+.ticket-inputs input::placeholder {/* Styles the placeholder text for input fields */
   color: #bbb;
   font-size: 14px;
 }
 
 .ticket-inputs input::-webkit-outer-spin-button,
-.ticket-inputs input::-webkit-inner-spin-button {
+.ticket-inputs input::-webkit-inner-spin-button {/* Removes default number input controls for cleaner UI */
   -webkit-appearance: none;
   margin: 0;
 }
 
-.summary p {
+.summary p {/* Formats additional summary details with proper spacing and visibility */
   font-size: 16px;
   color: white;
   margin: 5px 0;
