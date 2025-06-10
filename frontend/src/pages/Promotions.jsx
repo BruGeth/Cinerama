@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, useCallback } from "react"
 import "../styles/Promotions.css"
 
 const Promotions = () => {
@@ -19,7 +19,7 @@ const Promotions = () => {
   }, [])
 
   // Enhanced promotion data with date conditions and coupon codes
-  const promotions = {
+  const promotions = useMemo(() => ({
     tickets: [
       {
         id: 1,
@@ -220,7 +220,7 @@ const Promotions = () => {
         ],
       },
     ],
-  }
+  }),[])
 
   // Utility functions for date/time validation
   const isDateInRange = (date, startDate, endDate) => {
@@ -262,81 +262,58 @@ const Promotions = () => {
   }
 
   // Main function to check if promotion is active
-  const isPromotionActive = (promotion, userData = {}) => {
+  const isPromotionActive = useCallback((promotion, userData = {}) => {
     const now = currentDate
 
-    // Check date range
-    if (!isDateInRange(now, promotion.startDate, promotion.endDate)) {
-      return false
-    }
-
-    // Check day conditions
-    if (!isDayValid(now, promotion.dayConditions)) {
-      return false
-    }
-
-    // Check time conditions
-    if (!isTimeValid(now, promotion.timeConditions)) {
-      return false
-    }
-
-    // Check special conditions
-    if (promotion.specialCondition === "birthday") {
-      return isBirthdayValid(userData.birthday)
-    }
-
+    if (!isDateInRange(now, promotion.startDate, promotion.endDate)) return false
+    if (!isDayValid(now, promotion.dayConditions)) return false
+    if (!isTimeValid(now, promotion.timeConditions)) return false
+    if (promotion.specialCondition === "birthday") return isBirthdayValid(userData.birthday)
     return true
-  }
+  }, [currentDate])
 
   // Get promotion status for display
-  const getPromotionStatus = (promotion, userData = {}) => {
+  const getPromotionStatus = useCallback((promotion, userData = {}) => {
     const now = currentDate
 
     if (isPromotionActive(promotion, userData)) {
       return { status: "active", message: "Promoción Activa" }
     }
-
-    // Check if it's a future promotion
     if (now < promotion.startDate) {
       const daysUntil = Math.ceil((promotion.startDate - now) / (1000 * 60 * 60 * 24))
       return { status: "upcoming", message: `Disponible en ${daysUntil} días` }
     }
-
-    // Check if it's expired
     if (now > promotion.endDate) {
       return { status: "expired", message: "Promoción Expirada" }
     }
-
-    // Check day/time specific conditions
     if (promotion.dayConditions && !isDayValid(now, promotion.dayConditions)) {
-      const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+      const dayNames = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sabado"]
       const validDays = promotion.dayConditions.map((day) => dayNames[day]).join(", ")
       return { status: "inactive", message: `Disponible: ${validDays}` }
     }
-
     if (promotion.timeConditions && !isTimeValid(now, promotion.timeConditions)) {
       return {
         status: "inactive",
         message: `Disponible: ${promotion.timeConditions.start} - ${promotion.timeConditions.end}`,
       }
     }
-
     return { status: "inactive", message: "No Disponible" }
-  }
+  }, [currentDate, isPromotionActive])
 
   // Filter promotions based on active tab and show only active ones by default
   const getFilteredPromotions = useMemo(() => {
-    const allPromotions = [...promotions.tickets, ...promotions.combos, ...promotions.gifts, ...promotions.cards]
-
+    const allPromotions = [
+      ...promotions.tickets,
+      ...promotions.combos,
+      ...promotions.gifts,
+      ...promotions.cards,
+    ]
     const filtered = activeTab === "all" ? allPromotions : promotions[activeTab] || []
-
-    // Add status to each promotion
     return filtered.map((promo) => ({
       ...promo,
       statusInfo: getPromotionStatus(promo, { birthday: "1990-05-31" }), // Mock user data
     }))
-  }, [activeTab, currentDate])
-
+  }, [activeTab, promotions, getPromotionStatus])
   // Get active promotions only
   const activePromotions = useMemo(() => {
     return getFilteredPromotions.filter((promo) => promo.statusInfo.status === "active")
