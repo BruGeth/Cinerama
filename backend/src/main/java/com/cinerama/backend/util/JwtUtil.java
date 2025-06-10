@@ -11,6 +11,15 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
+/**
+ * JWT token utility for secure user authentication and session management.
+ *
+ * <p>Provides stateless authentication by generating, validating, and parsing JWT tokens
+ * with configurable expiration and HMAC-SHA512 signing for enhanced security.</p>
+ *
+ * <p>Tokens contain user email as subject and are valid for 10 hours by default.
+ * Invalid tokens are logged but do not throw exceptions to maintain application stability.</p>
+ */
 @Slf4j
 @Component
 public class JwtUtil {
@@ -23,6 +32,13 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private long expirationTime;
 
+
+    /**
+     * Initializes JWT signing key from application configuration.
+     *
+     * <p>Validates secret configuration and creates HMAC-SHA signing key.
+     * Missing or empty secrets are logged as errors but don't prevent startup.</p>
+     */
     @PostConstruct
     public void init() {
         if (secret == null || secret.isEmpty()) {
@@ -36,6 +52,12 @@ public class JwtUtil {
         }
     }
 
+    /**
+     * Generates a signed JWT token for user authentication.
+     *
+     * @param email user's email address to embed as token subject
+     * @return signed JWT token string valid for 10 hours
+     */
     public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
@@ -46,6 +68,13 @@ public class JwtUtil {
                 .compact();
     }
 
+    /**
+     * Extracts user email from validated JWT token.
+     *
+     * @param token JWT token to parse
+     * @return user email stored in token subject
+     * @throws JwtException if token is invalid, expired, or malformed
+     */
     public String extractEmail(String token) {
         try {
             return Jwts.parserBuilder()
@@ -78,6 +107,15 @@ public class JwtUtil {
                 .getBody();
     }
 
+    /**
+     * Validates JWT token signature and expiration without throwing exceptions.
+     *
+     * <p>Invalid tokens are logged for security monitoring but return false
+     * instead of propagating exceptions to maintain application flow.</p>
+     *
+     * @param token JWT token to validate
+     * @return true if token is valid and not expired, false otherwise
+     */
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -87,7 +125,7 @@ public class JwtUtil {
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             log.warn("Invalid JWT token: {}", e.getMessage());
-            return false;
+            return false; // Graceful failure for invalid tokens
         }
     }
 }

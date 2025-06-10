@@ -2,6 +2,7 @@ import React from 'react';
 import '../styles/Corporate.css';
 import { useNavigate } from 'react-router-dom';
 
+// Used to navigate to other routes
 const Corporate = () => {
   const navigate = useNavigate();
 

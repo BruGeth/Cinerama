@@ -1,7 +1,8 @@
 
 import React from "react";
-import "../styles/Cines.css";
+import "../styles/Cines.css";// Import styles for layout and design
 
+// Array containing cinema details, including name, location, and image URL
 const cines = [
   {
     nombre: "CINERAMA MIRAFLORES",
@@ -15,6 +16,7 @@ const cines = [
   }
 ];
 
+// Functional component for displaying individual cinema cards
 const CineCard = ({ cine }) => (
   <div className="cine-card">
   <img src={cine.imagen} alt={cine.nombre} />
@@ -25,14 +27,15 @@ const CineCard = ({ cine }) => (
 </div>
 );
 
+// Main component that displays the cinema list
 const Cines = () => (
   <div className="cine-page">
     <h1 className="page-title">NUESTRAS SEDES</h1>
-    <div className="cine-list">
+    <div className="cine-list">{/* Container for displaying cinemas */}
       {cines.map((cine, index) => (
-        <CineCard key={index} cine={cine} />
+        <CineCard key={index} cine={cine} /> /* Render each cinema as a card */
       ))}
     </div>
   </div>
 );
-export default Cines;
+export default Cines;// Export component for use in other parts of the application

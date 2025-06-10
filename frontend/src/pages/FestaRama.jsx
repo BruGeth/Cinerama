@@ -6,21 +6,24 @@ const FestaRama = () => {
   const navigate = useNavigate();
   const [fadeIn, setFadeIn] = useState(false);
 
+  // Trigger fade-in animation on mount after a short delay
   useEffect(() => {
-    setTimeout(() => setFadeIn(true), 100); // delay animation
+    setTimeout(() => setFadeIn(true), 100);
   }, []);
 
+  // Navigate back to the Corporate page
   const handleBack = () => {
     navigate('/corporate');
   };
-  // Nueva función para manejar el clic en el botón de reserva
+  
+  // Navigate to the packages/reservation page
   const handleReserveClick = () => {
-    navigate('/festarama/packages'); // Navega a la página de paquetes
+    navigate('/festarama/packages'); 
   };
 
   return (
     <div className={`festarama-container ${fadeIn ? 'fade-in' : ''}`}>
-      {/* Banner */}
+      {/*  FestaRama Banner Section */}
       <div className="festarama-banner">
         <div className="banner-content">
           <div className="festarama-banner-icon">🎉</div> 
@@ -31,12 +34,14 @@ const FestaRama = () => {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Main Content Section */}
       <div className="festarama-content">
+        {/* Back Button */}
         <button onClick={handleBack} className="festarama-back-button">
           ← Volver
         </button>
 
+      {/* Birthday Party Card Section */}
         <div className="festarama-birthday-card">
           <div className="festarama-birthday-info">
             <h1 className="festarama-birthday-title">La Mejor Fiesta de Cumpleaños</h1>
@@ -50,6 +55,7 @@ const FestaRama = () => {
               películas favoritas y atención especializada.
             </p>
 
+          {/* Feature List */}  
             <div className="festarama-feature-list">
               <div className="festarama-feature-item pastel-tematico">
                 <span>🎂 Pastel temático</span> 
@@ -65,9 +71,11 @@ const FestaRama = () => {
               </div>
             </div>
 
+          {/* Reserve Button */}
             <button className="festarama-reserve-button" onClick={handleReserveClick}>🎈 Reserva tu fiesta</button>
           </div>
 
+          {/* Birthday Image */}
           <div className="festarama-birthday-image">
             <img
               src="/images/FestaRama.jpg"

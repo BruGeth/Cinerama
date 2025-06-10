@@ -20,6 +20,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
+/**
+ * Authentication service implementation providing secure user registration and login.
+ *
+ * <p>Implements email-based account verification workflow with BCrypt password hashing
+ * and JWT token generation for stateless authentication.</p>
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -76,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Invalid verification code");
         }
 
-        // Enable the user account and clear the verification code
+        // Activate account and clear verification code for security
         user.setEnabled(true);
         user.setVerificationCode(null);
         userRepository.save(user);

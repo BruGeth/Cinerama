@@ -2,17 +2,21 @@ import { useState } from 'react';
 import '../styles/Promotions.css';
 import PromoSlider from '../components/PromoSlider';
 
+// Main component that displays all cinema promotions with filtering and modal functionality
 const Promotions = () => {
+  // State to track which promotion category tab is currently active (all, tickets, combos, etc.)
   const [activeTab, setActiveTab] = useState('all');
 
-  // Sample promotion data
+  // Static data structure containing all promotion categories and their details
+  // Each promotion has: id, title, description, icon type, conditions array, and FAQs array
   const promotions = {
+    // Ticket-related promotions (2x1 deals, student discounts)
     tickets: [
       {
         id: 1,
-        title: 'Entradas 2x1',
+        title: 'Entradas 2x1', // "Buy one get one free tickets"
         description: '¡Compra una entrada y llévate otra gratis! Válido solo los miércoles cuando compres a través de nuestra app o web.',
-        icon: 'ticket',
+        icon: 'ticket', // Used to determine which FontAwesome icon to display
         conditions: [
           'Válido solo los miércoles',
           'Debe realizar la compra a través de app o web',
@@ -27,7 +31,7 @@ const Promotions = () => {
       },
       {
         id: 2,
-        title: 'Descuento Estudiantil',
+        title: 'Descuento Estudiantil', // "Student discount"
         description: '20% de descuento en todas las entradas regulares con identificación estudiantil válida.',
         icon: 'ticket',
         conditions: [
@@ -41,10 +45,11 @@ const Promotions = () => {
         ]
       }
     ],
+    // Food combo promotions (family packs, date night specials)
     combos: [
       {
         id: 3,
-        title: 'Combo Familiar',
+        title: 'Combo Familiar', // "Family combo"
         description: 'Obtén unas palomitas grandes, 4 bebidas medianas y 2 cajas de dulces a un precio especial.',
         icon: 'popcorn',
         conditions: [
@@ -59,7 +64,7 @@ const Promotions = () => {
       },
       {
         id: 4,
-        title: 'Combo Noche de Cita',
+        title: 'Combo Noche de Cita', // "Date night combo"
         description: 'Palomitas medianas, 2 bebidas y un postre para compartir a un precio especial.',
         icon: 'popcorn',
         conditions: [
@@ -73,10 +78,11 @@ const Promotions = () => {
         ]
       }
     ],
+    // Special gift promotions (birthday rewards, loyalty programs)
     gifts: [
       {
         id: 5,
-        title: 'Regalo de Cumpleaños',
+        title: 'Regalo de Cumpleaños', // "Birthday gift"
         description: 'Entrada gratis durante tu semana de cumpleaños. Requiere registro.',
         icon: 'gift',
         conditions: [
@@ -91,10 +97,11 @@ const Promotions = () => {
         ]
       }
     ],
+    // Credit card partnership promotions
     cards: [
       {
         id: 6,
-        title: 'Promoción Tarjetas de Crédito',
+        title: 'Promoción Tarjetas de Crédito', // "Credit card promotion"
         description: '15% de descuento al pagar con tarjetas bancarias participantes.',
         icon: 'card',
         conditions: [
@@ -111,57 +118,64 @@ const Promotions = () => {
     ]
   };
 
-  // Filter promotions based on active tab
+  // Function that filters and returns promotions based on the currently selected tab
+  // If 'all' is selected, it combines all promotion categories into a single array
   const getFilteredPromotions = () => {
     if (activeTab === 'all') {
       return [
-        ...promotions.tickets,
+        ...promotions.tickets,   // Spread operator to merge all arrays
         ...promotions.combos,
         ...promotions.gifts,
         ...promotions.cards
       ];
     }
+    // Return specific category array, or empty array if category doesn't exist  
     return promotions[activeTab] || [];
   };
 
-  // Get icon class based on promotion type
+  // Maps promotion icon types to corresponding FontAwesome CSS classes
+  // Used to display appropriate icons for each promotion category
   const getIconClass = (iconType) => {
     switch (iconType) {
       case 'ticket':
-        return 'fa fa-ticket';
+        return 'fa fa-ticket';      // Ticket icon for ticket promotions
       case 'popcorn':
-        return 'fa fa-film';
+        return 'fa fa-film';        // Film icon for combo promotions
       case 'gift':
-        return 'fa fa-gift';
+        return 'fa fa-gift';        // Gift icon for birthday/loyalty promotions
       case 'card':
-        return 'fa fa-credit-card';
+        return 'fa fa-credit-card'; // Credit card icon for payment promotions
       default:
-        return 'fa fa-star';
+        return 'fa fa-star';        // Default star icon as fallback
     }
   };
 
+  // State to track which promotion is currently selected for detailed view in modal
+  // null means no modal is open, object means modal shows that promotion's details
   const [selectedPromotion, setSelectedPromotion] = useState(null);
 
+  // Function to open modal with detailed view of selected promotion
   const openPromotionDetails = (promotion) => {
     setSelectedPromotion(promotion);
   };
 
+  // Function to close the promotion details modal
   const closePromotionDetails = () => {
     setSelectedPromotion(null);
   };
 
   return (
     <div className="promotions-page">
-      {/* Promo Slider */}
+      {/* Hero section with promotional slider/carousel */}
       <div className="promo-slider-container">
         <PromoSlider />
       </div>
 
-      {/* Promotions Section */}
+      {/* Main promotions section with filtering tabs and grid display */}
       <div className="promotions-section">
         <h2>Promociones Disponibles</h2>
         
-        {/* Tabs */}
+        {/* Tab navigation for filtering promotions by category */}
         <div className="promo-tabs">
           <button 
             className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
@@ -181,6 +195,7 @@ const Promotions = () => {
           >
             Combos
           </button>
+          {/* Note: This tab references 'specials' but that category doesn't exist in data */}
           <button 
             className={`tab-button ${activeTab === 'specials' ? 'active' : ''}`}
             onClick={() => setActiveTab('specials')}
@@ -189,17 +204,20 @@ const Promotions = () => {
           </button>
         </div>
 
-        {/* Promotions Grid */}
+        {/* Grid layout displaying filtered promotion cards */}
         <div className="promotions-grid">
           {getFilteredPromotions().map((promo) => (
             <div key={promo.id} className="promo-card">
+              {/* Icon section using FontAwesome classes */}
               <div className="promo-icon">
                 <i className={getIconClass(promo.icon)}></i>
               </div>
+              {/* Promotion content: title and description */}
               <div className="promo-content">
                 <h3>{promo.title}</h3>
                 <p>{promo.description}</p>
               </div>
+              {/* Button to open detailed modal view */}
               <button 
                 className="view-details-btn" 
                 onClick={() => openPromotionDetails(promo)}
@@ -211,12 +229,15 @@ const Promotions = () => {
         </div>
       </div>
 
-      {/* Promotion Details Modal */}
+      {/* Modal overlay and content - only rendered when a promotion is selected */}
       {selectedPromotion && (
         <div className="promo-modal-overlay" onClick={closePromotionDetails}>
+          {/* Modal content - stops propagation to prevent closing when clicking inside */}
           <div className="promo-modal" onClick={(e) => e.stopPropagation()}>
+            {/* Close button using × symbol */}
             <button className="close-modal" onClick={closePromotionDetails}>&times;</button>
             <div className="modal-content">
+              {/* Modal header with large icon and promotion title */}
               <div className="modal-header">
                 <div className="promo-icon large">
                   <i className={getIconClass(selectedPromotion.icon)}></i>
@@ -224,11 +245,14 @@ const Promotions = () => {
                 <h2>{selectedPromotion.title}</h2>
               </div>
               
+              {/* Modal body containing description, terms, and FAQs */}
               <div className="modal-body">
+                {/* Promotion description */}
                 <div className="promo-description-container">
                   <p className="promo-description">{selectedPromotion.description}</p>
                 </div>
                 
+                {/* Terms and conditions list */}
                 <div className="promo-conditions">
                   <h3>Términos y Condiciones</h3>
                   <ul>
@@ -238,6 +262,7 @@ const Promotions = () => {
                   </ul>
                 </div>
                 
+                {/* FAQ section with questions and answers */}
                 <div className="promo-faqs">
                   <h3>Preguntas Frecuentes</h3>
                   <div className="modal-faqs-grid">
@@ -251,6 +276,7 @@ const Promotions = () => {
                 </div>
               </div>
               
+              {/* Modal footer with call-to-action button */}
               <div className="modal-footer">
                 <button className="redeem-btn">Canjear Oferta</button>
               </div>
@@ -259,7 +285,8 @@ const Promotions = () => {
         </div>
       )}
 
-      {/* FAQ Section - Reorganizada horizontalmente */}
+      {/* General FAQ section displayed at bottom of page */}
+      {/* Contains common questions about promotions in horizontal layout */}
       <div className="faq-section">
         <h2>Preguntas Frecuentes</h2>
         <div className="faq-container horizontal">
