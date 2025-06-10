@@ -17,7 +17,7 @@ import Profile from '../pages/Profile';
 import PrivateRoute from '../utils/PrivateRoute';
 import Cines from '../pages/Cines';
 import Promotions from '../pages/Promotions';
-import MoreInformation from "../Components/MoreInformation";
+import MoreInformation from "../components/MoreInformation";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminRoute from "../utils/AdminRoute";
 

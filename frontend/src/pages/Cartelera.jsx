@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'; // Import navigation function for handling route changes
 import { FaTicketAlt } from 'react-icons/fa'; // Import ticket icon for UI enhancement
-import { movies } from '../components/movieData'; // Import movie data from external file
+import { movies } from '../components/DataMovie'; // Import movie data from external file
 import '../styles/Cartelera.css'; // Import styles for component styling
 
 const Cartelera = () => {
