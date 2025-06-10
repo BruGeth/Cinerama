@@ -1,4 +1,4 @@
-.verify-email-page {
+.verify-email-page {/* Styles the main container for the verification page, centering content with a background image */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,7 +12,7 @@
   background-blend-mode: overlay; 
 }
 
-.verify-card {
+.verify-card {/* Defines the verification card layout with a white background, rounded corners, and shadow */
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -22,7 +22,7 @@
   position: relative;
 }
 
-.back-button {
+.back-button {/* Positions the back button in the top-left corner with red text and no background */
   position: absolute;
   top: 1.5rem;
   left: 1.5rem;
@@ -33,27 +33,27 @@
   padding: 0;
 }
 
-.verify-card h1 {
+.verify-card h1 {/* Styles the title with centered text and spacing */
   font-size: 1.8rem;
   text-align: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
-.verify-card p {
+.verify-card p {/* Formats the instructional text with gray color and padding */
   text-align: center;
   color: #666;
   margin-bottom: 2rem;
   padding: 0 1rem;
 }
 
-.code-inputs {
+.code-inputs {/* Arranges input boxes in a row with spacing */
   display: flex;
   justify-content: space-between;
   margin-bottom: 2rem;
 }
 
-.code-inputs input {
+.code-inputs input {/* Styles the code input fields with defined size, rounded corners, and center-aligned text */
   width: 60px;
   height: 60px;
   border-radius: 12px;
@@ -64,21 +64,21 @@
   margin: 0 4px;
 }
 
-.code-inputs input.active {
+.code-inputs input.active {/* Highlights the active input field with a blue border */
   border: 2px solid #0088ff;
 }
 
-.code-inputs input:focus {
+.code-inputs input:focus {/* Ensures focus styling with a blue border */
   outline: none;
   border: 2px solid #0088ff;
 }
 
-.verify-buttons {
+.verify-buttons {/* Organizes action buttons in a row with spacing */
   display: flex;
   gap: 1rem;
 }
 
-.verify-buttons button {
+.verify-buttons button {/* Styles buttons with rounded shape, bold text, and smooth transition */
   flex: 1;
   padding: 1rem;
   border: none;
@@ -89,23 +89,23 @@
   transition: background-color 0.2s;
 }
 
-.send-button {
+.send-button {/* Defines the send button with a gray background */
   background-color: #9e9e9e;
   color: white;
 }
 
-.resend-button {
+.resend-button {/* Styles the resend button with a yellow background */
   background-color: #ffc107;
   color: black;
 }
 
 /* Responsive adjustments */
-@media (max-width: 480px) {
-  .verify-card {
+@media (max-width: 480px) {/* Modifies styles for smaller screens, adjusting padding and input sizes */
+  .verify-card {/* Reduces padding for better fit on smaller screens */
     padding: 1.5rem;
   }
 
-  .code-inputs input {
+  .code-inputs input {/* Scales down input fields for compact screens */
     width: 45px;
     height: 45px;
     font-size: 1.2rem;
