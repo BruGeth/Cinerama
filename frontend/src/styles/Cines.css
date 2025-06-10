@@ -5,7 +5,7 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.cine-page {/* Defines the main page container with padding and background color */
+.cine-page { /* Defines the main container for the cinema listings with padding and background color */
   background-color: #ffffff;
   padding: 40px 20px;
   text-align: center;
@@ -65,8 +65,8 @@ body {
   margin-bottom: 12px;
   text-transform: uppercase;
 }
- /* Styles the paragraph with size, font-weight, and color */
-.cine-info-box p {
+
+.cine-info-box p {/* Styles the paragraph text with adjusted font size and weight */
   color: #000000;
   font-size: 1.2em;
   font-weight: bold;

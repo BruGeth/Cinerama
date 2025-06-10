@@ -1,15 +1,18 @@
-.cartelera-container {/* Defines the main container for the listing page, adding padding and background color */
+
+.cartelera-container {/* Defines the main container with padding, background color, and full viewport height */
   padding: 2rem;
   background-color: #f0f0f0;
   min-height: 100vh;
 }
 
-.cartelera-title {/* Styles the title, setting font size, color, and spacing */
+
+.cartelera-title {/* Styles the title with font size, color, centering, and bottom margin */
   font-size: 2rem;
   text-align: center;
   color: #000;
   margin-bottom: 1.5rem;
 }
+
 
 .cartelera-grid {/* Creates a responsive grid layout for displaying movie cards */
   display: grid;
@@ -17,7 +20,8 @@
   gap: 1.5rem;
 }
 
-.cartelera-card {/* Styles individual movie cards with background color, rounded corners, and shadow */
+
+.cartelera-card {/* Styles individual movie cards with background color, shadow, flex layout, and minimum height */
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -26,7 +30,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 500px;
+  justify-content: space-between;
+  align-items: center;
 }
+
 
 .cartelera-image {/* Sets the movie poster size, ensuring it fits properly with rounded corners */
   width: 100%;
@@ -35,6 +43,7 @@
   border-radius: 8px;
 }
 
+
 .cartelera-movie-title {/* Defines the title style within the movie card, adjusting font size and alignment */
   font-size: 1.25rem;
   font-weight: bold;
@@ -42,12 +51,14 @@
   text-align: center;
 }
 
+
 .cartelera-description {/* Styles the movie description with font size, color, and spacing */
   font-size: 0.9rem;
   color: #444;
   margin: 0.5rem 0 1rem;
   text-align: center;
 }
+
 
 .buy-button { /* Styles the purchase button, setting color, padding, and hover effects */
   background-color: #e50914;
@@ -60,7 +71,13 @@
   align-items: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: auto;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  max-width: 180px; 
 }
+
 
 .buy-button:hover {/* Defines the hover effect for the purchase button, changing background color */
   background-color: #c40812;

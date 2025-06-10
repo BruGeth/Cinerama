@@ -1,4 +1,4 @@
-.verify-email-page {/* Defines the container for the verification page, centering content with a background image */
+.verify-email-page {/* Styles the main container for the verification page, centering content with a background image */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,7 +12,8 @@
   background-blend-mode: overlay; 
 }
 
-.verify-card {  /* Styles the verification card with a white background, rounded corners, and subtle shadow */
+
+.verify-card { /* Styles the verification card with a white background, rounded corners, and subtle shadow */
   background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -54,6 +55,7 @@
 }
 
 .code-inputs input { /* Styles the code input fields with size, rounded corners, and center-aligned text */
+
   width: 60px;
   height: 60px;
   border-radius: 12px;
@@ -101,7 +103,6 @@
 
 /* Responsive adjustments */
 @media (max-width: 480px) {/* Modifies styles for smaller screens, adjusting padding and input sizes */
-
   .verify-card {/* Reduces padding for better fit on smaller screens */
     padding: 1.5rem;
   }

@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import "../styles/Promotions.css"
 
-
 // Main component that displays all cinema promotions with filtering and modal functionality
 const Promotions = () => {
   const [activeTab, setActiveTab] = useState("all")
