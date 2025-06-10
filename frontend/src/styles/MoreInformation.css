@@ -1,0 +1,45 @@
+.more-info-wrapper {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  background-color: #000; /* Black background */
+  color: #fff; /* White text */
+}
+
+.more-info-trailer {
+  width: 100%;
+}
+
+.more-info-content {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.more-info-image {
+  width: 300px;
+  border-radius: 8px;
+}
+
+.more-info-text {
+  max-width: 600px;
+}
+.buy-button {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #e50914;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.3s;
+}
+
+.buy-button:hover {
+  background-color: #b00610;
+}

@@ -36,19 +36,21 @@ const userService = {
 
     if (!response.ok) {
       const error = await response.json();
+      console.error("Error en loginUser:", error);
       throw new Error(error.message || "Login failed.");
     }
 
-    const data = await response.json(); // Contiene el token
-    localStorage.setItem("token", data.token); // 👈 Guardar token
-    return data.token;
+    const data = await response.json(); // Contains the token and user data
+    console.log("Respuesta del backend (login):", data);
+    localStorage.setItem("token", data.token); // save token in localStorage
+    return data;
   },
 
   getCurrentUser: async () => {
     const token = localStorage.getItem("token");
 
-    console.log(token); // Verifica si el token está presente
-    // Si no hay token, no se puede obtener el usuario
+    console.log(token); // Verify if the token is being retrieved correctly
+    // If the token is not present, return null
     if (!token) return null;
 
     try {
@@ -62,15 +64,15 @@ const userService = {
       });
 
       if (!response.ok) {
-        localStorage.removeItem("token"); // Token inválido
-        localStorage.removeItem("user"); // También eliminar el usuario
+        localStorage.removeItem("token"); // Invalid token, remove it
+        localStorage.removeItem("user"); // Also remove user data
         return null;
       }
 
       const userData = await response.json();
-      // Guardar el usuario en localStorage
+      // Log the user data to verify it
       localStorage.setItem("user", JSON.stringify(userData));
-      return userData; // Retorna el usuario
+      return userData; // Return the user data
     } catch (error) {
       console.error("Error getting current user:", error);
       localStorage.removeItem("token");

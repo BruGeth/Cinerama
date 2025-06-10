@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { MOVIES } from "../Components/movieData"
+import { movies } from "../components/DataMovies"
 import "../styles/FestaRamaPackages.css"
 import confetti from "canvas-confetti"
 
@@ -128,7 +128,7 @@ const FestaRamaPackages = () => {
   const movieOptions = useMemo(() => {
     try {
       // Validate MOVIES data exists
-      if (!MOVIES || !Array.isArray(MOVIES)) {
+      if (!movies || !Array.isArray(movies)) {
         throw new Error("No se pudieron cargar los datos de películas")
       }
 
@@ -139,7 +139,7 @@ const FestaRamaPackages = () => {
         "Thunderbolts",
       ]
 
-      const filteredMovies = MOVIES.filter((movie) => {
+      const filteredMovies = movies.filter((movie) => {
         if (!movie || !movie.title) return false
         return targetMovies.includes(movie.title)
       })
@@ -1121,4 +1121,4 @@ const FestaRamaPackages = () => {
   )
 }
 
-export default FestaRamaPackages
+export default FestaRamaPackages;

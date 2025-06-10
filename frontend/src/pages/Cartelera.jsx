@@ -1,26 +1,26 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import { FaTicketAlt } from 'react-icons/fa';
-import { MOVIES } from '../Components/movieData';
-import '../styles/Cartelera.css'; 
+import { useNavigate } from 'react-router-dom'; // Import navigation function for handling route changes
+import { FaTicketAlt } from 'react-icons/fa'; // Import ticket icon for UI enhancement
+import { movies } from '../components/DataMovie'; // Import movie data from external file
+import '../styles/Cartelera.css'; // Import styles for component styling
 
 const Cartelera = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate(); // Hook for navigation within the app
 
+  // Function to navigate to the movie purchase page based on selected movie ID
   const handleBuyClick = (id) => {
-    navigate(`/cartelera/${id}`);
+    navigate(`/billboard/${id}`); // Navigates to a specific movie's detail page
   };
 
   return (
     <div className="cartelera-container">
       <h1 className="cartelera-title">Cartelera</h1>
-      <div className="cartelera-grid">
-        {MOVIES.map((movie) => (
-          <div key={movie.id} className="cartelera-card">
-            <img src={movie.image} alt={movie.title} className="cartelera-image" />
+      <div className="cartelera-grid">{/* Grid layout for displaying movies */}
+        {movies.map((movie) => (
+          <div key={movie.id} className="cartelera-card">{/* Unique movie card */}
+            <img src={movie.image} alt={movie.title} className="cartelera-image" />{/* Movie poster */}
             <h2 className="cartelera-movie-title">{movie.title}</h2>
-            <p className="cartelera-description">{movie.description}</p>
-            <button className="buy-button" onClick={() => handleBuyClick(movie.id)}>
+            <p className="cartelera-description">{movie.description_showtimes}</p>
+            <button className="buy-button" onClick={() => handleBuyClick(movie.id)}>{/* Purchase button */}
               <FaTicketAlt style={{ marginRight: '8px' }} />
               Comprar
             </button>
@@ -31,4 +31,4 @@ const Cartelera = () => {
   );
 };
 
-export default Cartelera;
+export default Cartelera; // Export component for use in other parts of the application
