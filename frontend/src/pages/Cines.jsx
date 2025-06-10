@@ -26,13 +26,13 @@ const CineCard = ({ cine }) => (
   </div>
 );
 
-// Main component that displays the list of cinemas
+// Main component that displays the cinema list
 const Cines = () => (
   <div className="cine-page"> {/* Main container for cinema listings */}
-    <h1 className="page-title">NUESTRAS SEDES</h1> {/* Page title */}
-    <div className="cine-list"> {/* Container for rendering cinema cards dynamically */}
+    <h1 className="page-title">NUESTRAS SEDES</h1>
+    <div className="cine-list">{/* Container for displaying cinemas */}
       {cines.map((cine, index) => (
-        <CineCard key={index} cine={cine} /> /* Render each cinema card */
+        <CineCard key={index} cine={cine} /> /* Render each cinema as a card */
       ))}
     </div>
   </div>

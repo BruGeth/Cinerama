@@ -1,10 +1,16 @@
+// Import React and useState hook
 import React, { useState } from "react";
+// Import the CSS file for styles
 import '../styles/Confectionery.css';
 
+// Functional component for the Confectionery section
 const Confectionery = () => {
+  // Define available product categories
   const categorias = ["Todos", "Palomitas", "Refrescos", "Dulces", "Combos"];
+  // State to keep track of the selected category
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("Todos");
 
+  // Array of available products, each with a category, name, description, price, and image
   const productos = [
     {
       categoria: "Palomitas",
@@ -25,7 +31,7 @@ const Confectionery = () => {
       nombre: "Refresco Grande",
       descripcion: "Refresco a elegir, tamaño grande",
       precio: 16.90,
-      imagen: "https://media.istockphoto.com/id/909938470/es/foto/comida-r%C3%A1pida-cola-bebe-copa-y-pajita.jpg?s=612x612&w=0&k=20&c=MV_j5gIoFgobJM_lTmhgDnpSt1g_eStiww1xrPFw8uA=  ",
+      imagen: "https://media.istockphoto.com/id/909938470/es/foto/comida-r%C3%A1pida-cola-bebe-copa-y-pajita.jpg?s=612x612&w=0&k=20&c=MV_j5gIoFgobJM_lTmhgDnpSt1g_eStiww1xrPFw8uA=",
     },
     {
       categoria: "Refrescos",
@@ -50,40 +56,52 @@ const Confectionery = () => {
     },
   ];
 
+  // Filter the products based on the selected category
   const productosFiltrados = categoriaSeleccionada === "Todos"
     ? productos
     : productos.filter(p => p.categoria === categoriaSeleccionada);
 
+  // JSX to render the component
   return (
     <div className="confectionery-container">
-  <h1 className="confectionery-title">Confitería</h1>
-  <p className="confectionery-description">Disfruta de nuestros deliciosos snacks...</p>
+      {/* Main title */}
+      <h1 className="confectionery-title">Confitería</h1>
+      {/* Short description */}
+      <p className="confectionery-description">Disfruta de nuestros deliciosos snacks...</p>
 
-  <div className="category-buttons">
-    {categorias.map(cat => (
-      <button
-        key={cat}
-        className={`category-button ${categoriaSeleccionada === cat ? 'active' : ''}`}
-        onClick={() => setCategoriaSeleccionada(cat)}
-      >
-        {cat}
-      </button>
-    ))}
-  </div>
-
-  <div className={`product-grid ${categoriaSeleccionada !== "Todos" ? "horizontal" : ""}`}>
-    {productosFiltrados.map((prod, idx) => (
-      <div key={idx} className="product-card">
-        <img src={prod.imagen} alt={prod.nombre} className="product-image" />
-        <h3 className="product-title">{prod.nombre}</h3>
-        <p className="product-description">{prod.descripcion}</p>
-        <p className="product-price">S/. {prod.precio.toFixed(2)}</p>
-        <button className="product-button">Añadir</button>
+      {/* Category selection buttons */}
+      <div className="category-buttons">
+        {categorias.map(cat => (
+          <button
+            key={cat}
+            className={`category-button ${categoriaSeleccionada === cat ? 'active' : ''}`}
+            onClick={() => setCategoriaSeleccionada(cat)} // Change selected category on click
+          >
+            {cat}
+          </button>
+        ))}
       </div>
-    ))}
-  </div>
-</div>
+
+      {/* Product cards grid */}
+      <div className={`product-grid ${categoriaSeleccionada !== "Todos" ? "horizontal" : ""}`}>
+        {productosFiltrados.map((prod, idx) => (
+          <div key={idx} className="product-card">
+            {/* Product image */}
+            <img src={prod.imagen} alt={prod.nombre} className="product-image" />
+            {/* Product name */}
+            <h3 className="product-title">{prod.nombre}</h3>
+            {/* Product description */}
+            <p className="product-description">{prod.descripcion}</p>
+            {/* Product price */}
+            <p className="product-price">S/. {prod.precio.toFixed(2)}</p>
+            {/* Action button */}
+            <button className="product-button">Añadir</button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
+// Export the component
 export default Confectionery;

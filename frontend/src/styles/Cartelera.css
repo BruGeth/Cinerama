@@ -1,8 +1,10 @@
+
 .cartelera-container {/* Defines the main container with padding, background color, and full viewport height */
   padding: 2rem;
   background-color: #f0f0f0;
   min-height: 100vh;
 }
+
 
 .cartelera-title {/* Styles the title with font size, color, centering, and bottom margin */
   font-size: 2rem;
@@ -11,11 +13,13 @@
   margin-bottom: 1.5rem;
 }
 
-.cartelera-grid {/* Creates a responsive grid layout for movie cards */
+
+.cartelera-grid {/* Creates a responsive grid layout for displaying movie cards */
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1.5rem;
 }
+
 
 .cartelera-card {/* Styles individual movie cards with background color, shadow, flex layout, and minimum height */
   background-color: #fff;
@@ -29,28 +33,32 @@
   min-height: 500px;
 }
 
-.cartelera-image {/* Ensures proper sizing and rounding of movie poster images */
+
+.cartelera-image {/* Sets the movie poster size, ensuring it fits properly with rounded corners */
   width: 100%;
   height: 280px;
   object-fit: cover;
   border-radius: 8px;
 }
 
-.cartelera-movie-title {/* Defines the title's appearance with bold font and centered alignment */
+
+.cartelera-movie-title {/* Defines the title style within the movie card, adjusting font size and alignment */
   font-size: 1.25rem;
   font-weight: bold;
   margin-top: 0.8rem;
   text-align: center;
 }
 
-.cartelera-description {/* Styles the description text with size, color, and spacing */
+
+.cartelera-description {/* Styles the movie description with font size, color, and spacing */
   font-size: 0.9rem;
   color: #444;
   margin: 0.5rem 0 1rem;
   text-align: center;
 }
 
-.buy-button {/* Styles the purchase button with color, padding, rounded edges, and hover effect */
+
+.buy-button { /* Styles the purchase button, setting color, padding, and hover effects */
   background-color: #e50914;
   color: white;
   padding: 0.5rem 1rem;
@@ -64,6 +72,7 @@
   margin-top: auto; 
 }
 
-.buy-button:hover {/* Changes the button color on hover for interactive feedback */
+
+.buy-button:hover {/* Defines the hover effect for the purchase button, changing background color */
   background-color: #c40812;
 }

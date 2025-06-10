@@ -11,21 +11,21 @@ body {
   text-align: center;
 }
 
-.page-title {/* Styles the title with bold red color, large font size, and bottom margin */
+.page-title {/* Styles the title with bold red color, font size, and spacing */
   color: #e60000;
   font-size: 3em;
   font-weight: bold;
   margin-bottom: 40px;
 }
 
-.cine-list {/* Arranges cinema cards in a vertical flex column with spacing */
+.cine-list {/* Creates a flex column layout, aligning items centrally with spacing */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 60px;
 }
 
-.cine-card {/* Styles each cinema card with rounded corners, shadow effects, and hover transition */
+.cine-card {/* Styles individual cinema cards with rounded corners, shadow, and smooth transition effects */
   width: 95%;
   max-width: 1000px;
   border-radius: 32px;
@@ -37,11 +37,11 @@ body {
   padding: 0;
 }
 
-.cine-card:hover {/* Applies a slight scaling effect on hover for better interaction */
+.cine-card:hover {/* Adds a slight scaling effect on hover to enhance interaction */
   transform: scale(1.02);
 }
 
-.cine-card img {/* Ensures cinema images are properly sized with rounded top corners */
+.cine-card img {/* Ensures the cinema image fills the container with fixed height and rounded top corners */
   width: 100%;
   height: 350px;
   object-fit: cover;
@@ -49,7 +49,7 @@ body {
   display: block;
 }
 
-.cine-info-box { /* Styles the information box with padding, background color, and shadow */
+.cine-info-box { /* Styles the information box with background color, padding, and shadow */
   background-color: #e04949;
   padding: 24px 28px;
   border-radius: 0 0 10px 10px;
@@ -58,7 +58,7 @@ body {
   margin: 0;
 }
 
-.cine-info-box h2 {/* Defines cinema name appearance with bold, uppercase text */
+.cine-info-box h2 {/* Defines the title inside the cinema card with uppercase, bold font */
   color: white;
   font-size: 2em;
   font-weight: bold;

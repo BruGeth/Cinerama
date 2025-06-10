@@ -1,28 +1,27 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Hook to enable navigation within the app
-import { FaTicketAlt } from 'react-icons/fa'; // Import ticket icon for button styling
-import { MOVIES } from '../Components/movieData'; // Import movie data array
-import '../styles/Cartelera.css'; // Import styles for layout and design
+import { useNavigate } from 'react-router-dom'; // Import navigation function for handling route changes
+import { FaTicketAlt } from 'react-icons/fa'; // Import ticket icon for UI enhancement
+import { movies } from '../components/movieData'; // Import movie data from external file
+import '../styles/Cartelera.css'; // Import styles for component styling
 
 const Cartelera = () => {
-  const navigate = useNavigate(); // Initialize navigation function
+  const navigate = useNavigate(); // Hook for navigation within the app
 
-  // Function to handle ticket purchase click, redirecting to the movie detail page
+  // Function to navigate to the movie purchase page based on selected movie ID
   const handleBuyClick = (id) => {
     navigate(`/billboard/${id}`); // Navigates to a specific movie's detail page
   };
 
   return (
-    <div className="cartelera-container"> {/* Main container for the movie listing page */}
-      <h1 className="cartelera-title">Cartelera</h1> {/* Page title */}
-      <div className="cartelera-grid"> {/* Grid layout for dynamically displaying movie cards */}
-        {MOVIES.map((movie) => ( 
-          <div key={movie.id} className="cartelera-card"> {/* Unique card for each movie */}
-            <img src={movie.image} alt={movie.title} className="cartelera-image" /> {/* Movie poster */}
-            <h2 className="cartelera-movie-title">{movie.title}</h2> {/* Movie title */}
-            <p className="cartelera-description">{movie.description}</p> {/* Movie description */}
-            <button className="buy-button" onClick={() => handleBuyClick(movie.id)}> {/* Purchase button */}
-              <FaTicketAlt style={{ marginRight: '8px' }} /> {/* Icon for better UX */}
+    <div className="cartelera-container">
+      <h1 className="cartelera-title">Cartelera</h1>
+      <div className="cartelera-grid">{/* Grid layout for displaying movies */}
+        {movies.map((movie) => (
+          <div key={movie.id} className="cartelera-card">{/* Unique movie card */}
+            <img src={movie.image} alt={movie.title} className="cartelera-image" />{/* Movie poster */}
+            <h2 className="cartelera-movie-title">{movie.title}</h2>
+            <p className="cartelera-description">{movie.description_showtimes}</p>
+            <button className="buy-button" onClick={() => handleBuyClick(movie.id)}>{/* Purchase button */}
+              <FaTicketAlt style={{ marginRight: '8px' }} />
               Comprar
             </button>
           </div>
