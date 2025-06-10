@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { MOVIES } from '../Components/movieData';
+import { movies } from '../components/DataMovie';
 import "../styles/SpecialFunctions.css"
 
 const SpecialFunctions = () => {
@@ -72,7 +72,7 @@ const SpecialFunctions = () => {
   const movieOptions = useMemo(() => {
     try {
       // Validate MOVIES data exists
-      if (!MOVIES || !Array.isArray(MOVIES)) {
+      if (!movies || !Array.isArray(movies)) {
         throw new Error("No se pudieron cargar los datos de películas")
       }
 
@@ -83,7 +83,7 @@ const SpecialFunctions = () => {
         "Thunderbolts",
       ]
 
-      const filteredMovies = MOVIES.filter((movie) => {
+      const filteredMovies = movies.filter((movie) => {
         if (!movie || !movie.title) return false
         return targetMovies.includes(movie.title)
       })

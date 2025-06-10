@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
-import { movies } from "../components/DataMovies"
+import { movies } from "../components/DataMovie"
 import "../styles/FestaRamaPackages.css"
 import confetti from "canvas-confetti"
 
