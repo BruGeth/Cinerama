@@ -37,7 +37,7 @@ const VerifyEmail = () => {
       await userService.verifyUser({ email, verificationCode: finalCode });
   
       console.log("Verificación exitosa.");
-      navigate("/login"); // pagina inicio con el inicio de sesión
+      navigate("/login");
     } catch (error) {
       console.error("Error al verificar:", error.message);
       alert("Código inválido o expirado. Inténtalo de nuevo.");
