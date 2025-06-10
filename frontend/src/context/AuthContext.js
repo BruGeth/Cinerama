@@ -58,15 +58,23 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const token = await userService.loginUser(credentials);
-      console.log("Token recibido:", token);
-      const userFromToken = getUserFromToken(token);
-      console.log("Usuario decodificado del token:", userFromToken);
+      // Call the userService to log in the user
+      const response = await userService.loginUser(credentials);
+      const { name, token } = response;
+
+      const decoded = jwtDecode(token);
+      const userFromToken = {
+        name, // <-- Add name from the response
+        email: decoded.sub,
+        role: decoded.roles === "ROLE_ADMIN" ? "admin" : "user",
+      };
+
       setUser(userFromToken);
+      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userFromToken));
       return token;
     } catch (error) {
-      console.error("Login error en AuthContext:", error);
+      console.error("Login error:", error);
       throw error;
     }
   };

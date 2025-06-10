@@ -72,7 +72,7 @@ const Navbar = () => {
                   onClick={closeMenu}
                 >
                   <span className="user-greeting">
-                    Hola, {user.name ? user.name.split(" ")[0] : user.email}
+                    Hola, {user?.name ? user.name.split(" ")[0] : user?.email}
                   </span>
                 </Link>
                 {user.role === "admin" && (

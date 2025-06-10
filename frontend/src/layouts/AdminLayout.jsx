@@ -1,18 +1,18 @@
-import { useState } from "react"
-import { Link, useNavigate, useLocation } from "react-router-dom"
-import { useAuth } from "../context/AuthContext"
-import "../styles/AdminLayout.css"
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import "../styles/AdminLayout.css";
 
 function AdminLayout({ children }) {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleLogout = async () => {
-    await logout()
-    navigate("/login")
-  }
+    await logout();
+    navigate("/login");
+  };
 
   const menuItems = [
     { path: "/admin", label: "Dashboard", icon: "📊" },
@@ -22,7 +22,7 @@ function AdminLayout({ children }) {
     { path: "/admin/products", label: "Confitería", icon: "🍿" },
     { path: "/admin/reports", label: "Reportes", icon: "📈" },
     { path: "/admin/users", label: "Usuarios", icon: "👥" },
-  ]
+  ];
 
   return (
     <div className="admin-layout">
@@ -30,10 +30,19 @@ function AdminLayout({ children }) {
       <aside className={`admin-sidebar ${sidebarOpen ? "open" : "closed"}`}>
         <div className="sidebar-header">
           <div className="admin-logo">
-            <span className="logo-ciner">CINER</span>
-            <span className="logo-ama">AMA</span>
+            {sidebarOpen ? (
+              <>
+                <span className="logo-ciner">CINER</span>
+                <span className="logo-ama">AMA</span>
+              </>
+            ) : (
+              <span className="logo-ciner">C</span>
+            )}
           </div>
-          <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <button
+            className="sidebar-toggle"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
             {sidebarOpen ? "←" : "→"}
           </button>
         </div>
@@ -43,7 +52,9 @@ function AdminLayout({ children }) {
             <Link
               key={item.path}
               to={item.path}
-              className={`nav-item ${location.pathname === item.path ? "active" : ""}`}
+              className={`nav-item ${
+                location.pathname === item.path ? "active" : ""
+              }`}
             >
               <span className="nav-icon">{item.icon}</span>
               {sidebarOpen && <span className="nav-label">{item.label}</span>}
@@ -55,12 +66,22 @@ function AdminLayout({ children }) {
           <div className="user-info">
             {sidebarOpen && (
               <>
-                <div className="user-name">{user?.name}</div>
+                <div className="user-name">
+                  {user?.name
+                    ? user.name
+                    : user?.email
+                    ? user.email.split("@")[0]
+                    : "Usuario"}
+                </div>
                 <div className="user-role">Administrador</div>
               </>
             )}
           </div>
-          <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
+          <button
+            className="logout-btn"
+            onClick={handleLogout}
+            title="Cerrar sesión"
+          >
             🚪
           </button>
         </div>
@@ -80,7 +101,7 @@ function AdminLayout({ children }) {
         <main className="admin-content">{children}</main>
       </div>
     </div>
-  )
+  );
 }
 
-export default AdminLayout
+export default AdminLayout;
