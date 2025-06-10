@@ -1,3 +1,4 @@
+/* Main container layout */
 .corporate-container {
   display: flex;
   flex-direction: column;
@@ -7,6 +8,7 @@
   overflow: hidden;
 }
 
+/* Centered content wrapper */
 .corporate-content {
   flex: 1;
   padding: 2rem;
@@ -15,6 +17,7 @@
   width: 100%;
 }
 
+/* Page title styling */
 .corporate-title {
   color: #e50914;
   text-align: center;
@@ -24,12 +27,14 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Grid layout for product cards */
 .corporate-products-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
-/* CARD */
+
+/* Individual product card container */
 .corporate-product-card {
   border-radius: 12px;
   overflow: hidden;
@@ -39,11 +44,13 @@
   position: relative;
 }
 
+/* Hover animation for card lift */
 .corporate-product-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
+/* Overlay for image and content layering */
 .corporate-card-overlay {
   position: relative;
   width: 100%;
@@ -51,6 +58,7 @@
   overflow: hidden;
 }
 
+/* Card image background */
 .corporate-card-image {
   position: absolute;
   width: 100%;
@@ -63,6 +71,7 @@
   justify-content: center;
 }
 
+/* Title shown on top of image */
 .corporate-image-title {
   color: white;
   font-size: 2rem;
@@ -72,6 +81,7 @@
   transition: all 0.3s ease;
 }
 
+/* Hidden content revealed on hover */
 .corporate-card-content {
   position: absolute;
   top: 0;
@@ -88,6 +98,7 @@
   color: black;
 }
 
+/* Reveal card content and dim image on hover */
 .corporate-product-card:hover .corporate-card-image {
   opacity: 0.2;
   transform: scale(1.1);
@@ -102,6 +113,7 @@
   transform: translateY(0);
 }
 
+/* Themed background color variations */
 .corporate-yellow {
   background-color: #ffcf00;
 }
@@ -111,6 +123,7 @@
   color: white;
 }
 
+/* Background images for different products */
 .corporate-events-img {
   background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/public/images/events.jpg');
   background-color: #111;
@@ -141,6 +154,7 @@
   background-color: #666;
 }
 
+/* Button style for "Cotizar" */
 .corporate-product-button {
   background-color: #ffffff;
   color: #cecb1fe5;
@@ -165,7 +179,7 @@
   color: #e74c3c;
 }
 
-/* Typography */
+/* Typography for content text */
 h2 {
   font-size: 1.5rem;
   margin-bottom: 1rem;

@@ -1,23 +1,23 @@
-import React from "react";
 import "../styles/Home.css";
-import Slider from "../Components/Slider";
-import PromoSlider from "../Components/PromoSlider";
+import Slider from "../components/Slider";
+import PromoSlider from "../components/PromoSlider";
 import { Link } from "react-router-dom";
 import { movies } from '../Components/DataMovie';
-function Home() {
+const Home = () => {
   return (
     <section className='home-wrapper'>
+      {/* Slider section at the top of the homepage */}
       <Slider />
       <div className="home-container">
-        {/* HISTORY */}
+        {/* Promotions Section */}
         <section className="home-promotions" style={{ padding: '2rem' }}>
-          <h2 className="home-title">NUESTRAS PROMOCIONES</h2>
+          <h2 className="home-title">OUR PROMOTIONS</h2>
           <PromoSlider />
         </section>
 
-        {/* NEW SECTION WITH CARDS */}
+        {/* Section with movie cards */}
         <section className="home-card-section">
-          <h2 className="home-subtitle">Películas en Cartelera</h2>
+          <h2 className="home-subtitle">Now Showing</h2>
           <div className="home-card-container">
 
 
@@ -41,6 +41,6 @@ function Home() {
       </div>
     </section>
   );
-}
+};
 
 export default Home;

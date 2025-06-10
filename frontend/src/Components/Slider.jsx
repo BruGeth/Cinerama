@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { FaTicketAlt } from 'react-icons/fa';
+import { useState, useEffect, useCallback } from "react";
+import { FaTicketAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
-import '../styles/Slider.css';
+import "../styles/Slider.css";
 
 const Slider = () => {
   const slides = [
@@ -42,11 +42,13 @@ const Slider = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!animating) nextSlide();
-    }, 3000);
+      if (!animating) {
+        nextSlide();
+      }
+    }, 3000); // every 3 seconds
 
-    return () => clearInterval(interval);
-  }, [animating, nextSlide]);
+    return () => clearInterval(interval); // cleaning
+  }, [animating, nextSlide]); // restarts if animating changes
 
   return (
     <div className="slider">
@@ -56,7 +58,7 @@ const Slider = () => {
         <img
           src={slides[current].image}
           alt={`Slide ${current + 1}`}
-          className={`slider-image ${animating ? 'fade-out' : 'fade-in'}`}
+          className={`slider-image ${animating ? "fade-out" : "fade-in"}`}
         />
         <div className="slider-overlay">
           <h1 className="slider-title"><span className="highlight">{slides[current].title}</span></h1>

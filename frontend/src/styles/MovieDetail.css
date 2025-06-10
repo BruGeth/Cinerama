@@ -1,4 +1,4 @@
-.movie-detail-container {
+.movie-detail-container {/* Defines the main layout with flexible positioning, spacing, and dark background */
   display: flex;
   gap: 40px;
   padding: 40px;
@@ -7,47 +7,47 @@
   flex-wrap: wrap;
 }
 
-.left-column {
+.left-column { /* Controls the left section's width and ensures a maximum size */
   flex: 1;
   max-width: 300px;
 }
 
-.movie-image {
+.movie-image { /* Styles the movie poster with full width, rounded corners, and spacing */
   width: 100%;
   border-radius: 10px;
   margin-bottom: 20px;
 }
 
-.sinopsis-title {
+.sinopsis-title { /* Defines the title for the synopsis with red color and adequate sizing */
   color: #e60000;
   font-size: 20px;
   margin-top: 10px;
 }
 
-.sinopsis-text {
+.sinopsis-text {/* Ensures the text is justified and readable with a balanced line height */
   line-height: 1.5;
   text-align: justify;
 }
 
-.right-column {
+.right-column { /* Sets the right section to take more space while maintaining a minimum width */
   flex: 2;
   min-width: 300px;
 }
 
-.movie-title {
+.movie-title { /* Styles the main movie title with large font and white text */
   font-size: 28px;
   margin-bottom: 10px;
   color: #fff;
 }
 
-.date-selector {
+.date-selector {/* Displays date options with flexible positioning and spacing */
   display: flex;
   gap: 10px;
   margin: 20px 0;
   flex-wrap: wrap;
 }
 
-.date-box {
+.date-box {/* Styles each date box with dark background, border, and centered text */
   background-color: #111;
   padding: 10px;
   border-radius: 5px;
@@ -56,22 +56,22 @@
   border: 1px solid #555;
 }
 
-.cinema-info {
+.cinema-info {/* Controls the cinema details section with subtle gray text */
   margin-top: 10px;
   font-size: 14px;
   color: #ccc;
 }
 
-.cinema-name {
+.cinema-name { /* Highlights the cinema name with bold red styling */
   color: #ff2222;
   font-weight: bold;
 }
 
-.showtimes {
+.showtimes { /* Adds spacing before the showtime buttons */
   margin-top: 20px;
 }
 
-.showtime-button {
+.showtime-button { /* Defines the showtime buttons with color, padding, rounded edges, and transitions */
   background-color: #fff;
   color: #000;
   margin-right: 10px;
@@ -84,7 +84,7 @@
   transition: 0.2s;
 }
 
-.showtime-button:hover {
+.showtime-button:hover { /* Applies a hover effect, changing the button background to red */
   background-color: #ff0000;
   color: white;
 }

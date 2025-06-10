@@ -1,19 +1,26 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
-  const { login } = useContext(AuthContext); // 👈 Using the login function from context
+  // Accessing the login function from the authentication context
+  const { login, isAdmin } = useContext(AuthContext); // 👈 Using the login function from context
+  // State to hold the email and password input values
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
   });
+  // State to manage the "Remember me" checkbox
   const [rememberMe, setRememberMe] = useState(false);
+   // State to display any login error messages
   const [error, setError] = useState("");
+  // State to indicate if login is in progress
   const [isLoading, setIsLoading] = useState(false);
+  // Hook for programmatic navigation after login
   const navigate = useNavigate();
 
+  // Handle input changes and update the credentials state
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({
@@ -22,6 +29,7 @@ const Login = () => {
     }));
   };
 
+  // Validate form inputs before submitting
   const validateForm = () => {
     if (!credentials.email) {
       setError("Email is required");
@@ -34,6 +42,7 @@ const Login = () => {
     return true;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -42,20 +51,33 @@ const Login = () => {
     setError("");
 
     try {
-      await login(credentials); // 👈 Login function updates context + user state
-      if (rememberMe) {
-        localStorage.setItem("userEmail", credentials.email);
-      } else {
-        localStorage.removeItem("userEmail");
-      }
-      navigate("/");
-    } catch (err) {
-      console.error("Login error:", err.message);
-      setError("Invalid credentials. Please try again.");
-    } finally {
-      setIsLoading(false);
+    // Attempt login using the provided credentials
+    console.log("Intentando login con:", credentials);
+    await login(credentials);
+    console.log("Login exitoso, isAdmin:", isAdmin());
+    // Store email in local storage if "Remember me" is checked
+    if (rememberMe) {
+      localStorage.setItem("userEmail", credentials.email);
+    } else {
+      localStorage.removeItem("userEmail");
     }
-  };
+    setTimeout(() => {
+      if (isAdmin()) {
+        console.log("Redirigiendo a dashboard");
+        navigate("/admin/dashboard");
+      } else {
+        console.log("Redirigiendo a home");
+        // Redirect to homepage after successful login
+        navigate("/");
+      }
+    }, 100);
+  } catch (err) {
+    console.error("Login error:", err.message);
+    setError("Invalid credentials. Please try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="login-container">

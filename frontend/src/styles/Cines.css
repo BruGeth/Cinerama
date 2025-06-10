@@ -5,27 +5,27 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.cine-page {
+.cine-page {/* Defines the main page container with padding and background color */
   background-color: #ffffff;
   padding: 40px 20px;
   text-align: center;
 }
 
-.page-title {
+.page-title {/* Styles the title with bold red color, font size, and spacing */
   color: #e60000;
   font-size: 3em;
   font-weight: bold;
   margin-bottom: 40px;
 }
 
-.cine-list {
+.cine-list {/* Creates a flex column layout, aligning items centrally with spacing */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 60px;
 }
 
-.cine-card {
+.cine-card {/* Styles individual cinema cards with rounded corners, shadow, and smooth transition effects */
   width: 95%;
   max-width: 1000px;
   border-radius: 32px;
@@ -37,11 +37,11 @@ body {
   padding: 0;
 }
 
-.cine-card:hover {
+.cine-card:hover {/* Adds a slight scaling effect on hover to enhance interaction */
   transform: scale(1.02);
 }
 
-.cine-card img {
+.cine-card img {/* Ensures the cinema image fills the container with fixed height and rounded top corners */
   width: 100%;
   height: 350px;
   object-fit: cover;
@@ -49,7 +49,7 @@ body {
   display: block;
 }
 
-.cine-info-box {
+.cine-info-box { /* Styles the information box with background color, padding, and shadow */
   background-color: #e04949;
   padding: 24px 28px;
   border-radius: 0 0 10px 10px;
@@ -58,23 +58,17 @@ body {
   margin: 0;
 }
 
-.cine-info-box h2 {
+.cine-info-box h2 {/* Defines the title inside the cinema card with uppercase, bold font */
   color: white;
   font-size: 2em;
   font-weight: bold;
   margin-bottom: 12px;
   text-transform: uppercase;
 }
-
+ /* Styles the paragraph with size, font-weight, and color */
 .cine-info-box p {
   color: #000000;
   font-size: 1.2em;
   font-weight: bold;
-  margin: 0;
-}
-.cine-info-box p {
-  color: #000000;
-  font-size: 1.5em;
-  font-weight: bold; /* cambiaste de 500 a bold */
   margin: 0;
 }
