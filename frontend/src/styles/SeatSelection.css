@@ -1,11 +1,11 @@
-.seat-selection-container {
+.seat-selection-container {/* Styles the main seat selection section with centered content and dark background */
   text-align: center;
   background-color: #000;
   color: white;
   padding: 40px;
 }
 
-.screen {
+.screen {/* Defines the appearance of the screen indicator with bold text and background styling */
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
@@ -16,7 +16,7 @@
   display: inline-block;
 }
 
-.seat-grid {
+.seat-grid {/* Arranges seat rows inside a flex container with padding and box shadow */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,12 +27,12 @@
   box-shadow: 0px 4px 8px rgba(255, 34, 34, 0.2);
 }
 
-.seat-row {
+.seat-row {/* Structures individual rows with spacing between seats */
   display: flex;
   gap: 5px;
 }
 
-.seat {
+.seat {/* Styles each seat with rounded edges, border, and interactive properties */
   width: 35px;
   height: 35px;
   border-radius: 8px;
@@ -47,17 +47,17 @@
   transition: transform 0.1s ease, background-color 0.3s ease;
 }
 
-.seat.selected {
+.seat.selected {/* Highlights the selected seat with a red background and enlarged effect */
   background-color: #ff2222;
   border-color: #fff;
   transform: scale(1.1);
 }
 
-.seat:hover {
+.seat:hover {/* Changes the seat color on hover for interactive feedback */
   background-color: #ff5500;
 }
 
-.confirm-button {
+.confirm-button {/* Defines the confirmation button with padding, rounded edges, and transition effects */
   margin-top: 15px;
   background-color: #ff2222;
   color: white;
@@ -70,11 +70,11 @@
   transition: background-color 0.3s ease, transform 0.1s ease;
 }
 
-.confirm-button:hover {
+.confirm-button:hover {/* Applies a hover effect to enhance interaction */
   background-color: #ff5500;
   transform: scale(1.05);
 }
-.button-container {
+.button-container {/* Arranges buttons in a flex row for consistent layout */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,7 +82,7 @@
   margin-top: 20px;
 }
 
-.cinema-screen {
+.cinema-screen {/* Styles the screen area with size, background color, and shadow */
   width: 80%;
   height: 60px;
   background-color: #444;
@@ -96,7 +96,7 @@
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.2);
 }
-.cinema-container {
+.cinema-container {/* Defines the cinema layout with structured padding and shadow effects */
   width: 90%;
   background-color: #222;
   border-radius: 10px;
@@ -108,36 +108,19 @@
   align-items: center;
 }
 
-.cinema-screen {
-  width: 80%;
-  height: 60px;
-  background-color: #444;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(255, 255, 255, 0.2);
-}
-
-/* Grid de asientos ahora ocupa el mismo ancho que la pantalla */
-.seat-grid {
+.seat-grid {/* Ensures proper alignment and spacing for seat grid */
   display: grid;
-  grid-template-columns: repeat(20, 1fr); /* Divide el espacio en 20 columnas */
-  gap: 10px; /* Aumenta la separación entre los asientos */
+  grid-template-columns: repeat(20, 1fr); 
+  gap: 10px; 
   padding: 20px;
-  width: 80%; /* Igual al ancho de la pantalla */
+  width: 80%; 
 }
 
-/* Cada fila se ajusta automáticamente */
 .seat-row {
-  display: contents; /* Evita que las filas agrupen los elementos */
+  display: contents; /* Uses 'contents' to properly structure seat elements */
 }
 
-/* Asientos con más separación */
-.seat {
+.seat {/* Enlarges seats slightly and applies transitions */
   width: 40px;
   height: 40px;
   border-radius: 8px;
@@ -163,26 +146,23 @@
 .seat:hover {
   background-color: #ff5500;
 }
-.empty-space {
+.empty-space {/* Makes certain seat gaps transparent */
   width: 40px;
   height: 40px;
   background-color: transparent;
 }
-.payment-button {
+.payment-button {/* Defines payment button with interactive styling */
   padding: 10px 20px;
   font-size: 16px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-
-.payment-button {
   background-color: #ff2222;
   color: white;
 }
 
-.payment-button:hover {
+
+.payment-button:hover {/* Changes color on hover for better feedback */
   background-color: #ff5500;
 }
