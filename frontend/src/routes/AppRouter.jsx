@@ -6,17 +6,18 @@ import About from "../pages/About";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
-import VerifyEmail from "../pages/VerifyEmail";
-import Confectionery from "../pages/Confectionery";
-import Cartelera from "../pages/Cartelera";
-import MovieDetail from "../pages/MovieDetail";
-import Corporate from "../pages/Corporate";
-import FestaRama from "../pages/FestaRama";
-import FestaRamaPackages from "../pages/FestaRamaPackages";
-import Profile from "../pages/Profile";
-import PrivateRoute from "../utils/PrivateRoute";
-import Cines from "../pages/Cines";
-import Promotions from "../pages/Promotions";
+import VerifyEmail from '../pages/VerifyEmail';
+import Confectionery from '../pages/Confectionery';
+import Cartelera from '../pages/Cartelera';
+import MovieDetail from '../pages/MovieDetail';
+import Corporate from '../pages/Corporate';
+import FestaRama from '../pages/FestaRama';
+import FestaRamaPackages from '../pages/FestaRamaPackages';
+import Profile from '../pages/Profile';
+import PrivateRoute from '../utils/PrivateRoute';
+import Cines from '../pages/Cines';
+import Promotions from '../pages/Promotions';
+import MoreInformation from "../Components/MoreInformation";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminRoute from "../utils/AdminRoute";
 
@@ -56,6 +57,7 @@ const AppRouter = () => {
                   />
                   <Route path="/cinemas" element={<Cines />} />
                   <Route path="/promotions" element={<Promotions />} />
+                  <Route path="/more-information/:id" element={<MoreInformation/>} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>

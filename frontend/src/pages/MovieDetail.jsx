@@ -1,4 +1,3 @@
-
 import { useParams } from 'react-router-dom'; // Hook to retrieve URL parameters
 import { movies } from '../components/movieData'; // Import movie data from external file
 import '../styles/MovieDetail.css'; // Import CSS styles for layout and design
@@ -15,10 +14,10 @@ const MovieDetail = () => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     return {
-      short: date.toLocaleDateString('es-PE', { 
-        weekday: 'short', 
-        day: '2-digit', 
-        month: 'short' 
+      short: date.toLocaleDateString('es-PE', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short'
       }), // Short formatted date for display
       full: date.toLocaleDateString('es-PE') // Full formatted date
     };
