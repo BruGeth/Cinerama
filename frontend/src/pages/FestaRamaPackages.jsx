@@ -22,12 +22,45 @@ const FestaRamaPackages = () => {
     setShowModal(true);
     
     // Trigger confetti effect when package is selected
+  const duration = 3 * 1000;
+  const animationEnd = Date.now() + duration;
+
+  const randomInRange = (min, max) => {
+    return Math.random() * (max - min) + min;
+  }
+
+  const interval = setInterval(function() {
+    const timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    const particleCount = 50 * (timeLeft / duration);
+    
+    // Fire from the left
     confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
+      particleCount,
+      startVelocity: 30,
+      spread: 80,
+      origin: {
+        x: randomInRange(0.1, 0.3),
+        y: Math.random() - 0.2
+      }
     });
-  };
+    
+    // Fire from the right
+    confetti({
+      particleCount,
+      startVelocity: 30,
+      spread: 80,
+      origin: {
+        x: randomInRange(0.7, 0.9),
+        y: Math.random() - 0.2
+      }
+    });
+  }, 250);
+};
 
   const closeModal = () => {
     setShowModal(false);
@@ -59,7 +92,7 @@ const FestaRamaPackages = () => {
             <ul className="package-features">
               <li><span className="check-icon">✓</span> Sala privada por 3 horas</li>
               <li><span className="check-icon">✓</span> Película a elección</li>
-              <li><span className="check-icon">✓</span> Palomitas y refrescos para 10 niños</li>
+              <li><span className="check-icon">✓</span> Palomitas y refrescos para 15 niños</li>
               <li><span className="check-icon">✓</span> Invitaciones digitales</li>
               <li><span className="check-icon">✓</span> Decoración básica</li>
             </ul>
@@ -77,7 +110,10 @@ const FestaRamaPackages = () => {
         {/* Paquete Premium */}
         <div className="package-card premium">
           <div className="package-header">
-            <div className="ribbon">Popular</div>
+            <div className="ribbon-popular">
+            <span className="ribbon-text">¡MÁS VENDIDO!</span>
+            <div className="ribbon-shine"></div>
+            </div>
             <h2>Paquete Premium</h2>
             <div className="price-tag">S/. 1000</div>
           </div>
@@ -85,7 +121,7 @@ const FestaRamaPackages = () => {
             <ul className="package-features">
               <li><span className="check-icon">✓</span> Sala privada por 4 horas</li>
               <li><span className="check-icon">✓</span> Película a elección</li>
-              <li><span className="check-icon">✓</span> Palomitas y refrescos para 15 niños</li>
+              <li><span className="check-icon">✓</span> Palomitas y refrescos para 30 niños</li>
               <li><span className="check-icon">✓</span> Pastel temático</li>
               <li><span className="check-icon">✓</span> Decoración temática completa</li>
               <li><span className="check-icon">✓</span> Animador por 2 horas</li>
@@ -112,7 +148,7 @@ const FestaRamaPackages = () => {
             <ul className="package-features">
               <li><span className="check-icon">✓</span> Sala VIP privada por 5 horas</li>
               <li><span className="check-icon">✓</span> Película a elección</li>
-              <li><span className="check-icon">✓</span> Menú completo para 20 niños</li>
+              <li><span className="check-icon">✓</span> Menú completo para 50 niños</li>
               <li><span className="check-icon">✓</span> Pastel temático personalizado</li>
               <li><span className="check-icon">✓</span> Decoración premium</li>
               <li><span className="check-icon">✓</span> 2 Animadores por 3 horas</li>
@@ -156,7 +192,7 @@ const FestaRamaPackages = () => {
 
       {/* Confirmation Modal */}
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modal-overlay-improved">
           <div className="modal-content">
             <span className="close-modal" onClick={closeModal}>&times;</span>
             <h2>¡Excelente elección!</h2>
@@ -170,26 +206,6 @@ const FestaRamaPackages = () => {
           </div>
         </div>
       )}
-
-      {/* Contact Section */}
-      <div className="contact-section">
-        <h2>¿Tienes dudas adicionales?</h2>
-        <p>Nuestro equipo está listo para ayudarte a crear la fiesta perfecta</p>
-        <div className="contact-methods">
-          <div className="contact-method">
-            <i className="contact-icon">📞</i>
-            <span>01-555-1234</span>
-          </div>
-          <div className="contact-method">
-            <i className="contact-icon">✉️</i>
-            <span>festarama@cinerama.com</span>
-          </div>
-          <div className="contact-method">
-            <i className="contact-icon">💬</i>
-            <span>Chat en vivo</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

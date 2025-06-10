@@ -84,6 +84,7 @@
   min-width: 300px;
   max-width: 350px;
   flex: 1;
+  overflow: visible;
 }
 
 .package-card:hover {
@@ -97,6 +98,7 @@
   color: white;
   text-align: center;
   position: relative;
+  overflow: visible;
 }
 
 .basic .package-header {
@@ -139,6 +141,62 @@
   transform: translateX(30%) translateY(-5%) rotate(45deg);
   transform-origin: top left;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.ribbon-popular {
+  position: absolute;
+  top: -15px;  
+  right: -15px; 
+  background: linear-gradient(45deg, #ff6b35, #f7931e, #ff6b35);
+  background-size: 200% 200%;
+  color: white;
+  padding: 8px 20px; 
+  font-size: 0.75rem; 
+  font-weight: 700;
+  transform: rotate(15deg);
+  box-shadow: 0 6px 15px rgba(255, 107, 53, 0.5);
+  border-radius: 20px; 
+  animation: ribbonPulse 2s ease-in-out infinite, gradientShift 3s ease-in-out infinite;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.3);
+  overflow: hidden;
+  z-index: 10; 
+}
+
+.ribbon-text {
+  position: relative;
+  z-index: 2;
+}
+
+.ribbon-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shine 2s ease-in-out infinite;
+}
+
+@keyframes ribbonPulse {
+  0%, 100% { 
+    transform: rotate(12deg) scale(1); 
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+  }
+  50% { 
+    transform: rotate(12deg) scale(1.05); 
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
 }
 
 /* Package Body */
