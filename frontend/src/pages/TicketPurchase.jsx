@@ -47,6 +47,14 @@ const TicketPurchase = () => {
         setShowSeatSelection(false);
         setShowTicketOptions(true);
     };
+    // Navigate to the payment confirmation page, passing the selected details in the URL parameters
+    const handleContinueToPayment = (selectedSeats) => {
+        if (!Array.isArray(selectedSeats)) {
+            console.error("Error: selectedSeats is not an array", selectedSeats);
+            return;
+        }
+        navigate(`/payment-confirmation?movie=${movie.title}&showtime=${showtime}&format=${format}&ticketsGeneral=${ticketCount.general}&ticketsChild=${ticketCount.niño}&seats=${selectedSeats.join(",")}`);
+    };
 
     return (
         <div className="purchase-container"> {/* Main container for ticket purchase */}
@@ -102,7 +110,7 @@ const TicketPurchase = () => {
                             </ul>
                             <h3>Total: S/{15 * (ticketCount.general || 0) + 10 * (ticketCount.niño || 0)}</h3>
                             <button className="confirm-button" onClick={handleContinueToSeats}>
-                                Continuar
+                                Continue to Seat Selection
                             </button>
                         </div>
                     )}
@@ -113,9 +121,9 @@ const TicketPurchase = () => {
             {showSeatSelection && (
                 <div className="seat-selection-container">
                     <SeatSelection
-                        onConfirmSeats={(seats) => console.log(seats)} // Capture selected seats
-                        ticketCount={ticketCount} // Pass selected ticket quantities
-                        onGoBack={handleGoBackToTickets} // Handle returning to ticket selection
+                        onProceedToPayment={(seats) => handleContinueToPayment(seats)}
+                        ticketCount={ticketCount}
+                        onGoBack={handleGoBackToTickets}
                     />
                 </div>
             )}

@@ -3,8 +3,8 @@ import "../styles/SeatSelection.css"; // Import CSS for styling
 
 const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
   // Define rows using uppercase letters and columns numbered from 1 to 20
-  const rows = "ABCDEFGHIJKLMNOPQ".split(""); 
-  const columns = Array.from({ length: 20 }, (_, i) => i + 1); 
+  const rows = "ABCDEFGHIJKLMNOPQ".split("");
+  const columns = Array.from({ length: 20 }, (_, i) => i + 1);
 
   const [selectedSeats, setSelectedSeats] = useState([]); // State to store selected seats
 
@@ -54,7 +54,7 @@ const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
             <div key={row} className="seat-row"> {/* Render each row */}
               {columns.map((col) => {
                 const seat = `${row}${col}`; // Generate seat identifier
-                return emptySeats.has(seat) ? ( 
+                return emptySeats.has(seat) ? (
                   <div key={seat} className="empty-space"></div> // Render empty spaces for unavailable seats
                 ) : (
                   <button
@@ -73,7 +73,7 @@ const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
       </div>
 
       <div className="button-container">
-        <button className="payment-button" onClick={onProceedToPayment}> {/* Proceed to payment button */}
+        <button className="payment-button" onClick={() => onProceedToPayment(selectedSeats)}>
           Continuar con pago
         </button>
       </div>

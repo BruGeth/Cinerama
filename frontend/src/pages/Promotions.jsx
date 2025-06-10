@@ -321,7 +321,7 @@ const Promotions = () => {
   // Get active promotions only
   const activePromotions = useMemo(() => {
     return getFilteredPromotions.filter((promo) => promo.statusInfo.status === "active")
-  }, [getFilteredPromotions]
+  }, [getFilteredPromotions])
 
   // Maps promotion icon types to corresponding FontAwesome CSS classes
   // Used to display appropriate icons for each promotion category

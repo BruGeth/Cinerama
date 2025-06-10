@@ -21,6 +21,7 @@ import TicketPurchase from '../pages/TicketPurchase';
 import MoreInformation from "../components/MoreInformation";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminRoute from "../utils/AdminRoute";
+import PaymentConfirmation from "../pages/PaymentConfirmation"
 
 const AppRouter = () => {
   return (
@@ -60,6 +61,7 @@ const AppRouter = () => {
                   <Route path="/cinemas" element={<Cines />} />
                   <Route path="/promotions" element={<Promotions />} />
                   <Route path="/more-information/:id" element={<MoreInformation/>} />
+                  <Route path="/payment-confirmation" element={<PaymentConfirmation />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
