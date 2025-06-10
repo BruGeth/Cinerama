@@ -1,6 +1,6 @@
 import "../styles/Home.css";
-import Slider from "../Components/Slider";
-import PromoSlider from "../Components/PromoSlider";
+import Slider from "../components/Slider";
+import PromoSlider from "../components/PromoSlider";
 import { Link } from "react-router-dom";
 import { movies } from '../components/DataMovie';
 const Home = () => {
