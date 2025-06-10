@@ -1,5 +1,5 @@
 import { useState } from 'react'; // Import React and useState for managing component state
-import { movies } from '../Components/DataMovie'; // Import movie data
+import { movies } from '../components/DataMovie'; // Import movie data
 import '../styles/MovieDetail.css'; // Import CSS for styling
 import { useParams, useNavigate } from 'react-router-dom'; // Import hooks for routing functionality
 

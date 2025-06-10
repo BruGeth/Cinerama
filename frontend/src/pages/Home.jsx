@@ -2,7 +2,7 @@ import "../styles/Home.css";
 import Slider from "../Components/Slider";
 import PromoSlider from "../Components/PromoSlider";
 import { Link } from "react-router-dom";
-import { movies } from '../Components/DataMovie';
+import { movies } from '../components/DataMovie';
 const Home = () => {
   return (
     <section className='home-wrapper'>
