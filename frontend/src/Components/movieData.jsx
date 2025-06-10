@@ -1,12 +1,13 @@
+// Array containing movie details, including metadata and showtimes per format.
 export const MOVIES = [
   {
-    id: 1,
+    id: 1,// Unique identifier for the movie
     title: 'Thunderbolts',
     description: 'Un mundo sin Vengadores no significa que no haya un grupo de superhéroes. Hay un grupo y se llaman Thunderbolts.',
     image: 'https://www.cinerama.com.pe/_admin/assets/images/peliculas/thunderbolts-poster-66f184dbe403e.jpg',
     duration: 120,
     genre: 'Acción',
-    showtimes: {
+    showtimes: {// Available showtimes categorized by format
       "2D": ['13:30', '16:10', '18:50', '21:30'],
       "3D": ['14:00', '17:00', '20:00'],
       "XD": ['15:00', '18:30', '22:00']
