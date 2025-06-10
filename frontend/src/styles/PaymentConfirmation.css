@@ -1,0 +1,52 @@
+.payment-container {
+  background-color: #000;
+  color: white;
+  padding: 40px;
+  text-align: center;
+}
+
+.payment-title {
+  font-size: 28px;
+  color: #ff2222;
+  margin-bottom: 10px;
+}
+
+.payment-instruction {
+  font-size: 16px;
+  color: #ccc;
+}
+
+.payment-summary {
+  background-color: #111;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+  margin: 20px auto;
+  width: 80%;
+}
+
+.total-price {
+  font-size: 24px;
+  color: #ffcc00;
+  margin-top: 10px;
+}
+
+.payment-method {
+  margin-top: 20px;
+}
+
+.paypal-button {
+  background-color: #ff2222;
+  color: white;
+  padding: 12px 24px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.paypal-button:hover {
+  background-color: #ff5500;
+}
