@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import '../styles/PromoSlider.css'; 
 
 const PromoSlider = () => {
@@ -14,24 +14,13 @@ const PromoSlider = () => {
     const [animating, setAnimating] = useState(false);
     const [current, setCurrent] = useState(0);
 
-    
-    useEffect(() => {
-        const interval = setInterval(() => {
-          if (!animating) {
-            nextSlide();
-          }
-        }, 3000);
-      
-        return () => clearInterval(interval);
-      }, [animating]);
-
-    const nextSlide = () => {
+    const nextSlide = useCallback(() => {
         setAnimating(true);
         setTimeout(() => {
             setCurrent((prev) => (prev + 1) % slides.length);
             setAnimating(false);
         }, 300);
-    };
+    }, [slides.length]);
 
     const prevSlide = () => {
         setAnimating(true);
@@ -40,6 +29,15 @@ const PromoSlider = () => {
             setAnimating(false);
         }, 300);
     };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+          if (!animating) {
+            nextSlide();
+          }
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [animating, nextSlide]);
 
     return (
         <div className="slider promotions-slider">

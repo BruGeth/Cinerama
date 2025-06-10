@@ -1,5 +1,5 @@
 // Array of movie objects, each containing metadata like title, description, image, duration, genre, and showtimes.
-export const MOVIES = [
+export const movies = [
   {
     id: 1,// Unique identifier for the movie
     title: 'Thunderbolts',

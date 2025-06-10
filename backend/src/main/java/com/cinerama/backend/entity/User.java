@@ -150,6 +150,17 @@ public class User {
      */
     @NotBlank(message = "Password is mandatory")
     private String password;
+    
+    /**
+     * Role associated with the user.
+     *
+     * <p>Many-to-one relationship with the Role entity. Loads the role eagerly (EAGER fetch type).
+     * The "role_id" field in the database acts as a foreign key and cannot be null.</p>
+     */  
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
 
     /**
      * Account activation status for email verification control.
@@ -172,6 +183,7 @@ public class User {
      *   <li>Prevents unauthorized access to unverified accounts</li>
      * </ul>
      */
+
     @Column(nullable = false)
     private boolean enabled = false;
 

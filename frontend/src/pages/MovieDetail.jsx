@@ -1,11 +1,11 @@
-import React from 'react';
+
 import { useParams } from 'react-router-dom'; // Hook to retrieve URL parameters
-import { MOVIES } from '../Components/movieData'; // Import movie data from external file
+import { movies } from '../components/movieData'; // Import movie data from external file
 import '../styles/MovieDetail.css'; // Import CSS styles for layout and design
 
 const MovieDetail = () => {
   const { id } = useParams(); // Extract movie ID from URL parameters
-  const movie = MOVIES.find((m) => m.id === Number(id)); // Find movie by ID
+  const movie = movies.find((m) => m.id === Number(id)); // Find movie by ID
 
   // If movie is not found, display an error message
   if (!movie) return <h2 style={{ color: 'white' }}>Película no encontrada</h2>;

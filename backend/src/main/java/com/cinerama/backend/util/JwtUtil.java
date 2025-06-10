@@ -29,7 +29,9 @@ public class JwtUtil {
 
     private SecretKey secretKey;
 
-    private final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 hours
+    @Value("${jwt.expiration}")
+    private long expirationTime;
+
 
     /**
      * Initializes JWT signing key from application configuration.
@@ -45,6 +47,9 @@ public class JwtUtil {
             log.info("[JWT] Secret loaded successfully ✅");
             this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         }
+        if (expirationTime <= 0) {
+            log.error("[JWT] Expiration time must be positive ❌");
+        }
     }
 
     /**
@@ -53,11 +58,12 @@ public class JwtUtil {
      * @param email user's email address to embed as token subject
      * @return signed JWT token string valid for 10 hours
      */
-    public String generateToken(String email) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("roles", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -70,12 +76,35 @@ public class JwtUtil {
      * @throws JwtException if token is invalid, expired, or malformed
      */
     public String extractEmail(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            log.warn("Error extracting email from token: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public String extractRole(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            return claims.get("roles", String.class);
+        } catch (Exception e) {
+            log.warn("Error extracting role from token: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .getBody();
     }
 
     /**

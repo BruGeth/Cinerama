@@ -1,7 +1,6 @@
-import React from "react";
 import "../styles/Home.css";
-import Slider from "../Components/Slider";
-import PromoSlider from "../Components/PromoSlider";
+import Slider from "../components/Slider";
+import PromoSlider from "../components/PromoSlider";
 
 const Home = () => {
   return (
@@ -9,13 +8,13 @@ const Home = () => {
       {/* Slider section at the top of the homepage */}
       <Slider />
       <div className="home-container">
-        {/* PROMOTIONS SECTION */}
+        {/* Promotions Section */}
         <section className="home-promotions" style={{ padding: '2rem' }}>
           <h2 className="home-title">OUR PROMOTIONS</h2>
           <PromoSlider />
         </section>
 
-        {/* SECTION WITH MOVIE CARDS */}
+        {/* Section with movie cards */}
         <section className="home-card-section">
           <h2 className="home-subtitle">Now Showing</h2>
           <div className="home-card-container">

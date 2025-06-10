@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../styles/Promotions.css';
-import PromoSlider from '../Components/PromoSlider';
+import PromoSlider from '../components/PromoSlider';
 
 // Main component that displays all cinema promotions with filtering and modal functionality
 const Promotions = () => {
