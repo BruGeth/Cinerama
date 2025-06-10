@@ -1,6 +1,5 @@
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { movies } from '../Components/DataMovie';
+import { movies } from '../components/DataMovie';
 import { FaTicketAlt } from "react-icons/fa";
 import "../styles/MoreInformation.css";
 

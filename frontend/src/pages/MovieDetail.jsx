@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'; // Hook to retrieve URL parameters
-import { movies } from '../components/movieData'; // Import movie data from external file
+import { movies } from '../components/DataMovie'; // Import movie data from external file
 import '../styles/MovieDetail.css'; // Import CSS styles for layout and design
 
 const MovieDetail = () => {
