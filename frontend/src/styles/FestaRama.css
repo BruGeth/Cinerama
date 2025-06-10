@@ -1,14 +1,17 @@
+/* Container for the entire FestaRama page with fade-in animation */
 .festarama-container {
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
   animation: fadeIn 0.6s ease-in-out;
 }
 
+/* Fade-in effect applied when the fade-in class is active */
 .festarama-container.fade-in {
   opacity: 1;
   transition: opacity 0.6s ease-in-out;
 }
 
+/* Keyframes for fade-in animation (opacity + vertical translate) */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -20,7 +23,7 @@
   }
 }
 
-/* Banner FestaRama */
+/* FestaRama Banner styles: centered content, red background with white text */
 .festarama-banner {
   background-color: red;
   color: white;
@@ -59,7 +62,7 @@
   line-height: 1.4;
 }
 
-/* Volver Button */
+/* Back button: outlined style with hover color fill */
 .festarama-back-button {
   background: none;
   border: 2px solid #ff4d4f;
@@ -84,6 +87,7 @@
   margin: 0 auto;
 }
 
+/* Birthday card container with flex layout and shadow */
 .festarama-birthday-card {
   display: flex;
   flex-wrap: wrap;
@@ -112,6 +116,7 @@
   margin: 1.5rem 0;
 }
 
+/* Individual feature items with background, padding, and hover effect */
 .festarama-feature-item {
   font-size: 1rem;
   background-color: #fff;
@@ -127,6 +132,7 @@
   transform: translateX(5px);
 }
 
+/* Reserve button with red background and smooth hover color change */
 .festarama-reserve-button {
   margin-top: 1rem;
   background-color: #ff4d4f;

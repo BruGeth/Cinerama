@@ -661,6 +661,7 @@ button:disabled {
   animation: modalFadeIn 0.3s ease-out !important;
 }
 
+/* Animation for Modal Appearance */
 @keyframes modalFadeIn {
   from {
     opacity: 0;

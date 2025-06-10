@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo, useCallback } from "react"
 import "../styles/Promotions.css"
 
+
+// Main component that displays all cinema promotions with filtering and modal functionality
 const Promotions = () => {
   const [activeTab, setActiveTab] = useState("all")
   const [selectedPromotion, setSelectedPromotion] = useState(null)
@@ -89,6 +91,7 @@ const Promotions = () => {
         ],
       },
     ],
+    // Food combo promotions (family packs, date night specials)
     combos: [
       {
         id: 3,
@@ -153,6 +156,7 @@ const Promotions = () => {
         ],
       },
     ],
+    // Special gift promotions (birthday rewards, loyalty programs)
     gifts: [
       {
         id: 5,
@@ -187,6 +191,7 @@ const Promotions = () => {
         ],
       },
     ],
+    // Credit card partnership promotions
     cards: [
       {
         id: 6,
@@ -317,9 +322,10 @@ const Promotions = () => {
   // Get active promotions only
   const activePromotions = useMemo(() => {
     return getFilteredPromotions.filter((promo) => promo.statusInfo.status === "active")
-  }, [getFilteredPromotions])
+  }, [getFilteredPromotions]
 
-  // Get icon class based on promotion type
+  // Maps promotion icon types to corresponding FontAwesome CSS classes
+  // Used to display appropriate icons for each promotion category
   const getIconClass = (iconType) => {
     switch (iconType) {
       case "ticket":
@@ -335,10 +341,12 @@ const Promotions = () => {
     }
   }
 
+  // Function to open modal with detailed view of selected promotion
   const openPromotionDetails = (promotion) => {
     setSelectedPromotion(promotion)
   }
 
+  // Function to close the promotion details modal
   const closePromotionDetails = () => {
     setSelectedPromotion(null)
   }

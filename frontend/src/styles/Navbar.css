@@ -97,6 +97,26 @@
   background-color: #c50812;
 }
 
+.btn-dashboard {
+  background-color: #222;
+  color: #ffc107;
+  border: 2px solid #ffc107;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    color 0.3s,
+    border-color 0.3s;
+}
+
+.btn-dashboard:hover {
+  background-color: #ffc107;
+  color: #222;
+  border-color: #222;
+}
+
 .user-greeting {
   display: inline-block;
   max-width: 120px;
@@ -190,6 +210,7 @@
       opacity: 0;
       transform: translateY(-10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
