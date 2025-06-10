@@ -10,7 +10,7 @@ const MoreInformation = () => {
   const movie = movies.find((m) => m.id === parseInt(id));
 
   const handleBuyClick = () => {
-    navigate(`/cartelera/${movie.id}`);
+    navigate(`/billboard/${movie.id}`);
   };
 
   if (!movie) {

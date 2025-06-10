@@ -1,5 +1,5 @@
 import { useState } from 'react'; // Import React and useState for managing component state
-import { movies } from '../components/movieData'; // Import movie data
+import { movies } from '../Components/DataMovie'; // Import movie data
 import '../styles/MovieDetail.css'; // Import CSS for styling
 import { useParams, useNavigate } from 'react-router-dom'; // Import hooks for routing functionality
 
@@ -8,7 +8,7 @@ const MovieDetail = () => {
   const navigate = useNavigate(); // Hook for handling navigation
 
   // Find the movie matching the extracted ID
-  const movie = MOVIES.find((m) => m.id === Number(id));
+  const movie = movies.find((m) => m.id === Number(id));
 
   // Handles navigation to the purchase page when selecting a showtime
   const handleSelectShowtime = (format, time) => {
@@ -37,7 +37,7 @@ const MovieDetail = () => {
       <div className="left-column"> {/* Left section for movie poster and synopsis */}
         <img src={movie.image} alt={movie.title} className="movie-image" /> {/* Display movie poster */}
         <h3 className="sinopsis-title">Sinopsis</h3>
-        <p className="sinopsis-text">{movie.description}</p> {/* Display movie description */}
+        <p className="sinopsis-text">{movie.description_movie}</p> {/* Display movie description */}
       </div>
 
       <div className="right-column"> {/* Right section containing movie information and showtimes */}

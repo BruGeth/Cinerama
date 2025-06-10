@@ -31,6 +31,8 @@
   flex-direction: column;
   align-items: center;
   min-height: 500px;
+  justify-content: space-between;
+  align-items: center;
 }
 
 
@@ -69,7 +71,11 @@
   align-items: center;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-top: auto; 
+  margin-top: auto;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  max-width: 180px; 
 }
 
 

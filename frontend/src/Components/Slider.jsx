@@ -37,7 +37,7 @@ const Slider = () => {
 
   const handleBuyClick = () => {
     const movieId = slides[current].id;
-    navigate(`/cartelera/${movieId}`);
+    navigate(`/billboard/${movieId}`);
   };
 
   useEffect(() => {
