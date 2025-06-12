@@ -2,10 +2,16 @@ package com.cinerama.backend.controller;
 
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.repository.UserRepository;
+import com.cinerama.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.ByteArrayInputStream;
+import java.util.List;
 
 /**
  * REST controller for handling user-related operations.
@@ -32,8 +38,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserRepository userRepository;
+    private final UserService userService;
 
     /**
      * Retrieves the profile information of the currently authenticated user.
@@ -99,5 +105,56 @@ public class UserController {
         // Return complete user profile
         // TODO: Create UserProfileResponse DTO to exclude password and other sensitive fields
         return ResponseEntity.ok(user);
+    }
+
+    /**
+     * Retrieves a list of all users in the system.
+     *
+     * <p>This endpoint is restricted to users with the ADMIN role.</p>
+     *
+     * @return ResponseEntity containing a list of all User entities
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return ResponseEntity.ok(users);
+    }
+
+    /**
+     * Retrieves a list of all users in the system as Users.
+     *
+     * <p>This endpoint is restricted to users with the ADMIN role.</p>
+     *
+     * @return ResponseEntity containing a list of Users
+     */
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/export")
+    public ResponseEntity<InputStreamResource> exportUsersToExcel() {
+        ByteArrayInputStream excelStream = userService.exportUsersToExcel();
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=usuarios.xlsx")
+                .body(new InputStreamResource(excelStream));
+    }
+
+    /**
+     * Registers a new user in the system.
+     *
+     * <p>This endpoint is restricted to users with the ADMIN role.</p>
+     *
+     * @param user The User entity containing registration details
+     * @return ResponseEntity indicating success or failure of registration
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("Email is already in use.");
+        }
+
+        userRepository.save(user);
+
+        return ResponseEntity.ok("User registered successfully.");
     }
 }
