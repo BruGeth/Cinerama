@@ -6,7 +6,6 @@ import com.cinerama.backend.dto.ShowtimeResponse;
 import com.cinerama.backend.repository.ShowtimeRepository;
 import com.cinerama.backend.service.ShowtimeService;
 import com.cinerama.backend.repository.MovieRepository;
-import com.cinerama.backend.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
