@@ -1,5 +1,7 @@
 package com.cinerama.backend.controller;
 
+import com.cinerama.backend.dto.ShowtimeRequest;
+import com.cinerama.backend.dto.ShowtimeResponse;
 import com.cinerama.backend.entity.Showtime;
 import com.cinerama.backend.service.ShowtimeService;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +18,12 @@ public class ShowtimeController {
     private final ShowtimeService showtimeService;
 
     @GetMapping
-    public List<Showtime> getAllShowtimes() {
+    public List<ShowtimeResponse> getAllShowtimes() {
         return showtimeService.getAllShowtimes();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Showtime> getShowtimeById(@PathVariable Long id) {
+    public ResponseEntity<ShowtimeResponse> getShowtimeById(@PathVariable Long id) {
         return showtimeService.getShowtimeById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -29,8 +31,8 @@ public class ShowtimeController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public Showtime createShowtime(@RequestBody Showtime showtime) {
-        return showtimeService.saveShowtime(showtime);
+    public ShowtimeResponse createShowtime(@RequestBody ShowtimeRequest showtimeRequest) {
+        return showtimeService.saveShowtime(showtimeRequest);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
