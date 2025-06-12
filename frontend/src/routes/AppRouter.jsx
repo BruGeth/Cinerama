@@ -24,6 +24,7 @@ import TicketPurchase from '../pages/TicketPurchase';
 import MoreInformation from "../components/MoreInformation";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminRoute from "../utils/AdminRoute";
+import MoviesManagement from "../pages/admin/MoviesManagement";
 
 const AppRouter = () => {
   return (
@@ -78,6 +79,14 @@ const AppRouter = () => {
           element={
             <AdminRoute>
               <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/movies"
+          element={
+            <AdminRoute>
+              <MoviesManagement />
             </AdminRoute>
           }
         />

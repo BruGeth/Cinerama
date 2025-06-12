@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import AdminLayout from "../../layouts/AdminLayout"
 import "../../styles/AdminDashboard.css"
+import { fetchMovies } from "../../services/movieService";
 
 function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -15,16 +16,32 @@ function AdminDashboard() {
   const [recentActivity, setRecentActivity] = useState([])
 
   useEffect(() => {
-    // Simulate API call for dashboard data
-    setTimeout(() => {
-      setStats({
-        totalMovies: 24,
-        totalCinemas: 8,
-        totalUsers: 1250,
-        todayRevenue: 15420,
-        todayTickets: 342,
-        occupancyRate: 78,
-      })
+  // Fetch movies from API and update stats
+  const loadStats = async () => {
+    try {
+      const movies = await fetchMovies();
+      setStats((prev) => ({
+        ...prev,
+        totalMovies: movies.length,
+        // Here you can add more logic to fetch other stats from your API
+      }));
+    } catch (err) {
+      // Manage error fetching movies
+    }
+  };
+
+  loadStats();
+
+  // Simulate fetching stats and recent activity
+  setTimeout(() => {
+    setStats((prev) => ({
+      ...prev,
+      totalCinemas: 8,
+      totalUsers: 1250,
+      todayRevenue: 15420,
+      todayTickets: 342,
+      occupancyRate: 78,
+    }));
 
       setRecentActivity([
         { id: 1, action: "Nueva película agregada", item: "Deadpool 3", time: "2 horas ago" },
