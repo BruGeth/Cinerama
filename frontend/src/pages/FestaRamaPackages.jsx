@@ -1,19 +1,19 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
-import { movies } from "../components/DataMovie"
-import "../styles/FestaRamaPackages.css"
-import confetti from "canvas-confetti"
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMovies } from "../hooks/useMovies"; // Use custom hook to fetch movies from API
+import "../styles/FestaRamaPackages.css";
+import confetti from "canvas-confetti";
 
 const FestaRamaPackages = () => {
-  const navigate = useNavigate()
-  const [fadeIn, setFadeIn] = useState(false)
-  const [selectedPackage, setSelectedPackage] = useState(null)
-  const [selectedCinema, setSelectedCinema] = useState("")
-  const [selectedMovie, setSelectedMovie] = useState("")
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [fadeIn, setFadeIn] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedCinema, setSelectedCinema] = useState("");
+  const [selectedMovie, setSelectedMovie] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     package: "",
     cinema: "",
@@ -28,7 +28,10 @@ const FestaRamaPackages = () => {
     childName: "",
     childAge: "",
     message: "",
-  })
+  });
+
+  // Fetch movies from API using custom hook
+  const { movies, loading: moviesLoading } = useMovies();
 
   // Packages data
   const packages = [
@@ -80,7 +83,7 @@ const FestaRamaPackages = () => {
       maxKids: 50,
       gradient: "linear-gradient(135deg, #ffc107, #cc9a06)",
     },
-  ]
+  ];
 
   // Cinema options
   const cinemaOptions = useMemo(
@@ -88,26 +91,30 @@ const FestaRamaPackages = () => {
       {
         id: "cinema-miraflores",
         name: "Cinerama Miraflores",
-        description: "Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium",
+        description:
+          "Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium",
         capacity: "180 personas",
         features: ["4K Projection", "2D", "3D", "XD", "IMAX"],
-        image: "https://www.cinerama.com.pe/_admin/assets/images/cines/pacifico.jpg",
+        image:
+          "https://www.cinerama.com.pe/_admin/assets/images/cines/pacifico.jpg",
         gradient: "linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)",
         location: "Miraflores",
       },
       {
         id: "cinema-minka",
         name: "Cinerama Minka",
-        description: "Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada",
+        description:
+          "Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada",
         capacity: "220 personas",
         features: ["HD Projection", "3D", "XD", "IMAX"],
-        image: "https://www.cinerama.com.pe/_admin/assets/images/cines/minka.jpg",
+        image:
+          "https://www.cinerama.com.pe/_admin/assets/images/cines/minka.jpg",
         gradient: "linear-gradient(135deg, #ef4444 0%, #fcd34d 100%)",
         location: "Callao",
       },
     ],
-    [],
-  )
+    []
+  );
 
   // Helper function to assign gradients based on genre
   const getMovieGradient = useCallback((genre) => {
@@ -120,63 +127,55 @@ const FestaRamaPackages = () => {
       Suspenso: "linear-gradient(135deg, #581c87 0%, #7c3aed 100%)",
       Infantil: "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)",
       Familiar: "linear-gradient(135deg, #10b981 0%, #3b82f6 100%)",
-    }
-    return gradients[genre] || "linear-gradient(135deg, #6b7280 0%, #9ca3af 100%)"
-  }, [])
+    };
+    return (
+      gradients[genre] || "linear-gradient(135deg, #6b7280 0%, #9ca3af 100%)"
+    );
+  }, []);
 
-  // Filter and transform movies from movieData.jsx - Only the 3 specific movies
+  // Filter and transform movies from API - Only the 3 specific movies
   const movieOptions = useMemo(() => {
     try {
-      // Validate MOVIES data exists
       if (!movies || !Array.isArray(movies)) {
-        throw new Error("No se pudieron cargar los datos de películas")
+        throw new Error("No se pudieron cargar los datos de películas");
       }
-
-      // Filter only the 3 specific movies requested (same as SpecialFunctions)
+      // Filter only the 3 specific movies requested
       const targetMovies = [
         "Destino Final: Lazos de Sangre",
         "Star Wars: Episodio III - La venganza de los Sith",
         "Thunderbolts",
-      ]
-
-      const filteredMovies = movies.filter((movie) => {
-        if (!movie || !movie.title) return false
-        return targetMovies.includes(movie.title)
-      })
-        .map((movie) => {
-          try {
-            return {
-              id: movie.id ? movie.id.toString() : Math.random().toString(),
-              title: movie.title || "Título no disponible",
-              description: movie.description || "Descripción no disponible",
-              image: movie.image || "/placeholder.svg?height=400&width=300",
-              genre: movie.genre || "Sin género",
-              duration: `${movie.duration || 120} min`,
-              rating: "PG-13", // Default rating since it's not in original data
-              availableCinemas: ["cinema-miraflores", "cinema-minka"], // Available in both cinemas
-              gradient: getMovieGradient(movie.genre || "Drama"),
-              showtimes: movie.showtimes || [],
-              originalData: movie, // Keep reference to original data
-            }
-          } catch (err) {
-            console.error("Error processing movie:", movie, err)
-            return null
-          }
+      ];
+      const filteredMovies = movies
+        .filter((movie) => {
+          if (!movie || !movie.title) return false;
+          return targetMovies.includes(movie.title);
         })
-        .filter(Boolean) // Remove null entries
+        .map((movie) => ({
+          id: movie.id ? movie.id.toString() : Math.random().toString(),
+          title: movie.title || "Título no disponible",
+          description: movie.descriptionMovie || "Descripción no disponible",
+          image: movie.imageUrl || "/placeholder.svg?height=400&width=300",
+          genre: movie.genreName || "Sin género",
+          duration: `${movie.duration || 120} min`,
+          rating: movie.rating || "PG-13",
+          availableCinemas: ["cinema-miraflores", "cinema-minka"],
+          gradient: getMovieGradient(movie.genreName || "Drama"),
+          showtimes: movie.showtimes || [],
+          originalData: movie,
+        }))
+        .filter(Boolean);
 
       if (filteredMovies.length === 0) {
-        throw new Error("No se encontraron las películas especificadas en la cartelera")
+        throw new Error(
+          "No se encontraron las películas especificadas en la cartelera"
+        );
       }
-
-      console.log(`Películas cargadas exitosamente: ${filteredMovies.length} de ${targetMovies.length}`)
-      return filteredMovies
+      return filteredMovies;
     } catch (err) {
-      console.error("Error processing movies:", err)
-      setError(`Error al cargar las películas: ${err.message}`)
-      return []
+      setError(`Error al cargar las películas: ${err.message}`);
+      return [];
     }
-  }, [getMovieGradient])
+  }, [movies, getMovieGradient]);
 
   const steps = [
     { number: 1, title: "Paquete", active: currentStep >= 1 },
@@ -184,95 +183,98 @@ const FestaRamaPackages = () => {
     { number: 3, title: "Película", active: currentStep >= 3 },
     { number: 4, title: "Contacto", active: currentStep >= 4 },
     { number: 5, title: "Resumen", active: currentStep >= 5 },
-  ]
+  ];
 
   // Get available movies based on selected cinema
   const availableMovies = useMemo(() => {
     try {
-      if (!selectedCinema) return movieOptions
+      if (!selectedCinema) return movieOptions;
       return movieOptions.filter((movie) => {
-        return movie.availableCinemas && movie.availableCinemas.includes(selectedCinema)
-      })
+        return (
+          movie.availableCinemas &&
+          movie.availableCinemas.includes(selectedCinema)
+        );
+      });
     } catch (err) {
-      console.error("Error filtering movies:", err)
-      return movieOptions
+      console.error("Error filtering movies:", err);
+      return movieOptions;
     }
-  }, [selectedCinema, movieOptions])
+  }, [selectedCinema, movieOptions]);
 
   // Email validation helper
   const isValidEmail = useCallback((email) => {
     try {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(email)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
     } catch (err) {
-      console.error("Error validating email:", err)
-      return false
+      console.error("Error validating email:", err);
+      return false;
     }
-  }, [])
+  }, []);
 
   // Phone validation helper
   const isValidPhone = useCallback((phone) => {
     try {
-      const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/
-      return phoneRegex.test(phone)
+      const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/;
+      return phoneRegex.test(phone);
     } catch (err) {
-      console.error("Error validating phone:", err)
-      return false
+      console.error("Error validating phone:", err);
+      return false;
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setTimeout(() => setFadeIn(true), 100)
-  }, [])
+    setTimeout(() => setFadeIn(true), 100);
+  }, []);
 
   const handleBack = useCallback(() => {
     try {
-      if (isAnimating) return
+      if (isAnimating) return;
 
-      setIsAnimating(true)
-      setError(null)
+      setIsAnimating(true);
+      setError(null);
 
       if (currentStep > 1) {
         setTimeout(() => {
-          setCurrentStep((prev) => prev - 1)
-          setIsAnimating(false)
-        }, 300)
+          setCurrentStep((prev) => prev - 1);
+          setIsAnimating(false);
+        }, 300);
       } else {
-        navigate("/festarama")
+        navigate("/festarama");
       }
     } catch (err) {
-      console.error("Error navigating back:", err)
-      setError(`Error al regresar: ${err.message}`)
-      setIsAnimating(false)
+      console.error("Error navigating back:", err);
+      setError(`Error al regresar: ${err.message}`);
+      setIsAnimating(false);
     }
-  }, [isAnimating, currentStep, navigate])
+  }, [isAnimating, currentStep, navigate]);
 
   const handlePackageSelect = useCallback(
     (packageData) => {
       try {
-        if (isAnimating) return
+        if (isAnimating) return;
 
-        setIsAnimating(true)
-        setError(null)
-        setSelectedPackage(packageData)
-        setFormData((prev) => ({ ...prev, package: packageData.id }))
+        setIsAnimating(true);
+        setError(null);
+        setSelectedPackage(packageData);
+        setFormData((prev) => ({ ...prev, package: packageData.id }));
 
         // Trigger confetti effect
-        const duration = 3 * 1000
-        const animationEnd = Date.now() + duration
+        const duration = 3 * 1000;
+        const animationEnd = Date.now() + duration;
 
         const randomInRange = (min, max) => {
-          return Math.random() * (max - min) + min
-        }
+          return Math.random() * (max - min) + min;
+        };
 
         const interval = setInterval(() => {
-          const timeLeft = animationEnd - Date.now()
+          const timeLeft = animationEnd - Date.now();
 
           if (timeLeft <= 0) {
-            return clearInterval(interval)
+            return clearInterval(interval);
           }
 
-          const particleCount = 50 * (timeLeft / duration)
+          const particleCount = 50 * (timeLeft / duration);
 
           // Fire from the left
           if (typeof confetti !== "undefined") {
@@ -284,7 +286,7 @@ const FestaRamaPackages = () => {
                 x: randomInRange(0.1, 0.3),
                 y: Math.random() - 0.2,
               },
-            })
+            });
 
             // Fire from the right
             confetti({
@@ -295,87 +297,87 @@ const FestaRamaPackages = () => {
                 x: randomInRange(0.7, 0.9),
                 y: Math.random() - 0.2,
               },
-            })
+            });
           }
-        }, 250)
+        }, 250);
 
         setTimeout(() => {
-          setCurrentStep(2)
-          setIsAnimating(false)
-        }, 1000)
+          setCurrentStep(2);
+          setIsAnimating(false);
+        }, 1000);
       } catch (err) {
-        console.error("Error selecting package:", err)
-        setError(`Error al seleccionar el paquete: ${err.message}`)
-        setIsAnimating(false)
+        console.error("Error selecting package:", err);
+        setError(`Error al seleccionar el paquete: ${err.message}`);
+        setIsAnimating(false);
       }
     },
-    [isAnimating],
-  )
+    [isAnimating]
+  );
 
   const handleCinemaSelect = useCallback(
     (cinemaId) => {
       try {
-        if (isAnimating) return
+        if (isAnimating) return;
 
-        const cinema = cinemaOptions.find((c) => c.id === cinemaId)
+        const cinema = cinemaOptions.find((c) => c.id === cinemaId);
         if (!cinema) {
-          throw new Error("Cine no válido seleccionado")
+          throw new Error("Cine no válido seleccionado");
         }
 
-        setIsAnimating(true)
-        setError(null)
-        setSelectedCinema(cinemaId)
-        setSelectedMovie("")
-        setFormData((prev) => ({ ...prev, cinema: cinemaId, movie: "" }))
+        setIsAnimating(true);
+        setError(null);
+        setSelectedCinema(cinemaId);
+        setSelectedMovie("");
+        setFormData((prev) => ({ ...prev, cinema: cinemaId, movie: "" }));
 
-        setTimeout(() => setIsAnimating(false), 300)
+        setTimeout(() => setIsAnimating(false), 300);
       } catch (err) {
-        console.error("Error selecting cinema:", err)
-        setError(`Error al seleccionar el cine: ${err.message}`)
-        setIsAnimating(false)
+        console.error("Error selecting cinema:", err);
+        setError(`Error al seleccionar el cine: ${err.message}`);
+        setIsAnimating(false);
       }
     },
-    [isAnimating, cinemaOptions],
-  )
+    [isAnimating, cinemaOptions]
+  );
 
   const handleMovieSelect = useCallback(
     (movieId) => {
       try {
-        const movie = movieOptions.find((m) => m.id === movieId)
+        const movie = movieOptions.find((m) => m.id === movieId);
         if (!movie) {
-          throw new Error("Película no válida seleccionada")
+          throw new Error("Película no válida seleccionada");
         }
 
-        setError(null)
-        setSelectedMovie(movieId)
-        setFormData((prev) => ({ ...prev, movie: movieId }))
+        setError(null);
+        setSelectedMovie(movieId);
+        setFormData((prev) => ({ ...prev, movie: movieId }));
       } catch (err) {
-        console.error("Error selecting movie:", err)
-        setError(`Error al seleccionar la película: ${err.message}`)
+        console.error("Error selecting movie:", err);
+        setError(`Error al seleccionar la película: ${err.message}`);
       }
     },
-    [movieOptions],
-  )
+    [movieOptions]
+  );
 
   const handleInputChange = useCallback(
     (field, value) => {
       try {
-        setError(null)
+        setError(null);
 
         if (!field || typeof field !== "string") {
-          throw new Error("Campo inválido")
+          throw new Error("Campo inválido");
         }
 
         // Real-time validation for specific fields
         if (field === "parentEmail" && value) {
           if (!isValidEmail(value)) {
-            setError("Por favor ingresa un email válido")
+            setError("Por favor ingresa un email válido");
           }
         }
 
         if (field === "parentPhone" && value) {
           if (!isValidPhone(value)) {
-            setError("Por favor ingresa un teléfono válido (mínimo 9 dígitos)")
+            setError("Por favor ingresa un teléfono válido (mínimo 9 dígitos)");
           }
         }
 
@@ -385,86 +387,88 @@ const FestaRamaPackages = () => {
           childName: 100,
           specialRequests: 500,
           message: 500,
-        }
+        };
 
         if (characterLimits[field] && value.length > characterLimits[field]) {
-          setError(`El campo no puede exceder ${characterLimits[field]} caracteres`)
-          return
+          setError(
+            `El campo no puede exceder ${characterLimits[field]} caracteres`
+          );
+          return;
         }
 
-        setFormData((prev) => ({ ...prev, [field]: value }))
+        setFormData((prev) => ({ ...prev, [field]: value }));
       } catch (err) {
-        console.error("Error updating form data:", err)
-        setError(`Error al actualizar la información: ${err.message}`)
+        console.error("Error updating form data:", err);
+        setError(`Error al actualizar la información: ${err.message}`);
       }
     },
-    [isValidEmail, isValidPhone],
-  )
+    [isValidEmail, isValidPhone]
+  );
 
   const handleContinue = useCallback(() => {
     try {
-      if (isAnimating || loading) return
+      if (isAnimating || loading) return;
 
-      setError(null)
+      setError(null);
 
-      let canContinue = false
-      let errorMessage = ""
+      let canContinue = false;
+      let errorMessage = "";
 
       switch (currentStep) {
         case 1:
-          canContinue = !!selectedPackage
-          errorMessage = "Por favor selecciona un paquete"
-          break
+          canContinue = !!selectedPackage;
+          errorMessage = "Por favor selecciona un paquete";
+          break;
         case 2:
-          canContinue = !!selectedCinema
-          errorMessage = "Por favor selecciona un cine"
-          break
+          canContinue = !!selectedCinema;
+          errorMessage = "Por favor selecciona un cine";
+          break;
         case 3:
-          canContinue = !!selectedMovie
-          errorMessage = "Por favor selecciona una película"
-          break
+          canContinue = !!selectedMovie;
+          errorMessage = "Por favor selecciona una película";
+          break;
         case 4:
           const hasRequiredFields = !!(
             formData.parentName &&
             formData.parentEmail &&
             formData.parentPhone &&
             formData.childName
-          )
-          const hasValidEmail = isValidEmail(formData.parentEmail)
-          const hasValidPhone = isValidPhone(formData.parentPhone)
+          );
+          const hasValidEmail = isValidEmail(formData.parentEmail);
+          const hasValidPhone = isValidPhone(formData.parentPhone);
 
-          canContinue = hasRequiredFields && hasValidEmail && hasValidPhone
+          canContinue = hasRequiredFields && hasValidEmail && hasValidPhone;
 
           if (!hasRequiredFields) {
-            errorMessage = "Por favor completa todos los campos requeridos"
+            errorMessage = "Por favor completa todos los campos requeridos";
           } else if (!hasValidEmail) {
-            errorMessage = "Por favor ingresa un email válido"
+            errorMessage = "Por favor ingresa un email válido";
           } else if (!hasValidPhone) {
-            errorMessage = "Por favor ingresa un teléfono válido"
+            errorMessage = "Por favor ingresa un teléfono válido";
           }
-          break
+          break;
         case 5:
-          canContinue = true
-          break
+          canContinue = true;
+          break;
         default:
-          canContinue = false
-          errorMessage = "Paso inválido"
+          canContinue = false;
+          errorMessage = "Paso inválido";
       }
 
       if (!canContinue) {
-        setError(errorMessage)
-        return
+        setError(errorMessage);
+        return;
       }
 
-      setIsAnimating(true)
+      setIsAnimating(true);
       setTimeout(() => {
-        setCurrentStep((prev) => Math.min(prev + 1, 5))
-        setIsAnimating(false)
-      }, 300)
+        setCurrentStep((prev) => Math.min(prev + 1, 5));
+        setIsAnimating(false);
+      }, 300);
     } catch (err) {
-      console.error("Error continuing to next step:", err)
-      setError(`Error al continuar: ${err.message}`)
-      setIsAnimating(false)
+      console.error("Error continuing to next step:", err);
+      setError(`Error al continuar: ${err.message}`);
+      setIsAnimating(false);
     }
   }, [
     selectedPackage,
@@ -476,37 +480,48 @@ const FestaRamaPackages = () => {
     loading,
     isValidEmail,
     isValidPhone,
-  ])
+  ]);
 
   const handleSubmit = useCallback(async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
-      const requiredFields = ["parentName", "parentEmail", "parentPhone", "childName"]
-      const missingFields = requiredFields.filter((field) => !formData[field])
+      const requiredFields = [
+        "parentName",
+        "parentEmail",
+        "parentPhone",
+        "childName",
+      ];
+      const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
-        throw new Error(`Campos requeridos faltantes: ${missingFields.join(", ")}`)
+        throw new Error(
+          `Campos requeridos faltantes: ${missingFields.join(", ")}`
+        );
       }
 
       if (!isValidEmail(formData.parentEmail)) {
-        throw new Error("Email inválido")
+        throw new Error("Email inválido");
       }
 
       if (!isValidPhone(formData.parentPhone)) {
-        throw new Error("Teléfono inválido")
+        throw new Error("Teléfono inválido");
       }
 
       if (!selectedMovie || !selectedCinema || !selectedPackage) {
-        throw new Error("Selección incompleta")
+        throw new Error("Selección incompleta");
       }
 
-      const selectedMovieData = movieOptions.find((m) => m.id === selectedMovie)
-      const selectedCinemaData = cinemaOptions.find((c) => c.id === selectedCinema)
+      const selectedMovieData = movieOptions.find(
+        (m) => m.id === selectedMovie
+      );
+      const selectedCinemaData = cinemaOptions.find(
+        (c) => c.id === selectedCinema
+      );
 
       if (!selectedMovieData || !selectedCinemaData) {
-        throw new Error("Error al obtener detalles de la selección")
+        throw new Error("Error al obtener detalles de la selección");
       }
 
       const submissionData = {
@@ -516,28 +531,35 @@ const FestaRamaPackages = () => {
         cinemaDetails: selectedCinemaData,
         timestamp: new Date().toISOString(),
         sessionId: Math.random().toString(36).substr(2, 9),
-      }
+      };
 
-      console.log("Submitting FestaRama booking:", submissionData)
+      console.log("Submitting FestaRama booking:", submissionData);
 
       // Simulate API call
       await new Promise((resolve, reject) => {
         setTimeout(() => {
           if (Math.random() > 0.05) {
-            resolve()
+            resolve();
           } else {
-            reject(new Error("Error del servidor. Por favor intenta nuevamente."))
+            reject(
+              new Error("Error del servidor. Por favor intenta nuevamente.")
+            );
           }
-        }, 1000)
-      })
+        }, 1000);
+      });
 
-      alert("¡Reserva de FestaRama enviada correctamente! Te contactaremos pronto para confirmar los detalles.")
-      navigate("/festarama")
+      alert(
+        "¡Reserva de FestaRama enviada correctamente! Te contactaremos pronto para confirmar los detalles."
+      );
+      navigate("/festarama");
     } catch (err) {
-      console.error("Error submitting form:", err)
-      setError(err.message || "Error al enviar la reserva. Por favor intenta nuevamente.")
+      console.error("Error submitting form:", err);
+      setError(
+        err.message ||
+          "Error al enviar la reserva. Por favor intenta nuevamente."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }, [
     formData,
@@ -549,30 +571,39 @@ const FestaRamaPackages = () => {
     navigate,
     isValidEmail,
     isValidPhone,
-  ])
+  ]);
 
   // Image error handling
   const handleImageError = useCallback((e, backgroundClass = "cinema-bg") => {
     try {
-      console.warn("Image failed to load:", e.target.src)
-      e.target.style.display = "none"
+      console.warn("Image failed to load:", e.target.src);
+      e.target.style.display = "none";
       if (e.target.parentElement) {
-        e.target.parentElement.classList.add(backgroundClass)
+        e.target.parentElement.classList.add(backgroundClass);
       }
     } catch (err) {
-      console.error("Error handling image error:", err)
+      console.error("Error handling image error:", err);
     }
-  }, [])
+  }, []);
 
   // Scroll to top on step change
   useEffect(() => {
     try {
-      window.scrollTo({ top: 0, behavior: "smooth" })
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      console.error("Error scrolling to top:", err)
-      window.scrollTo(0, 0)
+      console.error("Error scrolling to top:", err);
+      window.scrollTo(0, 0);
     }
-  }, [currentStep])
+  }, [currentStep]);
+
+  if (moviesLoading) {
+    return (
+      <div className="loading-overlay">
+        <div className="loading-spinner"></div>
+        <p>Loading movies...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`events-container ${fadeIn ? "fade-in" : ""}`}>
@@ -581,7 +612,10 @@ const FestaRamaPackages = () => {
         <div className="events-header-content">
           <div className="events-icon">🎉</div>
           <h1 className="events-title">FestaRama - Fiestas Infantiles</h1>
-          <p className="events-subtitle">Crea la fiesta perfecta para tu hijos con nuestros paquetes especiales</p>
+          <p className="events-subtitle">
+            Crea la fiesta perfecta para tu hijos con nuestros paquetes
+            especiales
+          </p>
         </div>
         <div className="events-header-overlay"></div>
       </div>
@@ -663,11 +697,17 @@ const FestaRamaPackages = () => {
           {steps.map((step, index) => (
             <div
               key={step.number}
-              className={`events-step ${step.active ? "active" : ""} ${currentStep === step.number ? "current" : ""}`}
+              className={`events-step ${step.active ? "active" : ""} ${
+                currentStep === step.number ? "current" : ""
+              }`}
             >
               <div className="events-step-number">{step.number}</div>
               <span className="events-step-title">{step.title}</span>
-              {index < steps.length - 1 && <div className={`events-step-line ${step.active ? "active" : ""}`}></div>}
+              {index < steps.length - 1 && (
+                <div
+                  className={`events-step-line ${step.active ? "active" : ""}`}
+                ></div>
+              )}
             </div>
           ))}
         </div>
@@ -680,14 +720,19 @@ const FestaRamaPackages = () => {
           <div className="events-selection-section">
             <div className="events-selection-header">
               <h2>Elige el paquete perfecto para la celebración</h2>
-              <p>Selecciona el paquete que mejor se adapte a tus necesidades y presupuesto</p>
+              <p>
+                Selecciona el paquete que mejor se adapte a tus necesidades y
+                presupuesto
+              </p>
             </div>
 
             <div className="events-grid">
               {packages.map((pkg) => (
                 <div
                   key={pkg.id}
-                  className={`package-card ${pkg.id} ${selectedPackage?.id === pkg.id ? "selected" : ""}`}
+                  className={`package-card ${pkg.id} ${
+                    selectedPackage?.id === pkg.id ? "selected" : ""
+                  }`}
                   onClick={() => handlePackageSelect(pkg)}
                   style={{ "--card-gradient": pkg.gradient }}
                 >
@@ -729,7 +774,9 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!selectedPackage ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !selectedPackage ? "disabled" : ""
+                }`}
                 onClick={handleContinue}
                 disabled={!selectedPackage}
               >
@@ -755,13 +802,17 @@ const FestaRamaPackages = () => {
               {cinemaOptions.map((cinema) => (
                 <div
                   key={cinema.id}
-                  className={`events-card cinema-card ${selectedCinema === cinema.id ? "selected" : ""}`}
+                  className={`events-card cinema-card ${
+                    selectedCinema === cinema.id ? "selected" : ""
+                  }`}
                   onClick={() => handleCinemaSelect(cinema.id)}
                   style={{ "--card-gradient": cinema.gradient }}
                 >
                   <div className="events-card-image cinema-bg">
                     <img
-                      src={cinema.image || "/placeholder.svg?height=200&width=300"}
+                      src={
+                        cinema.image || "/placeholder.svg?height=200&width=300"
+                      }
                       alt={`${cinema.name} - Cinema`}
                       className="packages-card-img"
                       loading="lazy"
@@ -792,7 +843,11 @@ const FestaRamaPackages = () => {
                         ))}
                       </div>
                     </div>
-                    <div className={`packages-radio ${selectedCinema === cinema.id ? "checked" : ""}`}>
+                    <div
+                      className={`packages-radio ${
+                        selectedCinema === cinema.id ? "checked" : ""
+                      }`}
+                    >
                       <div className="packages-radio-inner"></div>
                     </div>
                   </div>
@@ -805,7 +860,9 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!selectedCinema ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !selectedCinema ? "disabled" : ""
+                }`}
                 onClick={handleContinue}
                 disabled={!selectedCinema}
               >
@@ -820,9 +877,17 @@ const FestaRamaPackages = () => {
           <div className="events-selection-section">
             <div className="events-selection-header">
               <h2>Elige la película para la fiesta</h2>
-              <p>Selecciona una película apropiada para niños que todos puedan disfrutar</p>
+              <p>
+                Selecciona una película apropiada para niños que todos puedan
+                disfrutar
+              </p>
               <div className="cinema-info">
-                <h3>Cine: {cinemaOptions.find((c) => c.id === selectedCinema)?.name.replace("Cinerama ", "")}</h3>
+                <h3>
+                  Cine:{" "}
+                  {cinemaOptions
+                    .find((c) => c.id === selectedCinema)
+                    ?.name.replace("Cinerama ", "")}
+                </h3>
               </div>
             </div>
 
@@ -832,13 +897,18 @@ const FestaRamaPackages = () => {
                   availableMovies.map((movie) => (
                     <div
                       key={movie.id}
-                      className={`movie-card ${selectedMovie === movie.id ? "selected" : ""}`}
+                      className={`movie-card ${
+                        selectedMovie === movie.id ? "selected" : ""
+                      }`}
                       onClick={() => handleMovieSelect(movie.id)}
                       style={{ "--card-gradient": movie.gradient }}
                     >
                       <div className="movie-poster">
                         <img
-                          src={movie.image || "/placeholder.svg?height=400&width=300"}
+                          src={
+                            movie.image ||
+                            "/placeholder.svg?height=400&width=300"
+                          }
                           alt={`${movie.title} - Poster`}
                           className="movie-img"
                           loading="lazy"
@@ -858,7 +928,10 @@ const FestaRamaPackages = () => {
                   ))
                 ) : (
                   <div className="no-movies-message">
-                    <p>No hay películas familiares disponibles para este cine en este momento.</p>
+                    <p>
+                      No hay películas familiares disponibles para este cine en
+                      este momento.
+                    </p>
                   </div>
                 )}
               </div>
@@ -869,7 +942,9 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!selectedMovie ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !selectedMovie ? "disabled" : ""
+                }`}
                 onClick={handleContinue}
                 disabled={!selectedMovie}
               >
@@ -884,7 +959,9 @@ const FestaRamaPackages = () => {
           <div className="events-form-section">
             <div className="events-selection-header">
               <h2>Información de Contacto</h2>
-              <p>Completa los datos para confirmar la reserva de la FestaRama</p>
+              <p>
+                Completa los datos para confirmar la reserva de la FestaRama
+              </p>
             </div>
 
             <div className="events-form">
@@ -895,7 +972,9 @@ const FestaRamaPackages = () => {
                     type="text"
                     placeholder="Tu nombre completo"
                     value={formData.parentName}
-                    onChange={(e) => handleInputChange("parentName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("parentName", e.target.value)
+                    }
                     required
                     maxLength="100"
                   />
@@ -906,7 +985,9 @@ const FestaRamaPackages = () => {
                     type="text"
                     placeholder="Nombre del cumpleañero/a"
                     value={formData.childName}
-                    onChange={(e) => handleInputChange("childName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("childName", e.target.value)
+                    }
                     required
                     maxLength="100"
                   />
@@ -920,7 +1001,9 @@ const FestaRamaPackages = () => {
                     type="email"
                     placeholder="tu@email.com"
                     value={formData.parentEmail}
-                    onChange={(e) => handleInputChange("parentEmail", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("parentEmail", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -930,7 +1013,9 @@ const FestaRamaPackages = () => {
                     type="tel"
                     placeholder="+51 999 999 999"
                     value={formData.parentPhone}
-                    onChange={(e) => handleInputChange("parentPhone", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("parentPhone", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -939,7 +1024,12 @@ const FestaRamaPackages = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>Edad del Niño/a</label>
-                  <select value={formData.childAge} onChange={(e) => handleInputChange("childAge", e.target.value)}>
+                  <select
+                    value={formData.childAge}
+                    onChange={(e) =>
+                      handleInputChange("childAge", e.target.value)
+                    }
+                  >
                     <option value="">Selecciona la edad</option>
                     {Array.from({ length: 13 }, (_, i) => i + 3).map((age) => (
                       <option key={age} value={age}>
@@ -952,10 +1042,15 @@ const FestaRamaPackages = () => {
                   <label>Número de Niños</label>
                   <select
                     value={formData.numberOfKids}
-                    onChange={(e) => handleInputChange("numberOfKids", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("numberOfKids", e.target.value)
+                    }
                   >
                     <option value="">Selecciona cantidad</option>
-                    {Array.from({ length: selectedPackage?.maxKids || 15 }, (_, i) => i + 1).map((num) => (
+                    {Array.from(
+                      { length: selectedPackage?.maxKids || 15 },
+                      (_, i) => i + 1
+                    ).map((num) => (
                       <option key={num} value={num}>
                         {num} niños
                       </option>
@@ -970,7 +1065,9 @@ const FestaRamaPackages = () => {
                   <input
                     type="date"
                     value={formData.eventDate}
-                    onChange={(e) => handleInputChange("eventDate", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("eventDate", e.target.value)
+                    }
                     min={new Date().toISOString().split("T")[0]}
                   />
                 </div>
@@ -979,7 +1076,9 @@ const FestaRamaPackages = () => {
                   <input
                     type="time"
                     value={formData.eventTime}
-                    onChange={(e) => handleInputChange("eventTime", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("eventTime", e.target.value)
+                    }
                   />
                 </div>
               </div>
@@ -989,11 +1088,15 @@ const FestaRamaPackages = () => {
                 <textarea
                   placeholder="Describe cualquier solicitud especial para la fiesta (decoración temática, alergias alimentarias, etc.)"
                   value={formData.specialRequests}
-                  onChange={(e) => handleInputChange("specialRequests", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("specialRequests", e.target.value)
+                  }
                   rows="4"
                   maxLength="500"
                 ></textarea>
-                <small className="char-count">{formData.specialRequests.length}/500 caracteres</small>
+                <small className="char-count">
+                  {formData.specialRequests.length}/500 caracteres
+                </small>
               </div>
             </div>
 
@@ -1002,9 +1105,21 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!formData.parentName || !formData.parentEmail || !formData.parentPhone || !formData.childName ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !formData.parentName ||
+                  !formData.parentEmail ||
+                  !formData.parentPhone ||
+                  !formData.childName
+                    ? "disabled"
+                    : ""
+                }`}
                 onClick={handleContinue}
-                disabled={!formData.parentName || !formData.parentEmail || !formData.parentPhone || !formData.childName}
+                disabled={
+                  !formData.parentName ||
+                  !formData.parentEmail ||
+                  !formData.parentPhone ||
+                  !formData.childName
+                }
               >
                 Continuar →
               </button>
@@ -1024,7 +1139,9 @@ const FestaRamaPackages = () => {
               <div className="summary-section">
                 <h3>🎉 Paquete Seleccionado</h3>
                 <p>{selectedPackage?.name}</p>
-                <span className="summary-price">S/. {selectedPackage?.price}</span>
+                <span className="summary-price">
+                  S/. {selectedPackage?.price}
+                </span>
                 <div className="package-summary-features">
                   {selectedPackage?.features.map((feature, index) => (
                     <span key={index} className="feature-item">
@@ -1036,9 +1153,14 @@ const FestaRamaPackages = () => {
 
               <div className="summary-section">
                 <h3>🎬 Cine Seleccionado</h3>
-                <p>{cinemaOptions.find((c) => c.id === selectedCinema)?.name}</p>
+                <p>
+                  {cinemaOptions.find((c) => c.id === selectedCinema)?.name}
+                </p>
                 <span className="summary-description">
-                  {cinemaOptions.find((c) => c.id === selectedCinema)?.description}
+                  {
+                    cinemaOptions.find((c) => c.id === selectedCinema)
+                      ?.description
+                  }
                 </span>
               </div>
 
@@ -1046,14 +1168,19 @@ const FestaRamaPackages = () => {
                 <h3>🎭 Película Seleccionada</h3>
                 <p>{movieOptions.find((m) => m.id === selectedMovie)?.title}</p>
                 <span className="summary-description">
-                  {movieOptions.find((m) => m.id === selectedMovie)?.description}
+                  {
+                    movieOptions.find((m) => m.id === selectedMovie)
+                      ?.description
+                  }
                 </span>
                 <div className="movie-summary-details">
                   <span>
-                    <strong>Género:</strong> {movieOptions.find((m) => m.id === selectedMovie)?.genre}
+                    <strong>Género:</strong>{" "}
+                    {movieOptions.find((m) => m.id === selectedMovie)?.genre}
                   </span>
                   <span>
-                    <strong>Duración:</strong> {movieOptions.find((m) => m.id === selectedMovie)?.duration}
+                    <strong>Duración:</strong>{" "}
+                    {movieOptions.find((m) => m.id === selectedMovie)?.duration}
                   </span>
                 </div>
               </div>
@@ -1081,7 +1208,8 @@ const FestaRamaPackages = () => {
                   )}
                   {formData.eventDate && (
                     <p>
-                      <strong>Fecha:</strong> {new Date(formData.eventDate).toLocaleDateString("es-ES")}
+                      <strong>Fecha:</strong>{" "}
+                      {new Date(formData.eventDate).toLocaleDateString("es-ES")}
                     </p>
                   )}
                   {formData.eventTime && (
@@ -1091,7 +1219,8 @@ const FestaRamaPackages = () => {
                   )}
                   {formData.specialRequests && (
                     <p>
-                      <strong>Solicitudes especiales:</strong> {formData.specialRequests}
+                      <strong>Solicitudes especiales:</strong>{" "}
+                      {formData.specialRequests}
                     </p>
                   )}
                 </div>
@@ -1102,7 +1231,11 @@ const FestaRamaPackages = () => {
               <button className="events-btn-secondary" onClick={handleBack}>
                 ← Regresar
               </button>
-              <button className="events-btn-primary" onClick={handleSubmit} disabled={loading}>
+              <button
+                className="events-btn-primary"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
                 {loading ? "Enviando..." : "Confirmar Reserva 🎉"}
               </button>
             </div>
@@ -1113,12 +1246,16 @@ const FestaRamaPackages = () => {
       {/* Add CSS for loading animation */}
       <style jsx>{`
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
 export default FestaRamaPackages;
