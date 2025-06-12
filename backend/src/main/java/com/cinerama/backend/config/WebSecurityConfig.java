@@ -4,6 +4,7 @@ import com.cinerama.backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -96,8 +97,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints for user authentication (register, login, verify)
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Public access to movie-related endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/genres/**", "/api/movies/**","/api/showtimes/**").permitAll()
+                        // Public access to user profile endpoint
                         .requestMatchers("/api/user/", "/api/tickets/**").authenticated()
-
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
                 )
