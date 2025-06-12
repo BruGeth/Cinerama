@@ -1,14 +1,12 @@
 import { useState } from 'react'; // Import React and useState for managing component state
-import { movies } from '../components/DataMovie'; // Import movie data
-import '../styles/MovieDetail.css'; // Import CSS for styling
 import { useParams, useNavigate } from 'react-router-dom'; // Import hooks for routing functionality
+import { useMovies } from '../hooks/useMovies'; // Import custom hook for fetching movie data from API
+import '../styles/MovieDetail.css'; // Import CSS for styling
 
 const MovieDetail = () => {
   const { id } = useParams(); // Extract movie ID from the URL
   const navigate = useNavigate(); // Hook for handling navigation
-
-  // Find the movie matching the extracted ID
-  const movie = movies.find((m) => m.id === Number(id));
+  const { movies: movie, loading } = useMovies(id); // Fetch movie data using custom hook
 
   // Handles navigation to the purchase page when selecting a showtime
   const handleSelectShowtime = (format, time) => {
@@ -18,8 +16,11 @@ const MovieDetail = () => {
   // State to track the selected date for showtimes
   const [selectedDate, setSelectedDate] = useState(0);
 
+  // Show loading message while fetching movie data
+  if (loading) return <h2 style={{ color: 'white' }}>Loading...</h2>;
+
   // Display an error message if the movie is not found
-  if (!movie) return <h2 style={{ color: 'white' }}>Película no encontrada</h2>;
+  if (!movie) return <h2 style={{ color: 'white' }}>Movie not found</h2>;
 
   // Generate an array of the next 7 days for showtime selection
   const days = Array.from({ length: 7 }, (_, i) => {
@@ -35,15 +36,15 @@ const MovieDetail = () => {
   return (
     <div className="movie-detail-container"> {/* Main container for movie details */}
       <div className="left-column"> {/* Left section for movie poster and synopsis */}
-        <img src={movie.image} alt={movie.title} className="movie-image" /> {/* Display movie poster */}
+        <img src={movie.imageUrl} alt={movie.title} className="movie-image" /> {/* Display movie poster */}
         <h3 className="sinopsis-title">Sinopsis</h3>
-        <p className="sinopsis-text">{movie.description_movie}</p> {/* Display movie description */}
+        <p className="sinopsis-text">{movie.descriptionMovie}</p> {/* Display movie description */}
       </div>
 
       <div className="right-column"> {/* Right section containing movie information and showtimes */}
         <h1 className="movie-title">{movie.title}</h1> {/* Display movie title */}
         <p><strong>Duración:</strong> {movie.duration} min</p> {/* Display movie duration */}
-        <p><strong>Género:</strong> {movie.genre}</p> {/* Display movie genre */}
+        <p><strong>Género:</strong> {movie.genreName}</p> {/* Display movie genre */}
 
         <div className="date-selector"> {/* Date selection buttons */}
           {days.map((day) => (
@@ -64,7 +65,7 @@ const MovieDetail = () => {
             <div key={format} className="format-container"> {/* Format section */}
               <h3>{format}</h3> {/* Display format title */}
               <div className="showtime-buttons"> {/* Container for showtime buttons */}
-                {Array.isArray(movie.showtimes[format]) && movie.showtimes[format].length > 0 ? (
+                {Array.isArray(movie.showtimes?.[format]) && movie.showtimes[format].length > 0 ? (
                   movie.showtimes[format].map((time, idx) => ( // Iterate through available showtimes
                     <button
                       key={idx}
