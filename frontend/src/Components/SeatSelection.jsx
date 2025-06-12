@@ -9,7 +9,7 @@ const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
   const [selectedSeats, setSelectedSeats] = useState([]); // State to store selected seats
 
   // Calculate the total number of tickets
-  const totalTickets = parseInt(ticketCount.general || 0) + parseInt(ticketCount.niño || 0);
+  const totalTickets = parseInt(ticketCount.general || 0) + parseInt(ticketCount.child || 0);
 
   // Set of predefined empty seats that are unavailable for selection
   const emptySeats = new Set([
