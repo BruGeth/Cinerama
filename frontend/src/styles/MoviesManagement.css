@@ -1,0 +1,162 @@
+.movies-management {
+  max-width: 1200px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.add-btn {
+  background-color: #e30000;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-btn:hover {
+  background-color: #c50000;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.movie-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-2px);
+}
+
+.movie-poster-placeholder {
+  height: 200px;
+  background: linear-gradient(135deg, #333, #666);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.movie-icon {
+  font-size: 3rem;
+  color: white;
+  opacity: 0.7;
+}
+
+.movie-info {
+  padding: 1.5rem;
+}
+
+.movie-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.movie-info p {
+  margin: 0.25rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.movie-genre {
+  font-weight: 600;
+  color: #555;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+
+.status-badge.cartelera {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.proximamente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.movie-actions {
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn,
+.delete-btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background-color: #f0b000;
+  color: #000;
+}
+
+.edit-btn:hover {
+  background-color: #d9a000;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .movies-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .movie-actions {
+    flex-direction: column;
+  }
+}

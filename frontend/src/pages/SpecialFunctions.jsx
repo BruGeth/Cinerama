@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { useNavigate } from "react-router-dom"
-import { movies } from '../components/DataMovie';
-import "../styles/SpecialFunctions.css"
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMovies } from "../hooks/useMovies"; // Import custom hook to fetch movies from API
+import "../styles/SpecialFunctions.css";
 
 const SpecialFunctions = () => {
-  const navigate = useNavigate()
-  const [selectedCinema, setSelectedCinema] = useState("")
-  const [selectedMovie, setSelectedMovie] = useState("")
-  const [currentStep, setCurrentStep] = useState(1)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
+  const [selectedCinema, setSelectedCinema] = useState("");
+  const [selectedMovie, setSelectedMovie] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     cinema: "",
     movie: "",
@@ -26,34 +26,41 @@ const SpecialFunctions = () => {
     contactPhone: "",
     company: "",
     message: "",
-  })
+  });
 
-  // Cinema options - same as Events component
+  // Fetch movies from API using custom hook
+  const { movies, loading: moviesLoading } = useMovies();
+
+  // Cinema options (static)
   const cinemaOptions = useMemo(
     () => [
       {
         id: "cinema-miraflores",
         name: "Cinerama Miraflores",
-        description: "Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium",
+        description:
+          "Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium",
         capacity: "180 personas",
         features: ["4K Projection", "2D", "3D", "XD", "IMAX"],
-        image: "https://www.cinerama.com.pe/_admin/assets/images/cines/pacifico.jpg",
+        image:
+          "https://www.cinerama.com.pe/_admin/assets/images/cines/pacifico.jpg",
         gradient: "linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)",
         location: "Miraflores",
       },
       {
         id: "cinema-minka",
         name: "Cinerama Minka",
-        description: "Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada",
+        description:
+          "Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada",
         capacity: "220 personas",
         features: ["HD Projection", "3D", "XD", "IMAX"],
-        image: "https://www.cinerama.com.pe/_admin/assets/images/cines/minka.jpg",
+        image:
+          "https://www.cinerama.com.pe/_admin/assets/images/cines/minka.jpg",
         gradient: "linear-gradient(135deg, #ef4444 0%, #fcd34d 100%)",
         location: "Callao",
       },
     ],
-    [],
-  )
+    []
+  );
 
   // Helper function to assign gradients based on genre
   const getMovieGradient = useCallback((genre) => {
@@ -64,63 +71,53 @@ const SpecialFunctions = () => {
       Drama: "linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)",
       Thriller: "linear-gradient(135deg, #374151 0%, #6b7280 100%)",
       Suspenso: "linear-gradient(135deg, #581c87 0%, #7c3aed 100%)",
-    }
-    return gradients[genre] || "linear-gradient(135deg, #6b7280 0%, #9ca3af 100%)"
-  }, [])
+    };
+    return (
+      gradients[genre] || "linear-gradient(135deg, #6b7280 0%, #9ca3af 100%)"
+    );
+  }, []);
 
-  // Filter and transform movies from movieData.jsx - Only the 3 specific movies
+  // Filter and transform movies from API - Only the 3 specific movies
   const movieOptions = useMemo(() => {
     try {
-      // Validate MOVIES data exists
       if (!movies || !Array.isArray(movies)) {
-        throw new Error("No se pudieron cargar los datos de películas")
+        throw new Error("Could not load movie data");
       }
-
       // Filter only the 3 specific movies requested
       const targetMovies = [
         "Destino Final: Lazos de Sangre",
         "Star Wars: Episodio III - La venganza de los Sith",
         "Thunderbolts",
-      ]
-
-      const filteredMovies = movies.filter((movie) => {
-        if (!movie || !movie.title) return false
-        return targetMovies.includes(movie.title)
-      })
-        .map((movie) => {
-          try {
-            return {
-              id: movie.id ? movie.id.toString() : Math.random().toString(),
-              title: movie.title || "Título no disponible",
-              description: movie.description || "Descripción no disponible",
-              image: movie.image || "/placeholder.svg?height=400&width=300",
-              genre: movie.genre || "Sin género",
-              duration: `${movie.duration || 120} min`,
-              rating: "PG-13", // Default rating since it's not in original data
-              availableCinemas: ["cinema-miraflores", "cinema-minka"], // Available in both cinemas
-              gradient: getMovieGradient(movie.genre || "Drama"),
-              showtimes: movie.showtimes || [],
-              originalData: movie, // Keep reference to original data
-            }
-          } catch (err) {
-            console.error("Error processing movie:", movie, err)
-            return null
-          }
+      ];
+      const filteredMovies = movies
+        .filter((movie) => {
+          if (!movie || !movie.title) return false;
+          return targetMovies.includes(movie.title);
         })
-        .filter(Boolean) // Remove null entries
+        .map((movie) => ({
+          id: movie.id ? movie.id.toString() : Math.random().toString(),
+          title: movie.title || "No title",
+          description: movie.descriptionMovie || "No description",
+          image: movie.imageUrl || "/placeholder.svg?height=400&width=300",
+          genre: movie.genreName || "No genre",
+          duration: `${movie.duration || 120} min`,
+          rating: movie.rating || "PG-13",
+          availableCinemas: ["cinema-miraflores", "cinema-minka"],
+          gradient: getMovieGradient(movie.genreName || "Drama"),
+          showtimes: movie.showtimes || [],
+          originalData: movie,
+        }))
+        .filter(Boolean);
 
       if (filteredMovies.length === 0) {
-        throw new Error("No se encontraron las películas especificadas en la cartelera")
+        throw new Error("No matching movies found in the billboard");
       }
-
-      console.log(`Películas cargadas exitosamente: ${filteredMovies.length} de ${targetMovies.length}`)
-      return filteredMovies
+      return filteredMovies;
     } catch (err) {
-      console.error("Error processing movies:", err)
-      setError(`Error al cargar las películas: ${err.message}`)
-      return []
+      setError(`Error loading movies: ${err.message}`);
+      return [];
     }
-  }, [getMovieGradient])
+  }, [movies, getMovieGradient]);
 
   // Institution types for the details form
   const institutionTypes = [
@@ -128,7 +125,7 @@ const SpecialFunctions = () => {
     { value: "colegio", label: "Colegio" },
     { value: "asociaciones", label: "Asociaciones" },
     { value: "otros", label: "Otros" },
-  ]
+  ];
 
   // Capacity options
   const capacityOptions = [
@@ -137,131 +134,134 @@ const SpecialFunctions = () => {
     { value: "150", label: "Hasta 150 personas" },
     { value: "200", label: "Hasta 200 personas" },
     { value: "200+", label: "Más de 200 personas" },
-  ]
+  ];
 
+  // Steps for the progress bar
   const steps = [
     { number: 1, title: "Cines", active: currentStep >= 1 },
     { number: 2, title: "Película", active: currentStep >= 2 },
     { number: 3, title: "Detalles", active: currentStep >= 3 },
     { number: 4, title: "Contacto", active: currentStep >= 4 },
     { number: 5, title: "Resumen", active: currentStep >= 5 },
-  ]
+  ];
 
   // Get available movies based on selected cinema
   const availableMovies = useMemo(() => {
     try {
-      if (!selectedCinema) return movieOptions
+      if (!selectedCinema) return movieOptions;
       return movieOptions.filter((movie) => {
-        return movie.availableCinemas && movie.availableCinemas.includes(selectedCinema)
-      })
+        return (
+          movie.availableCinemas &&
+          movie.availableCinemas.includes(selectedCinema)
+        );
+      });
     } catch (err) {
-      console.error("Error filtering movies:", err)
-      return movieOptions
+      return movieOptions;
     }
-  }, [selectedCinema, movieOptions])
+  }, [selectedCinema, movieOptions]);
 
   // Email validation helper
   const isValidEmail = useCallback((email) => {
     try {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      return emailRegex.test(email)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
     } catch (err) {
-      console.error("Error validating email:", err)
-      return false
+      console.error("Error validating email:", err);
+      return false;
     }
-  }, [])
+  }, []);
 
   // Phone validation helper
   const isValidPhone = useCallback((phone) => {
     try {
-      const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/
-      return phoneRegex.test(phone)
+      const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/;
+      return phoneRegex.test(phone);
     } catch (err) {
-      console.error("Error validating phone:", err)
-      return false
+      console.error("Error validating phone:", err);
+      return false;
     }
-  }, [])
+  }, []);
 
   // Handle cinema selection with error handling
   const handleCinemaSelect = useCallback(
     (cinemaId) => {
       try {
-        if (isAnimating) return
+        if (isAnimating) return;
 
         // Validate cinema exists
-        const cinema = cinemaOptions.find((c) => c.id === cinemaId)
+        const cinema = cinemaOptions.find((c) => c.id === cinemaId);
         if (!cinema) {
-          throw new Error("Cine no válido seleccionado")
+          throw new Error("Cine no válido seleccionado");
         }
 
-        setIsAnimating(true)
-        setError(null)
-        setSelectedCinema(cinemaId)
-        setSelectedMovie("") // Reset movie selection when cinema changes
-        setFormData((prev) => ({ ...prev, cinema: cinemaId, movie: "" }))
+        setIsAnimating(true);
+        setError(null);
+        setSelectedCinema(cinemaId);
+        setSelectedMovie(""); // Reset movie selection when cinema changes
+        setFormData((prev) => ({ ...prev, cinema: cinemaId, movie: "" }));
 
         // Haptic feedback if available
         if (navigator.vibrate) {
-          navigator.vibrate(50)
+          navigator.vibrate(50);
         }
 
-        setTimeout(() => setIsAnimating(false), 300)
+        setTimeout(() => setIsAnimating(false), 300);
       } catch (err) {
-        console.error("Error selecting cinema:", err)
-        setError(`Error al seleccionar el cine: ${err.message}`)
-        setIsAnimating(false)
+        console.error("Error selecting cinema:", err);
+        setError(`Error al seleccionar el cine: ${err.message}`);
+        setIsAnimating(false);
       }
     },
-    [isAnimating, cinemaOptions],
-  )
+    [isAnimating, cinemaOptions]
+  );
 
   // Handle movie selection with error handling
   const handleMovieSelect = useCallback(
     (movieId) => {
       try {
         // Validate movie exists
-        const movie = movieOptions.find((m) => m.id === movieId)
+        const movie = movieOptions.find((m) => m.id === movieId);
         if (!movie) {
-          throw new Error("Película no válida seleccionada")
+          throw new Error("Película no válida seleccionada");
         }
 
-        setError(null)
-        setSelectedMovie(movieId)
-        setFormData((prev) => ({ ...prev, movie: movieId }))
+        setError(null);
+        setSelectedMovie(movieId);
+        setFormData((prev) => ({ ...prev, movie: movieId }));
 
         // Haptic feedback if available
         if (navigator.vibrate) {
-          navigator.vibrate(50)
+          navigator.vibrate(50);
         }
       } catch (err) {
-        console.error("Error selecting movie:", err)
-        setError(`Error al seleccionar la película: ${err.message}`)
+        console.error("Error selecting movie:", err);
+        setError(`Error al seleccionar la película: ${err.message}`);
       }
     },
-    [movieOptions],
-  )
+    [movieOptions]
+  );
 
   // Handle form input changes with validation
   const handleInputChange = useCallback(
     (field, value) => {
       try {
-        setError(null)
+        setError(null);
 
         // Validate field exists
         if (!field || typeof field !== "string") {
-          throw new Error("Campo inválido")
+          throw new Error("Campo inválido");
         }
 
         // Real-time validation for specific fields
         if (field === "contactEmail" && value) {
           if (!isValidEmail(value)) {
-            setError("Por favor ingresa un email válido")
+            setError("Por favor ingresa un email válido");
           }
         }
 
         if (field === "contactPhone" && value) {
           if (!isValidPhone(value)) {
-            setError("Por favor ingresa un teléfono válido (mínimo 9 dígitos)")
+            setError("Por favor ingresa un teléfono válido (mínimo 9 dígitos)");
           }
         }
 
@@ -271,141 +271,169 @@ const SpecialFunctions = () => {
           company: 100,
           requirements: 500,
           message: 500,
-        }
+        };
 
         if (characterLimits[field] && value.length > characterLimits[field]) {
-          setError(`El campo no puede exceder ${characterLimits[field]} caracteres`)
-          return
+          setError(
+            `El campo no puede exceder ${characterLimits[field]} caracteres`
+          );
+          return;
         }
 
-        setFormData((prev) => ({ ...prev, [field]: value }))
+        setFormData((prev) => ({ ...prev, [field]: value }));
       } catch (err) {
-        console.error("Error updating form data:", err)
-        setError(`Error al actualizar la información: ${err.message}`)
+        console.error("Error updating form data:", err);
+        setError(`Error al actualizar la información: ${err.message}`);
       }
     },
-    [isValidEmail, isValidPhone],
-  )
+    [isValidEmail, isValidPhone]
+  );
 
   // Handle continue to next step with validation
   const handleContinue = useCallback(() => {
     try {
-      if (isAnimating || loading) return
+      if (isAnimating || loading) return;
 
-      setError(null)
+      setError(null);
 
       // Step-specific validation
-      let canContinue = false
-      let errorMessage = ""
+      let canContinue = false;
+      let errorMessage = "";
 
       switch (currentStep) {
         case 1:
-          canContinue = !!selectedCinema
-          errorMessage = "Por favor selecciona un cine"
-          break
+          canContinue = !!selectedCinema;
+          errorMessage = "Por favor selecciona un cine";
+          break;
         case 2:
-          canContinue = !!selectedMovie
-          errorMessage = "Por favor selecciona una película"
-          break
+          canContinue = !!selectedMovie;
+          errorMessage = "Por favor selecciona una película";
+          break;
         case 3:
-          canContinue = !!(formData.institutionType && formData.capacity)
-          errorMessage = "Por favor completa el tipo de institución y capacidad"
-          break
+          canContinue = !!(formData.institutionType && formData.capacity);
+          errorMessage =
+            "Por favor completa el tipo de institución y capacidad";
+          break;
         case 4:
-          const hasRequiredFields = !!(formData.contactName && formData.contactEmail && formData.contactPhone)
-          const hasValidEmail = isValidEmail(formData.contactEmail)
-          const hasValidPhone = isValidPhone(formData.contactPhone)
+          const hasRequiredFields = !!(
+            formData.contactName &&
+            formData.contactEmail &&
+            formData.contactPhone
+          );
+          const hasValidEmail = isValidEmail(formData.contactEmail);
+          const hasValidPhone = isValidPhone(formData.contactPhone);
 
-          canContinue = hasRequiredFields && hasValidEmail && hasValidPhone
+          canContinue = hasRequiredFields && hasValidEmail && hasValidPhone;
 
           if (!hasRequiredFields) {
-            errorMessage = "Por favor completa todos los campos requeridos"
+            errorMessage = "Por favor completa todos los campos requeridos";
           } else if (!hasValidEmail) {
-            errorMessage = "Por favor ingresa un email válido"
+            errorMessage = "Por favor ingresa un email válido";
           } else if (!hasValidPhone) {
-            errorMessage = "Por favor ingresa un teléfono válido"
+            errorMessage = "Por favor ingresa un teléfono válido";
           }
-          break
+          break;
         case 5:
-          canContinue = true
-          break
+          canContinue = true;
+          break;
         default:
-          canContinue = false
-          errorMessage = "Paso inválido"
+          canContinue = false;
+          errorMessage = "Paso inválido";
       }
 
       if (!canContinue) {
-        setError(errorMessage)
-        return
+        setError(errorMessage);
+        return;
       }
 
-      setIsAnimating(true)
+      setIsAnimating(true);
       setTimeout(() => {
-        setCurrentStep((prev) => Math.min(prev + 1, 5))
-        setIsAnimating(false)
-      }, 300)
+        setCurrentStep((prev) => Math.min(prev + 1, 5));
+        setIsAnimating(false);
+      }, 300);
     } catch (err) {
-      console.error("Error continuing to next step:", err)
-      setError(`Error al continuar: ${err.message}`)
-      setIsAnimating(false)
+      console.error("Error continuing to next step:", err);
+      setError(`Error al continuar: ${err.message}`);
+      setIsAnimating(false);
     }
-  }, [selectedCinema, selectedMovie, formData, currentStep, isAnimating, loading, isValidEmail, isValidPhone])
+  }, [
+    selectedCinema,
+    selectedMovie,
+    formData,
+    currentStep,
+    isAnimating,
+    loading,
+    isValidEmail,
+    isValidPhone,
+  ]);
 
   // Handle back navigation with error handling
   const handleBack = useCallback(() => {
     try {
-      if (isAnimating) return
+      if (isAnimating) return;
 
-      setIsAnimating(true)
-      setError(null)
+      setIsAnimating(true);
+      setError(null);
 
       if (currentStep > 1) {
         setTimeout(() => {
-          setCurrentStep((prev) => prev - 1)
-          setIsAnimating(false)
-        }, 300)
+          setCurrentStep((prev) => prev - 1);
+          setIsAnimating(false);
+        }, 300);
       } else {
-        navigate("/corporate")
+        navigate("/corporate");
       }
     } catch (err) {
-      console.error("Error navigating back:", err)
-      setError(`Error al regresar: ${err.message}`)
-      setIsAnimating(false)
+      console.error("Error navigating back:", err);
+      setError(`Error al regresar: ${err.message}`);
+      setIsAnimating(false);
     }
-  }, [isAnimating, currentStep, navigate])
+  }, [isAnimating, currentStep, navigate]);
 
   // Handle final submission with comprehensive error handling
   const handleSubmit = useCallback(async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
       // Comprehensive validation
-      const requiredFields = ["contactName", "contactEmail", "contactPhone", "institutionType", "capacity"]
-      const missingFields = requiredFields.filter((field) => !formData[field])
+      const requiredFields = [
+        "contactName",
+        "contactEmail",
+        "contactPhone",
+        "institutionType",
+        "capacity",
+      ];
+      const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
-        throw new Error(`Campos requeridos faltantes: ${missingFields.join(", ")}`)
+        throw new Error(
+          `Campos requeridos faltantes: ${missingFields.join(", ")}`
+        );
       }
 
       if (!isValidEmail(formData.contactEmail)) {
-        throw new Error("Email inválido")
+        throw new Error("Email inválido");
       }
 
       if (!isValidPhone(formData.contactPhone)) {
-        throw new Error("Teléfono inválido")
+        throw new Error("Teléfono inválido");
       }
 
       if (!selectedMovie || !selectedCinema) {
-        throw new Error("Selección de película o cine incompleta")
+        throw new Error("Selección de película o cine incompleta");
       }
 
       // Get selected movie and cinema details
-      const selectedMovieData = movieOptions.find((m) => m.id === selectedMovie)
-      const selectedCinemaData = cinemaOptions.find((c) => c.id === selectedCinema)
+      const selectedMovieData = movieOptions.find(
+        (m) => m.id === selectedMovie
+      );
+      const selectedCinemaData = cinemaOptions.find(
+        (c) => c.id === selectedCinema
+      );
 
       if (!selectedMovieData || !selectedCinemaData) {
-        throw new Error("Error al obtener detalles de la selección")
+        throw new Error("Error al obtener detalles de la selección");
       }
 
       const submissionData = {
@@ -415,114 +443,144 @@ const SpecialFunctions = () => {
         timestamp: new Date().toISOString(),
         userAgent: navigator.userAgent,
         sessionId: Math.random().toString(36).substr(2, 9),
-      }
+      };
 
-      console.log("Submitting special function data:", submissionData)
+      console.log("Submitting special function data:", submissionData);
 
       // Simulate API call with potential failure
       await new Promise((resolve, reject) => {
         setTimeout(() => {
           // Simulate 95% success rate
           if (Math.random() > 0.05) {
-            resolve()
+            resolve();
           } else {
-            reject(new Error("Error del servidor. Por favor intenta nuevamente."))
+            reject(
+              new Error("Error del servidor. Por favor intenta nuevamente.")
+            );
           }
-        }, 1000)
-      })
+        }, 1000);
+      });
 
-      alert("¡Función especial enviada correctamente! Te contactaremos pronto.")
-      navigate("/corporate")
+      alert(
+        "¡Función especial enviada correctamente! Te contactaremos pronto."
+      );
+      navigate("/corporate");
     } catch (err) {
-      console.error("Error submitting form:", err)
-      setError(err.message || "Error al enviar la solicitud. Por favor intenta nuevamente.")
+      console.error("Error submitting form:", err);
+      setError(
+        err.message ||
+          "Error al enviar la solicitud. Por favor intenta nuevamente."
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [formData, selectedMovie, selectedCinema, movieOptions, cinemaOptions, navigate, isValidEmail, isValidPhone])
+  }, [
+    formData,
+    selectedMovie,
+    selectedCinema,
+    movieOptions,
+    cinemaOptions,
+    navigate,
+    isValidEmail,
+    isValidPhone,
+  ]);
 
   // Image error handling with fallback
   const handleImageError = useCallback((e, backgroundClass = "cinema-bg") => {
     try {
-      console.warn("Image failed to load:", e.target.src)
-      e.target.style.display = "none"
+      console.warn("Image failed to load:", e.target.src);
+      e.target.style.display = "none";
       if (e.target.parentElement) {
-        e.target.parentElement.classList.add(backgroundClass)
+        e.target.parentElement.classList.add(backgroundClass);
       }
     } catch (err) {
-      console.error("Error handling image error:", err)
+      console.error("Error handling image error:", err);
     }
-  }, [])
+  }, []);
 
   // Keyboard navigation with error handling
   useEffect(() => {
     const handleKeyDown = (e) => {
       try {
         if (currentStep === 1 && selectedCinema) {
-          const currentIndex = cinemaOptions.findIndex((cinema) => cinema.id === selectedCinema)
+          const currentIndex = cinemaOptions.findIndex(
+            (cinema) => cinema.id === selectedCinema
+          );
           switch (e.key) {
             case "ArrowUp":
             case "ArrowLeft":
-              e.preventDefault()
-              if (currentIndex > 0) handleCinemaSelect(cinemaOptions[currentIndex - 1].id)
-              break
+              e.preventDefault();
+              if (currentIndex > 0)
+                handleCinemaSelect(cinemaOptions[currentIndex - 1].id);
+              break;
             case "ArrowDown":
             case "ArrowRight":
-              e.preventDefault()
-              if (currentIndex < cinemaOptions.length - 1) handleCinemaSelect(cinemaOptions[currentIndex + 1].id)
-              break
+              e.preventDefault();
+              if (currentIndex < cinemaOptions.length - 1)
+                handleCinemaSelect(cinemaOptions[currentIndex + 1].id);
+              break;
             case "Enter":
-              e.preventDefault()
-              if (selectedCinema) handleContinue()
-              break
+              e.preventDefault();
+              if (selectedCinema) handleContinue();
+              break;
             case "Escape":
-              e.preventDefault()
-              handleBack()
-              break
+              e.preventDefault();
+              handleBack();
+              break;
             default:
-              break
+              break;
           }
         }
       } catch (err) {
-        console.error("Error in keyboard navigation:", err)
+        console.error("Error in keyboard navigation:", err);
       }
-    }
+    };
 
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [currentStep, selectedCinema, handleCinemaSelect, handleContinue, handleBack, cinemaOptions])
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [
+    currentStep,
+    selectedCinema,
+    handleCinemaSelect,
+    handleContinue,
+    handleBack,
+    cinemaOptions,
+  ]);
 
   // Scroll to top on step change
   useEffect(() => {
     try {
-      window.scrollTo({ top: 0, behavior: "smooth" })
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
-      console.error("Error scrolling to top:", err)
+      console.error("Error scrolling to top:", err);
       // Fallback for older browsers
-      window.scrollTo(0, 0)
+      window.scrollTo(0, 0);
     }
-  }, [currentStep])
+  }, [currentStep]);
 
   // Error boundary effect
   useEffect(() => {
     const handleError = (event) => {
-      console.error("Global error caught:", event.error)
-      setError("Ha ocurrido un error inesperado. Por favor recarga la página.")
-    }
+      console.error("Global error caught:", event.error);
+      setError("Ha ocurrido un error inesperado. Por favor recarga la página.");
+    };
 
     const handleUnhandledRejection = (event) => {
-      console.error("Unhandled promise rejection:", event.reason)
-      setError("Error de conexión. Por favor verifica tu conexión a internet.")
-    }
+      console.error("Unhandled promise rejection:", event.reason);
+      setError("Error de conexión. Por favor verifica tu conexión a internet.");
+    };
 
-    window.addEventListener("error", handleError)
-    window.addEventListener("unhandledrejection", handleUnhandledRejection)
+    window.addEventListener("error", handleError);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
     return () => {
-      window.removeEventListener("error", handleError)
-      window.removeEventListener("unhandledrejection", handleUnhandledRejection)
-    }
-  }, [])
+      window.removeEventListener("error", handleError);
+      window.removeEventListener(
+        "unhandledrejection",
+        handleUnhandledRejection
+      );
+    };
+  }, []);
 
   // Show error state if no movies could be loaded
   if (error && movieOptions.length === 0) {
@@ -537,16 +595,31 @@ const SpecialFunctions = () => {
         </div>
         <div className="events-content">
           <div className="events-actions">
-            <button className="events-btn-primary" onClick={() => window.location.reload()}>
+            <button
+              className="events-btn-primary"
+              onClick={() => window.location.reload()}
+            >
               Recargar Página
             </button>
-            <button className="events-btn-secondary" onClick={() => navigate("/corporate")}>
+            <button
+              className="events-btn-secondary"
+              onClick={() => navigate("/corporate")}
+            >
               Regresar
             </button>
           </div>
         </div>
       </div>
-    )
+    );
+  }
+
+  if (moviesLoading) {
+    return (
+      <div className="loading-overlay">
+        <div className="loading-spinner"></div>
+        <p>Loading movies...</p>
+      </div>
+    );
   }
 
   return (
@@ -556,7 +629,9 @@ const SpecialFunctions = () => {
         <div className="events-header-content">
           <div className="events-icon">🎭</div>
           <h1 className="events-title">Funciones Especiales</h1>
-          <p className="events-subtitle">Disfruta de experiencias cinematográficas únicas y exclusivas</p>
+          <p className="events-subtitle">
+            Disfruta de experiencias cinematográficas únicas y exclusivas
+          </p>
         </div>
         <div className="events-header-overlay"></div>
       </div>
@@ -638,11 +713,17 @@ const SpecialFunctions = () => {
           {steps.map((step, index) => (
             <div
               key={step.number}
-              className={`events-step ${step.active ? "active" : ""} ${currentStep === step.number ? "current" : ""}`}
+              className={`events-step ${step.active ? "active" : ""} ${
+                currentStep === step.number ? "current" : ""
+              }`}
             >
               <div className="events-step-number">{step.number}</div>
               <span className="events-step-title">{step.title}</span>
-              {index < steps.length - 1 && <div className={`events-step-line ${step.active ? "active" : ""}`}></div>}
+              {index < steps.length - 1 && (
+                <div
+                  className={`events-step-line ${step.active ? "active" : ""}`}
+                ></div>
+              )}
             </div>
           ))}
         </div>
@@ -655,20 +736,27 @@ const SpecialFunctions = () => {
           <div className="events-selection-section">
             <div className="events-selection-header">
               <h2>Selecciona el cine para tu función especial</h2>
-              <p>Elige la sala que mejor se adapte a tus necesidades y ubicación preferida</p>
+              <p>
+                Elige la sala que mejor se adapte a tus necesidades y ubicación
+                preferida
+              </p>
             </div>
 
             <div className="events-grid">
               {cinemaOptions.map((cinema) => (
                 <div
                   key={cinema.id}
-                  className={`events-card cinema-card ${selectedCinema === cinema.id ? "selected" : ""}`}
+                  className={`events-card cinema-card ${
+                    selectedCinema === cinema.id ? "selected" : ""
+                  }`}
                   onClick={() => handleCinemaSelect(cinema.id)}
                   style={{ "--card-gradient": cinema.gradient }}
                 >
                   <div className="events-card-image cinema-bg">
                     <img
-                      src={cinema.image || "/placeholder.svg?height=200&width=300"}
+                      src={
+                        cinema.image || "/placeholder.svg?height=200&width=300"
+                      }
                       alt={`${cinema.name} - Cinema`}
                       className="events-card-img"
                       loading="lazy"
@@ -699,7 +787,11 @@ const SpecialFunctions = () => {
                         ))}
                       </div>
                     </div>
-                    <div className={`events-radio ${selectedCinema === cinema.id ? "checked" : ""}`}>
+                    <div
+                      className={`events-radio ${
+                        selectedCinema === cinema.id ? "checked" : ""
+                      }`}
+                    >
                       <div className="events-radio-inner"></div>
                     </div>
                   </div>
@@ -712,7 +804,9 @@ const SpecialFunctions = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!selectedCinema ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !selectedCinema ? "disabled" : ""
+                }`}
                 onClick={handleContinue}
                 disabled={!selectedCinema}
               >
@@ -726,11 +820,23 @@ const SpecialFunctions = () => {
         {currentStep === 2 && (
           <div className="events-selection-section">
             <div className="events-selection-header">
-              <h2>Elige el contenido disponible en base a tu selección de cine</h2>
-              <p>*La fecha de estreno de la película no debe exceder los 3 meses.</p>
-              <p>**Validar con un ejecutivo si los Próximos Estrenos se proyectarán en el cine elegido.</p>
+              <h2>
+                Elige el contenido disponible en base a tu selección de cine
+              </h2>
+              <p>
+                *La fecha de estreno de la película no debe exceder los 3 meses.
+              </p>
+              <p>
+                **Validar con un ejecutivo si los Próximos Estrenos se
+                proyectarán en el cine elegido.
+              </p>
               <div className="cinema-info">
-                <h3>Cines: {cinemaOptions.find((c) => c.id === selectedCinema)?.name.replace("Cinerama ", "")}</h3>
+                <h3>
+                  Cines:{" "}
+                  {cinemaOptions
+                    .find((c) => c.id === selectedCinema)
+                    ?.name.replace("Cinerama ", "")}
+                </h3>
               </div>
             </div>
 
@@ -740,20 +846,31 @@ const SpecialFunctions = () => {
                   availableMovies.map((movie) => (
                     <div
                       key={movie.id}
-                      className={`movie-card ${selectedMovie === movie.id ? "selected" : ""}`}
+                      className={`movie-card ${
+                        selectedMovie === movie.id ? "selected" : ""
+                      }`}
                       onClick={() => handleMovieSelect(movie.id)}
                       style={{ "--card-gradient": movie.gradient }}
                     >
                       <div className="movie-poster">
                         <img
-                          src={movie.image || "/placeholder.svg?height=400&width=300"}
+                          src={
+                            movie.image ||
+                            "/placeholder.svg?height=400&width=300"
+                          }
                           alt={`${movie.title} - Poster`}
                           className="movie-img"
                           loading="lazy"
                           onError={(e) => handleImageError(e, "movie-bg")}
                         />
-                        {movie.isFanEvent && <div className="movie-badge fan-event">FAN EVENT</div>}
-                        {movie.isComingSoon && <div className="movie-badge coming-soon">PRÓXIMAMENTE</div>}
+                        {movie.isFanEvent && (
+                          <div className="movie-badge fan-event">FAN EVENT</div>
+                        )}
+                        {movie.isComingSoon && (
+                          <div className="movie-badge coming-soon">
+                            PRÓXIMAMENTE
+                          </div>
+                        )}
                         <div className="movie-overlay">
                           <h4>{movie.title}</h4>
                           <p>{movie.description}</p>
@@ -768,7 +885,10 @@ const SpecialFunctions = () => {
                   ))
                 ) : (
                   <div className="no-movies-message">
-                    <p>No hay películas disponibles para este cine en este momento.</p>
+                    <p>
+                      No hay películas disponibles para este cine en este
+                      momento.
+                    </p>
                   </div>
                 )}
               </div>
@@ -779,7 +899,9 @@ const SpecialFunctions = () => {
                 Regresar
               </button>
               <button
-                className={`events-btn-primary ${!selectedMovie ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !selectedMovie ? "disabled" : ""
+                }`}
                 onClick={handleContinue}
                 disabled={!selectedMovie}
               >
@@ -801,11 +923,17 @@ const SpecialFunctions = () => {
               <div className="selected-items">
                 <div className="selected-item">
                   <h4>Película</h4>
-                  <p>{movieOptions.find((m) => m.id === selectedMovie)?.title}</p>
+                  <p>
+                    {movieOptions.find((m) => m.id === selectedMovie)?.title}
+                  </p>
                 </div>
                 <div className="selected-item">
                   <h4>Cines</h4>
-                  <p>{cinemaOptions.find((c) => c.id === selectedCinema)?.name.replace("Cinerama ", "")}</p>
+                  <p>
+                    {cinemaOptions
+                      .find((c) => c.id === selectedCinema)
+                      ?.name.replace("Cinerama ", "")}
+                  </p>
                 </div>
               </div>
             </div>
@@ -816,7 +944,9 @@ const SpecialFunctions = () => {
                   <label>Tipo de Institución: *</label>
                   <select
                     value={formData.institutionType}
-                    onChange={(e) => handleInputChange("institutionType", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("institutionType", e.target.value)
+                    }
                     required
                   >
                     <option value="">Selecciona una opción</option>
@@ -831,7 +961,9 @@ const SpecialFunctions = () => {
                   <label>Capacidad: *</label>
                   <select
                     value={formData.capacity}
-                    onChange={(e) => handleInputChange("capacity", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("capacity", e.target.value)
+                    }
                     required
                   >
                     <option value="">Selecciona capacidad</option>
@@ -869,11 +1001,15 @@ const SpecialFunctions = () => {
                 <textarea
                   placeholder="Describe cualquier requerimiento especial para tu función..."
                   value={formData.requirements}
-                  onChange={(e) => handleInputChange("requirements", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("requirements", e.target.value)
+                  }
                   rows="4"
                   maxLength="500"
                 ></textarea>
-                <small className="char-count">{formData.requirements.length}/500 caracteres</small>
+                <small className="char-count">
+                  {formData.requirements.length}/500 caracteres
+                </small>
               </div>
             </div>
 
@@ -882,7 +1018,11 @@ const SpecialFunctions = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!formData.institutionType || !formData.capacity ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !formData.institutionType || !formData.capacity
+                    ? "disabled"
+                    : ""
+                }`}
                 onClick={handleContinue}
                 disabled={!formData.institutionType || !formData.capacity}
               >
@@ -897,7 +1037,10 @@ const SpecialFunctions = () => {
           <div className="events-form-section">
             <div className="events-selection-header">
               <h2>Información de Contacto</h2>
-              <p>Completa tus datos para que podamos contactarte y confirmar tu función especial</p>
+              <p>
+                Completa tus datos para que podamos contactarte y confirmar tu
+                función especial
+              </p>
             </div>
 
             <div className="events-form">
@@ -908,7 +1051,9 @@ const SpecialFunctions = () => {
                     type="text"
                     placeholder="Tu nombre completo"
                     value={formData.contactName}
-                    onChange={(e) => handleInputChange("contactName", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("contactName", e.target.value)
+                    }
                     required
                     maxLength="100"
                   />
@@ -919,7 +1064,9 @@ const SpecialFunctions = () => {
                     type="text"
                     placeholder="Nombre de tu empresa o institución"
                     value={formData.company}
-                    onChange={(e) => handleInputChange("company", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("company", e.target.value)
+                    }
                     maxLength="100"
                   />
                 </div>
@@ -932,7 +1079,9 @@ const SpecialFunctions = () => {
                     type="email"
                     placeholder="tu@email.com"
                     value={formData.contactEmail}
-                    onChange={(e) => handleInputChange("contactEmail", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("contactEmail", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -942,7 +1091,9 @@ const SpecialFunctions = () => {
                     type="tel"
                     placeholder="+51 999 999 999"
                     value={formData.contactPhone}
-                    onChange={(e) => handleInputChange("contactPhone", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("contactPhone", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -957,7 +1108,9 @@ const SpecialFunctions = () => {
                   rows="4"
                   maxLength="500"
                 ></textarea>
-                <small className="char-count">{formData.message.length}/500 caracteres</small>
+                <small className="char-count">
+                  {formData.message.length}/500 caracteres
+                </small>
               </div>
             </div>
 
@@ -966,9 +1119,19 @@ const SpecialFunctions = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${!formData.contactName || !formData.contactEmail || !formData.contactPhone ? "disabled" : ""}`}
+                className={`events-btn-primary ${
+                  !formData.contactName ||
+                  !formData.contactEmail ||
+                  !formData.contactPhone
+                    ? "disabled"
+                    : ""
+                }`}
                 onClick={handleContinue}
-                disabled={!formData.contactName || !formData.contactEmail || !formData.contactPhone}
+                disabled={
+                  !formData.contactName ||
+                  !formData.contactEmail ||
+                  !formData.contactPhone
+                }
               >
                 Continuar →
               </button>
@@ -987,9 +1150,14 @@ const SpecialFunctions = () => {
             <div className="summary-card">
               <div className="summary-section">
                 <h3>🎬 Cine Seleccionado</h3>
-                <p>{cinemaOptions.find((c) => c.id === selectedCinema)?.name}</p>
+                <p>
+                  {cinemaOptions.find((c) => c.id === selectedCinema)?.name}
+                </p>
                 <span className="summary-description">
-                  {cinemaOptions.find((c) => c.id === selectedCinema)?.description}
+                  {
+                    cinemaOptions.find((c) => c.id === selectedCinema)
+                      ?.description
+                  }
                 </span>
               </div>
 
@@ -997,14 +1165,19 @@ const SpecialFunctions = () => {
                 <h3>🎭 Película Seleccionada</h3>
                 <p>{movieOptions.find((m) => m.id === selectedMovie)?.title}</p>
                 <span className="summary-description">
-                  {movieOptions.find((m) => m.id === selectedMovie)?.description}
+                  {
+                    movieOptions.find((m) => m.id === selectedMovie)
+                      ?.description
+                  }
                 </span>
                 <div className="movie-summary-details">
                   <span>
-                    <strong>Género:</strong> {movieOptions.find((m) => m.id === selectedMovie)?.genre}
+                    <strong>Género:</strong>{" "}
+                    {movieOptions.find((m) => m.id === selectedMovie)?.genre}
                   </span>
                   <span>
-                    <strong>Duración:</strong> {movieOptions.find((m) => m.id === selectedMovie)?.duration}
+                    <strong>Duración:</strong>{" "}
+                    {movieOptions.find((m) => m.id === selectedMovie)?.duration}
                   </span>
                 </div>
               </div>
@@ -1014,14 +1187,23 @@ const SpecialFunctions = () => {
                 <div className="summary-details">
                   <p>
                     <strong>Tipo de Institución:</strong>{" "}
-                    {institutionTypes.find((t) => t.value === formData.institutionType)?.label}
+                    {
+                      institutionTypes.find(
+                        (t) => t.value === formData.institutionType
+                      )?.label
+                    }
                   </p>
                   <p>
-                    <strong>Capacidad:</strong> {capacityOptions.find((c) => c.value === formData.capacity)?.label}
+                    <strong>Capacidad:</strong>{" "}
+                    {
+                      capacityOptions.find((c) => c.value === formData.capacity)
+                        ?.label
+                    }
                   </p>
                   {formData.date && (
                     <p>
-                      <strong>Fecha:</strong> {new Date(formData.date).toLocaleDateString("es-ES")}
+                      <strong>Fecha:</strong>{" "}
+                      {new Date(formData.date).toLocaleDateString("es-ES")}
                     </p>
                   )}
                   {formData.time && (
@@ -1067,7 +1249,11 @@ const SpecialFunctions = () => {
               <button className="events-btn-secondary" onClick={handleBack}>
                 ← Regresar
               </button>
-              <button className="events-btn-primary" onClick={handleSubmit} disabled={loading}>
+              <button
+                className="events-btn-primary"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
                 {loading ? "Enviando..." : "Enviar Solicitud ✨"}
               </button>
             </div>
@@ -1078,12 +1264,16 @@ const SpecialFunctions = () => {
       {/* Add CSS for loading animation */}
       <style jsx>{`
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
         }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
-export default SpecialFunctions
+export default SpecialFunctions;
