@@ -15,7 +15,7 @@ function AdminLayout({ children }) {
   };
 
   const menuItems = [
-    { path: "/admin", label: "Dashboard", icon: "📊" },
+    { path: "/admin/dashboard", label: "Dashboard", icon: "📊" },
     { path: "/admin/movies", label: "Películas", icon: "🎬" },
     { path: "/admin/cinemas", label: "Salas", icon: "🏢" },
     { path: "/admin/showtimes", label: "Horarios", icon: "⏰" },
