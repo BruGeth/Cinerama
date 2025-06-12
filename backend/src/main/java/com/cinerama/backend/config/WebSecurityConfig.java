@@ -95,8 +95,8 @@ public class WebSecurityConfig {
                 // Configure endpoint authorization rules
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints for user authentication (register, login, verify)
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/user/", "/api/tickets/**").authenticated()
+                        .requestMatchers("/api/auth/**", "/api/seats/available**").permitAll()
+                        .requestMatchers("/api/user/", "/api/seats/reserve", "/api/tickets/**", "/api/seats/**").authenticated()
 
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
