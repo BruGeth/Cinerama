@@ -30,7 +30,11 @@ public class Show {
     private List<Seat> seats;
     @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Booking> bookings;
+
+    @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room;
     // Getters and Setters
 
-
 }
+

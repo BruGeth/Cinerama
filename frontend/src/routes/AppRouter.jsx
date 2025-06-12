@@ -22,8 +22,9 @@ import SpecialFunctions from '../pages/SpecialFunctions';
 import Advertising from '../pages/Advertising';
 import TicketPurchase from '../pages/TicketPurchase';
 import MoreInformation from "../components/MoreInformation";
-import AdminDashboard from "../pages/admin/AdminDashboard";
 import AdminRoute from "../utils/AdminRoute";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import Users from "../pages/admin/Users";
 import MoviesManagement from "../pages/admin/MoviesManagement";
 
 const AppRouter = () => {
@@ -75,8 +76,8 @@ const AppRouter = () => {
           }
         />
         <Route
-          path="/admin/dashboard"
-          element={
+        path="/admin/dashboard"
+        element={
             <AdminRoute>
               <AdminDashboard />
             </AdminRoute>
@@ -90,6 +91,14 @@ const AppRouter = () => {
             </AdminRoute>
           }
         />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <Users />
+            </AdminRoute>
+          }
+          />
       </Routes>
     </Router>
   );
