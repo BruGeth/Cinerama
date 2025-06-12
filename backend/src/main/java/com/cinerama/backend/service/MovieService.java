@@ -1,13 +1,14 @@
 package com.cinerama.backend.service;
 
-import com.cinerama.backend.entity.Movie;
+import com.cinerama.backend.dto.MovieRequest;
+import com.cinerama.backend.dto.MovieResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface MovieService {
-    List<Movie> getAllMovies();
-    Optional<Movie> getMovieById(Long id);
-    Movie saveMovie(Movie movie);
+    List<MovieResponse> getAllMovies();
+    Optional<MovieResponse> getMovieById(Long id);
+    MovieResponse saveMovie(MovieRequest movieRequest);
     void deleteMovie(Long id);
 }
