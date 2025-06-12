@@ -35,6 +35,12 @@ public class MovieController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public MovieResponse updateMovie(@PathVariable Long id, @RequestBody MovieRequest movieRequest) {
+        return movieService.updateMovie(id, movieRequest);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id) {
         movieService.deleteMovie(id);

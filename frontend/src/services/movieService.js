@@ -1,6 +1,15 @@
 const API_BASE_URL = "/api/movies";
 
-// Get all movies
+// Helper function to get authorization headers
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
+  };
+};
+
+// Obtain all movies
 export const fetchMovies = async () => {
   const res = await fetch(API_BASE_URL);
   if (!res.ok) throw new Error("Error fetching movies");
@@ -11,18 +20,18 @@ export const fetchMovies = async () => {
 export const createMovie = async (movieData) => {
   const res = await fetch(API_BASE_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify(movieData),
   });
   if (!res.ok) throw new Error("Error creating movie");
   return await res.json();
 };
 
-// Update a movie (if your backend supports PUT/PATCH)
+// Update an existing movie
 export const updateMovie = async (id, movieData) => {
   const res = await fetch(`${API_BASE_URL}/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: JSON.stringify(movieData),
   });
   if (!res.ok) throw new Error("Error updating movie");
@@ -33,6 +42,7 @@ export const updateMovie = async (id, movieData) => {
 export const deleteMovie = async (id) => {
   const res = await fetch(`${API_BASE_URL}/${id}`, {
     method: "DELETE",
+    headers: getAuthHeaders(),
   });
   if (!res.ok) throw new Error("Error deleting movie");
 };

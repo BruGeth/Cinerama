@@ -41,6 +41,24 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public MovieResponse updateMovie(Long id, MovieRequest movieRequest) {
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Movie not found"));
+
+        movie.setTitle(movieRequest.getTitle());
+        movie.setDescriptionShowtimes(movieRequest.getDescriptionShowtimes());
+        movie.setDescriptionMovie(movieRequest.getDescriptionMovie());
+        movie.setRating(movieRequest.getRating());
+        movie.setGenre(genreRepository.findById(movieRequest.getGenreId()).orElse(null));
+        movie.setImageUrl(movieRequest.getImageUrl());
+        movie.setDuration(movieRequest.getDuration());
+        movie.setTrailerUrl(movieRequest.getTrailerUrl());
+
+        Movie updated = movieRepository.save(movie);
+        return toMovieResponse(updated);
+    }
+
+    @Override
     public void deleteMovie(Long id) {
         movieRepository.deleteById(id);
     }

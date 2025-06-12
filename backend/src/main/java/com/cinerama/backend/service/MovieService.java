@@ -10,5 +10,6 @@ public interface MovieService {
     List<MovieResponse> getAllMovies();
     Optional<MovieResponse> getMovieById(Long id);
     MovieResponse saveMovie(MovieRequest movieRequest);
+    MovieResponse updateMovie(Long id, MovieRequest movieRequest);
     void deleteMovie(Long id);
 }
