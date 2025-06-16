@@ -29,6 +29,11 @@ public class ShowtimeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/movie/{movieId}")
+    public List<ShowtimeResponse> getShowtimesByMovieId(@PathVariable Long movieId) {
+        return showtimeService.getShowtimesByMovieId(movieId);
+    }
+
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ShowtimeResponse createShowtime(@RequestBody ShowtimeRequest showtimeRequest) {

@@ -34,6 +34,14 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     }
 
     @Override
+    public List<ShowtimeResponse> getShowtimesByMovieId(Long movieId) {
+        return showtimeRepository.findByMovieId(movieId)
+                .stream()
+                .map(this::toShowtimeResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ShowtimeResponse saveShowtime(ShowtimeRequest showtimeRequest) {
         Showtime showtime = toShowtimeEntity(showtimeRequest);
         Showtime saved = showtimeRepository.save(showtime);
