@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface ShowtimeService {
     List<ShowtimeResponse> getAllShowtimes();
     Optional<ShowtimeResponse> getShowtimeById(Long id);
+    List<ShowtimeResponse> getShowtimesByMovieId(Long movieId);
     ShowtimeResponse saveShowtime(ShowtimeRequest showtimeRequest);
     void deleteShowtime(Long id);
 }

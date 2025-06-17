@@ -1,82 +1,145 @@
-import { useState } from 'react'; // Import React and useState for managing component state
-import { useParams, useNavigate } from 'react-router-dom'; // Import hooks for routing functionality
-import { useMovies } from '../hooks/useMovies'; // Import custom hook for fetching movie data from API
-import '../styles/MovieDetail.css'; // Import CSS for styling
+import { useState, useEffect } from "react"; // Import React and useState for managing component state
+import { useParams, useNavigate } from "react-router-dom"; // Import hooks for routing functionality
+import { useMovies } from "../hooks/useMovies"; // Import custom hook for fetching movie data from API
+import "../styles/MovieDetail.css"; // Import CSS for styling
 
 const MovieDetail = () => {
   const { id } = useParams(); // Extract movie ID from the URL
   const navigate = useNavigate(); // Hook for handling navigation
   const { movies: movie, loading } = useMovies(id); // Fetch movie data using custom hook
 
-  // Handles navigation to the purchase page when selecting a showtime
-  const handleSelectShowtime = (format, time) => {
-    navigate(`/purchase/${movie.id}/${time}/${format}`);
-  };
-
   // State to track the selected date for showtimes
   const [selectedDate, setSelectedDate] = useState(0);
-
-  // Show loading message while fetching movie data
-  if (loading) return <h2 style={{ color: 'white' }}>Loading...</h2>;
-
-  // Display an error message if the movie is not found
-  if (!movie) return <h2 style={{ color: 'white' }}>Movie not found</h2>;
+  // State to store grouped showtimes by format for the selected date
+  const [groupedShowtimes, setGroupedShowtimes] = useState({
+    "2D": [],
+    "3D": [],
+    XD: [],
+  });
 
   // Generate an array of the next 7 days for showtime selection
   const days = Array.from({ length: 7 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() + i);
     return {
-      id: i, // Unique identifier for each date
-      dayName: date.toLocaleDateString('es-PE', { weekday: 'short' }).slice(0, 3).toUpperCase(), // Extract weekday abbreviation
-      formattedDate: `${date.toLocaleDateString('es-PE', { day: '2-digit' })} ${date.toLocaleDateString('es-PE', { month: 'short' }).replace('.', '')}. ${date.getFullYear()}`, // Full formatted date
+      id: i,
+      dateObj: new Date(date), // Save the Date object for comparison
+      dayName: date
+        .toLocaleDateString("es-PE", { weekday: "short" })
+        .slice(0, 3)
+        .toUpperCase(),
+      formattedDate: `${date.toLocaleDateString("es-PE", {
+        day: "2-digit",
+      })} ${date
+        .toLocaleDateString("es-PE", { month: "short" })
+        .replace(".", "")}. ${date.getFullYear()}`,
     };
   });
 
+  // Fetch and group showtimes by format and selected date
+  useEffect(() => {
+  const fetchShowtimes = async () => {
+    if (!movie || !movie.id) return;
+    // Llama a tu nuevo endpoint filtrado por movieId
+    const res = await fetch(`/api/showtimes/movie/${movie.id}`);
+    const showtimesList = await res.json();
+
+    const selectedDay = days[selectedDate].dateObj;
+    selectedDay.setHours(0, 0, 0, 0);
+
+    const grouped = { "2D": [], "3D": [], "XD": [] };
+
+    showtimesList.forEach((st) => {
+      let format = "";
+      if (st.auditorium.includes("2D")) format = "2D";
+      else if (st.auditorium.includes("3D")) format = "3D";
+      else if (st.auditorium.includes("XD")) format = "XD";
+      else return;
+
+      const showDate = new Date(st.startTime);
+      const showDateMidnight = new Date(showDate);
+      showDateMidnight.setHours(0, 0, 0, 0);
+
+      if (showDateMidnight.getTime() === selectedDay.getTime()) {
+        grouped[format].push({
+          id: st.id,
+          time: st.startTime.slice(11, 16),
+          full: st.startTime,
+        });
+      }
+    });
+
+    setGroupedShowtimes(grouped);
+  };
+
+  if (movie && movie.id) {
+    fetchShowtimes();
+  }
+  // eslint-disable-next-line
+}, [movie, selectedDate]);
+
+  // Handles navigation to the purchase page when selecting a showtime
+  const handleSelectShowtime = (format, time) => {
+    navigate(`/purchase/${movie.id}/${time}/${format}`);
+  };
+
+  if (loading) return <h2 style={{ color: "white" }}>Loading...</h2>;
+  if (!movie) return <h2 style={{ color: "white" }}>Movie not found</h2>;
+
   return (
-    <div className="movie-detail-container"> {/* Main container for movie details */}
-      <div className="left-column"> {/* Left section for movie poster and synopsis */}
-        <img src={movie.imageUrl} alt={movie.title} className="movie-image" /> {/* Display movie poster */}
+    <div className="movie-detail-container">
+      <div className="left-column">
+        <img src={movie.imageUrl} alt={movie.title} className="movie-image" />
         <h3 className="sinopsis-title">Sinopsis</h3>
-        <p className="sinopsis-text">{movie.descriptionMovie}</p> {/* Display movie description */}
+        <p className="sinopsis-text">{movie.descriptionMovie}</p>
       </div>
 
-      <div className="right-column"> {/* Right section containing movie information and showtimes */}
-        <h1 className="movie-title">{movie.title}</h1> {/* Display movie title */}
-        <p><strong>Duración:</strong> {movie.duration} min</p> {/* Display movie duration */}
-        <p><strong>Género:</strong> {movie.genreName}</p> {/* Display movie genre */}
+      <div className="right-column">
+        <h1 className="movie-title">{movie.title}</h1>
+        <p>
+          <strong>Duración:</strong> {movie.duration} min
+        </p>
+        <p>
+          <strong>Género:</strong> {movie.genreName}
+        </p>
 
-        <div className="date-selector"> {/* Date selection buttons */}
+        <div className="date-selector">
           {days.map((day) => (
             <button
               key={day.id}
-              className={`date-box ${selectedDate === day.id ? 'active' : ''}`} // Apply active styling for selected date
-              onClick={() => setSelectedDate(day.id)} // Set selected date on click
+              className={`date-box ${selectedDate === day.id ? "active" : ""}`}
+              onClick={() => setSelectedDate(day.id)}
             >
-              <p style={{ fontWeight: 'bold', fontSize: '16px' }}>{day.dayName}</p> {/* Display short weekday name */}
-              <p style={{ fontSize: '14px', color: '#ccc' }}>{day.formattedDate}</p> {/* Display formatted date */}
+              <p style={{ fontWeight: "bold", fontSize: "16px" }}>
+                {day.dayName}
+              </p>
+              <p style={{ fontSize: "14px", color: "#ccc" }}>
+                {day.formattedDate}
+              </p>
             </button>
           ))}
         </div>
 
-        {/* Showtime selection grid */}
-        <div className={`showtime-grid ${selectedDate !== null ? 'active' : ''}`}>
-          {["2D", "3D", "XD"].map((format) => ( // Iterate over different formats
-            <div key={format} className="format-container"> {/* Format section */}
-              <h3>{format}</h3> {/* Display format title */}
-              <div className="showtime-buttons"> {/* Container for showtime buttons */}
-                {Array.isArray(movie.showtimes?.[format]) && movie.showtimes[format].length > 0 ? (
-                  movie.showtimes[format].map((time, idx) => ( // Iterate through available showtimes
+        <div
+          className={`showtime-grid ${selectedDate !== null ? "active" : ""}`}
+        >
+          {["2D", "3D", "XD"].map((format) => (
+            <div key={format} className="format-container">
+              <h3>{format}</h3>
+              <div className="showtime-buttons">
+                {groupedShowtimes[format] &&
+                groupedShowtimes[format].length > 0 ? (
+                  groupedShowtimes[format].map((st) => (
                     <button
-                      key={idx}
+                      key={st.id}
                       className="showtime-button"
-                      onClick={() => handleSelectShowtime(format, time)} // Handle showtime selection
+                      onClick={() => handleSelectShowtime(format, st.time)}
                     >
-                      {time}
+                      {st.time}
                     </button>
                   ))
                 ) : (
-                  <p className="no-showtime">No disponible</p> // Display message if no showtimes are available
+                  <p className="no-showtime">No disponible</p>
                 )}
               </div>
             </div>
@@ -87,4 +150,4 @@ const MovieDetail = () => {
   );
 };
 
-export default MovieDetail; // Export component for use in other parts of the application
+export default MovieDetail;
