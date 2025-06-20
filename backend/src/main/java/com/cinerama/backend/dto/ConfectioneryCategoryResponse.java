@@ -1,12 +1,12 @@
 package com.cinerama.backend.dto;
 
+import lombok.Getter;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
 
-@Data
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@Builder
 public class ConfectioneryCategoryResponse {
     private Long id;
     private String name;
