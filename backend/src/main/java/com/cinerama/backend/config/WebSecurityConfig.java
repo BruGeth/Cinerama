@@ -101,6 +101,7 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/genres/**", "/api/movies/**","/api/showtimes/**").permitAll()
                         // Public access to user profile endpoint
                         .requestMatchers("/api/user/", "/api/tickets/**", "/api/seats/**").authenticated()
+                        .requestMatchers("/api/orders/**").permitAll()//Added
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
                 )
