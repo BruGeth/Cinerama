@@ -1,0 +1,15 @@
+.category-modal {
+  max-width: 500px;
+}
+
+.category-form {
+  padding: 1.5rem;
+}
+
+.form-help {
+  display: block;
+  margin-top: 0.5rem;
+  color: #666;
+  font-size: 0.875rem;
+  font-style: italic;
+}
