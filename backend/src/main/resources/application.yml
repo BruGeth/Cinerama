@@ -41,3 +41,9 @@ logging:
   level:
     org.springframework: INFO
     com.cinerama: DEBUG
+
+paypal:
+  client-id: ${PAYPAL_CLIENT_ID}
+  client-secret: ${PAYPAL_CLIENT_SECRET}
+  mode: sandbox
+  api-url: https://api-m.sandbox.paypal.com
