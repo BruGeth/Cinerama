@@ -16,13 +16,12 @@ import static org.mockito.Mockito.*;
 class ConfectioneryProductServiceImplTest {
 
     private ConfectioneryProductRepository mockProductRepository;
-    private ConfectioneryCategoryRepository mockCategoryRepository;
     private ConfectioneryProductServiceImpl service;
 
     @BeforeEach
     void setUp() {
         mockProductRepository = mock(ConfectioneryProductRepository.class);
-        mockCategoryRepository = mock(ConfectioneryCategoryRepository.class);
+        ConfectioneryCategoryRepository mockCategoryRepository = mock(ConfectioneryCategoryRepository.class);
         service = new ConfectioneryProductServiceImpl(mockProductRepository, mockCategoryRepository);
     }
 
