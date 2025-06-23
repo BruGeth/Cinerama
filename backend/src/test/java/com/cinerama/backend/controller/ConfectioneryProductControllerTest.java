@@ -37,9 +37,11 @@ class ConfectioneryProductControllerTest {
     @Test
     void shouldReturnAllProducts() throws Exception {
         ConfectioneryProductResponse product1 = ConfectioneryProductResponse.builder()
-                .id(1L).name("Coca Cola").description("Bebida").price(2.0).image("coca.jpg").category(category).build();
+                .id(1L).name("Coca Cola").description("Bebida").price(2.0).image("coca.jpg")
+                .stock(50).stockUnit("envase").category(category).build();
         ConfectioneryProductResponse product2 = ConfectioneryProductResponse.builder()
-                .id(2L).name("Palomitas").description("Snack").price(1.5).image("popcorn.jpg").category(category).build();
+                .id(2L).name("Palomitas").description("Snack").price(1.5).image("popcorn.jpg")
+                .stock(100).stockUnit("porción").category(category).build();
         when(service.getAllProducts()).thenReturn(Arrays.asList(product1, product2));
 
         mockMvc.perform(get("/api/confectionery-products")
@@ -50,16 +52,21 @@ class ConfectioneryProductControllerTest {
                 .andExpect(jsonPath("$[0].description").value("Bebida"))
                 .andExpect(jsonPath("$[0].price").value(2.0))
                 .andExpect(jsonPath("$[0].image").value("coca.jpg"))
+                .andExpect(jsonPath("$[0].stock").value(50))
+                .andExpect(jsonPath("$[0].stockUnit").value("envase"))
                 .andExpect(jsonPath("$[0].category.id").value(1L))
                 .andExpect(jsonPath("$[0].category.name").value("Dulces"))
                 .andExpect(jsonPath("$[1].id").value(2L))
-                .andExpect(jsonPath("$[1].name").value("Palomitas"));
+                .andExpect(jsonPath("$[1].name").value("Palomitas"))
+                .andExpect(jsonPath("$[1].stock").value(100))
+                .andExpect(jsonPath("$[1].stockUnit").value("porción"));
     }
 
     @Test
     void shouldReturnProductById() throws Exception {
         ConfectioneryProductResponse product = ConfectioneryProductResponse.builder()
-                .id(1L).name("Coca Cola").description("Bebida").price(2.0).image("coca.jpg").category(category).build();
+                .id(1L).name("Coca Cola").description("Bebida").price(2.0).image("coca.jpg")
+                .stock(50).stockUnit("envase").category(category).build();
         when(service.getProductById(1L)).thenReturn(Optional.of(product));
 
         mockMvc.perform(get("/api/confectionery-products/1")
@@ -70,6 +77,8 @@ class ConfectioneryProductControllerTest {
                 .andExpect(jsonPath("$.description").value("Bebida"))
                 .andExpect(jsonPath("$.price").value(2.0))
                 .andExpect(jsonPath("$.image").value("coca.jpg"))
+                .andExpect(jsonPath("$.stock").value(50))
+                .andExpect(jsonPath("$.stockUnit").value("envase"))
                 .andExpect(jsonPath("$.category.id").value(1L))
                 .andExpect(jsonPath("$.category.name").value("Dulces"));
     }
@@ -77,22 +86,25 @@ class ConfectioneryProductControllerTest {
     @Test
     void shouldAllowAdminToCreateProduct() throws Exception {
         ConfectioneryProductRequest request = new ConfectioneryProductRequest(
-                "Nachos", "Snack", 3.0, "nachos.jpg", 1L
+                "Nachos", "Snack", 3.0, "nachos.jpg", 1L, 100, "unit"
         );
         ConfectioneryProductResponse created = ConfectioneryProductResponse.builder()
-                .id(3L).name("Nachos").description("Snack").price(3.0).image("nachos.jpg").category(category).build();
+                .id(3L).name("Nachos").description("Snack").price(3.0).image("nachos.jpg")
+                .stock(100).stockUnit("unit").category(category).build();
         when(service.createProduct(request)).thenReturn(created);
 
         mockMvc.perform(post("/api/confectionery-products")
                         .with(user("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Nachos\",\"description\":\"Snack\",\"price\":3.0,\"image\":\"nachos.jpg\",\"categoryId\":1}"))
+                        .content("{\"name\":\"Nachos\",\"description\":\"Snack\",\"price\":3.0,\"image\":\"nachos.jpg\",\"stock\":100,\"stockUnit\":\"unit\",\"categoryId\":1}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(3L))
                 .andExpect(jsonPath("$.name").value("Nachos"))
                 .andExpect(jsonPath("$.description").value("Snack"))
                 .andExpect(jsonPath("$.price").value(3.0))
                 .andExpect(jsonPath("$.image").value("nachos.jpg"))
+                .andExpect(jsonPath("$.stock").value(100))
+                .andExpect(jsonPath("$.stockUnit").value("unit"))
                 .andExpect(jsonPath("$.category.id").value(1L));
     }
 
@@ -101,29 +113,32 @@ class ConfectioneryProductControllerTest {
         mockMvc.perform(post("/api/confectionery-products")
                         .with(user("user").roles("USER"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Nachos\",\"description\":\"Snack\",\"price\":3.0,\"image\":\"nachos.jpg\",\"categoryId\":1}"))
+                        .content("{\"name\":\"Nachos\",\"description\":\"Snack\",\"price\":3.0,\"image\":\"nachos.jpg\",\"stock\":100,\"stockUnit\":\"unit\",\"categoryId\":1}"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void shouldAllowAdminToUpdateProduct() throws Exception {
         ConfectioneryProductRequest request = new ConfectioneryProductRequest(
-                "Agua", "Bebida", 1.0, "agua.jpg", 1L
+                "Agua", "Bebida", 1.0, "agua.jpg", 1L, 200, "envase"
         );
         ConfectioneryProductResponse updated = ConfectioneryProductResponse.builder()
-                .id(1L).name("Agua").description("Bebida").price(1.0).image("agua.jpg").category(category).build();
+                .id(1L).name("Agua").description("Bebida").price(1.0).image("agua.jpg")
+                .stock(200).stockUnit("envase").category(category).build();
         when(service.updateProduct(1L, request)).thenReturn(updated);
 
         mockMvc.perform(put("/api/confectionery-products/1")
                         .with(user("admin").roles("ADMIN"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Agua\",\"description\":\"Bebida\",\"price\":1.0,\"image\":\"agua.jpg\",\"categoryId\":1}"))
+                        .content("{\"name\":\"Agua\",\"description\":\"Bebida\",\"price\":1.0,\"image\":\"agua.jpg\",\"stock\":200,\"stockUnit\":\"envase\",\"categoryId\":1}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Agua"))
                 .andExpect(jsonPath("$.description").value("Bebida"))
                 .andExpect(jsonPath("$.price").value(1.0))
                 .andExpect(jsonPath("$.image").value("agua.jpg"))
+                .andExpect(jsonPath("$.stock").value(200))
+                .andExpect(jsonPath("$.stockUnit").value("envase"))
                 .andExpect(jsonPath("$.category.id").value(1L));
     }
 
@@ -132,7 +147,7 @@ class ConfectioneryProductControllerTest {
         mockMvc.perform(put("/api/confectionery-products/1")
                         .with(user("user").roles("USER"))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Agua\",\"description\":\"Bebida\",\"price\":1.0,\"image\":\"agua.jpg\",\"categoryId\":1}"))
+                        .content("{\"name\":\"Agua\",\"description\":\"Bebida\",\"price\":1.0,\"image\":\"agua.jpg\",\"stock\":200,\"stockUnit\":\"envase\",\"categoryId\":1}"))
                 .andExpect(status().isForbidden());
     }
 
