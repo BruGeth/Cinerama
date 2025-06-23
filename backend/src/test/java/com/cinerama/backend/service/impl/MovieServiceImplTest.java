@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class MovieServiceImplTest {
-
     @Test
     void getAllMovies_returnsAllMovies() {
         MovieRepository mockRepo = mock(MovieRepository.class);
