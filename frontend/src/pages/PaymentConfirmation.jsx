@@ -8,6 +8,7 @@ const PaymentConfirmation = () => {
   const [searchParams] = useSearchParams();
   const [showPayPal, setShowPayPal] = useState(false);
 
+  // Access payment-related actions and state from context
   const {
     createOrder,
     paymentStatus,
@@ -15,18 +16,21 @@ const PaymentConfirmation = () => {
     setMessage
   } = usePayment();
 
+  // Extract booking details from the URL query parameters
   const seats = searchParams.get("seats")?.split(",") || [];
   const movie = searchParams.get("movie");
   const showtime = searchParams.get("showtime");
   const format = searchParams.get("format");
   const ticketsGeneral = parseInt(searchParams.get("ticketsGeneral") || "0");
   const ticketsChild = parseInt(searchParams.get("ticketsChild") || "0");
-  const totalAmount = ticketsGeneral * 15 + ticketsChild * 10;
+  const totalAmount = ticketsGeneral * 15 + ticketsChild * 10;// Calculate total based on ticket types
 
+  // Check if PayPal Client ID is defined in environment variables
   if (!process.env.REACT_APP_PAYPAL_CLIENT_ID) {
     return <p>Error: PayPal Client ID no está definido</p>;
   }
  
+  // Create a PayPal order using the backend API
   const handleCreateOrder = async () => {
   try {
     const id = await createOrder(totalAmount);
@@ -38,17 +42,18 @@ const PaymentConfirmation = () => {
   }
 };
 
+// Handle PayPal approval and trigger backend capture
   const handleOnApprove = async (data) => {
   try {
     console.log("Orden aprobada por PayPal:", data.orderID);
 
-    // Captura la orden en tu backend
-    const token = localStorage.getItem("token"); // si usas JWT
+    // Capture the order through the backend API
+    const token = localStorage.getItem("token"); // use JWT if required
     const response = await fetch(`/api/orders/${data.orderID}/capture`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // solo si tu endpoint lo requiere
+        Authorization: `Bearer ${token}`, // include authorization if required
       },
     });
 
@@ -57,7 +62,7 @@ const PaymentConfirmation = () => {
 
     if (response.ok) {
       if (setMessage) setMessage("¡Pago realizado con éxito!");
-      // Aquí podrías redirigir, limpiar el carrito, etc.
+      // Optionally redirect or reset booking flow here
     } else {
       if (setMessage) setMessage(`Error al capturar la orden: ${result.error}`);
     }
