@@ -30,13 +30,13 @@ const Confectionery = () => {
     fetch("/api/confectionery-products")
       .then(res => res.json())
       .then(data => {
+        console.log("Products from API:", data); // <-- Add this line
         setProducts(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
 
-  // Filter the products based on the selected category
   // Filter the products based on the selected category
 const filteredProducts = selectedCategory === "Todos"
   ? products
