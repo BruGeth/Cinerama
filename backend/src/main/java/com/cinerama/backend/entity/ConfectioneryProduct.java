@@ -22,4 +22,6 @@ public class ConfectioneryProduct {
     private String description;
     private Double price;
     private String image;
+    private Integer stock;
+    private String stockUnit;
 }

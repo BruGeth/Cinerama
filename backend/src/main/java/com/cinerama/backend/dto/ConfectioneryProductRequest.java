@@ -2,12 +2,14 @@ package com.cinerama.backend.dto;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class ConfectioneryProductRequest {
     @NotBlank(message = "Product name is required")
     private String name;
@@ -22,4 +24,8 @@ public class ConfectioneryProductRequest {
 
     @NotNull(message = "Category ID is required")
     private Long categoryId;
+
+    private Integer stock;
+
+    private String stockUnit;
 }
