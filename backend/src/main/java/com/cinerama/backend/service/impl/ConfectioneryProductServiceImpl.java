@@ -46,6 +46,8 @@ public class ConfectioneryProductServiceImpl implements ConfectioneryProductServ
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setImage(request.getImage());
+        product.setStock(request.getStock());
+        product.setStockUnit(request.getStockUnit());
         product.setCategory(category);
         ConfectioneryProduct saved = productRepository.save(product);
         return toResponse(saved);
@@ -61,6 +63,8 @@ public class ConfectioneryProductServiceImpl implements ConfectioneryProductServ
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setImage(request.getImage());
+        product.setStock(request.getStock());
+        product.setStockUnit(request.getStockUnit());
         product.setCategory(category);
         ConfectioneryProduct updated = productRepository.save(product);
         return toResponse(updated);
@@ -78,6 +82,8 @@ public class ConfectioneryProductServiceImpl implements ConfectioneryProductServ
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .image(product.getImage())
+                .stock(product.getStock())
+                .stockUnit(product.getStockUnit())
                 .category(
                         ConfectioneryCategoryResponse.builder()
                                 .id(product.getCategory().getId())
