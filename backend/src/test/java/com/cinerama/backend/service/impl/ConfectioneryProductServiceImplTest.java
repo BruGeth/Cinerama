@@ -3,6 +3,7 @@ package com.cinerama.backend.service.impl;
 import com.cinerama.backend.dto.ConfectioneryProductResponse;
 import com.cinerama.backend.entity.ConfectioneryProduct;
 import com.cinerama.backend.entity.ConfectioneryCategory;
+import com.cinerama.backend.repository.ConfectioneryCategoryRepository;
 import com.cinerama.backend.repository.ConfectioneryProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,13 +15,15 @@ import static org.mockito.Mockito.*;
 
 class ConfectioneryProductServiceImplTest {
 
-    private ConfectioneryProductRepository mockRepository;
+    private ConfectioneryProductRepository mockProductRepository;
+    private ConfectioneryCategoryRepository mockCategoryRepository;
     private ConfectioneryProductServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        mockRepository = mock(ConfectioneryProductRepository.class);
-        service = new ConfectioneryProductServiceImpl(mockRepository);
+        mockProductRepository = mock(ConfectioneryProductRepository.class);
+        mockCategoryRepository = mock(ConfectioneryCategoryRepository.class);
+        service = new ConfectioneryProductServiceImpl(mockProductRepository, mockCategoryRepository);
     }
 
     @Test
@@ -38,7 +41,7 @@ class ConfectioneryProductServiceImplTest {
         product.setImage("chocolate.jpg");
         product.setCategory(category);
 
-        when(mockRepository.findAll()).thenReturn(List.of(product));
+        when(mockProductRepository.findAll()).thenReturn(List.of(product));
 
         // Act
         List<ConfectioneryProductResponse> result = service.getAllProducts();
@@ -52,6 +55,6 @@ class ConfectioneryProductServiceImplTest {
         assertEquals("chocolate.jpg", result.get(0).getImage());
         assertEquals(1L, result.get(0).getCategory().getId());
         assertEquals("Dulces", result.get(0).getCategory().getName());
-        verify(mockRepository, times(1)).findAll();
+        verify(mockProductRepository, times(1)).findAll();
     }
 }
