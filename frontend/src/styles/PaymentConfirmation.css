@@ -1,0 +1,73 @@
+.payment-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 50px;
+  background-color: #e0cbcb;
+}
+html, body {
+  background-color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+.payment-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+  color: #ff0000;
+}
+
+.payment-instruction {
+  font-size: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #000000;
+}
+
+.payment-summary {
+  background-color: #e6ae2e;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: #222 !important;
+}
+
+.payment-summary h2 {
+  margin-top: 0;
+  color: #222 !important;
+}
+
+.payment-summary p,
+.payment-summary strong,
+.payment-summary h3 {
+  color: #222 !important;
+}
+
+.payment-method h2 {
+  margin-top: 0;
+  color: #ff0000;
+  text-align: center;
+}
+
+.total-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff0000;
+}
+
+.paypal-button {
+  background-color: #ffc439;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.payment-message,
+.success-message {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: 600;
+}
