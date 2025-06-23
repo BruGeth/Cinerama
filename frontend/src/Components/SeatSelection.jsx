@@ -73,7 +73,7 @@ const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
       </div>
 
       <div className="button-container">
-        <button className="payment-button" onClick={onProceedToPayment}> {/* Proceed to payment button */}
+        <button className="payment-button" onClick={() => onProceedToPayment(selectedSeats)}> {/* Proceed to payment button */}
           Continuar con pago
         </button>
       </div>
