@@ -24,8 +24,10 @@ import TicketPurchase from '../pages/TicketPurchase';
 import MoreInformation from "../components/MoreInformation";
 import AdminRoute from "../utils/AdminRoute";
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import Users from "../pages/admin/Users";
+import PaymentConfirmation from "../pages/PaymentConfirmation"
+import { PaymentProvider } from "../context/PaymentContext";
 import MoviesManagement from "../pages/admin/MoviesManagement";
+import Users from "../pages/admin/Users";
 
 const AppRouter = () => {
   return (
@@ -55,7 +57,6 @@ const AppRouter = () => {
                   <Route path="/movies" element={<Cartelera />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/billboard/:id" element={<MovieDetail/>} />
-                  <Route path="/purchase/:id/:showtime/:format" element={<TicketPurchase />} />
                   <Route path="/corporate" element={<Corporate />} />
                   <Route path="/festarama" element={<FestaRama />} />
                   <Route
@@ -99,6 +100,24 @@ const AppRouter = () => {
             </AdminRoute>
           }
           />
+        <Route path="/purchase/:id/:showtime/:format" element={
+  <>
+    <Navbar />
+    <PaymentProvider>
+      <TicketPurchase />
+    </PaymentProvider>
+    <Footer />
+  </>
+} />
+<Route path="/payment-confirmation" element={
+  <>
+    <Navbar />
+    <PaymentProvider>
+      <PaymentConfirmation />
+    </PaymentProvider>
+    <Footer />
+  </>
+} />
       </Routes>
     </Router>
   );
