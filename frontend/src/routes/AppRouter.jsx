@@ -24,12 +24,11 @@ import TicketPurchase from "../pages/TicketPurchase";
 import MoreInformation from "../components/MoreInformation";
 import AdminRoute from "../utils/AdminRoute";
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import PaymentConfirmation from "../pages/PaymentConfirmation"
+import PaymentConfirmation from "../pages/PaymentConfirmation";
 import { PaymentProvider } from "../context/PaymentContext";
 import MoviesManagement from "../pages/admin/MoviesManagement";
 import Users from "../pages/admin/Users";
 import ConfectioneryManagement from "../pages/admin/ConfectioneryManagement";
-
 
 const AppRouter = () => {
   return (
@@ -119,26 +118,32 @@ const AppRouter = () => {
               <Users />
             </AdminRoute>
           }
-          />
-        <Route path="/purchase/:id/:showtime/:format" element={
-  <>
-    <Navbar />
-    <PaymentProvider>
-      <TicketPurchase />
-    </PaymentProvider>
-    <Footer />
-  </>
-} />
-<Route path="/payment-confirmation" element={
-  <>
-    <Navbar />
-    <PaymentProvider>
-      <PaymentConfirmation />
-    </PaymentProvider>
-    <Footer />
-  </>
-} />
-  </Routes>
+        />
+        <Route
+          path="/purchase/:id/:showtime/:format"
+          element={
+            <>
+              <Navbar />
+              <PaymentProvider>
+                <TicketPurchase />
+              </PaymentProvider>
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/payment-confirmation"
+          element={
+            <>
+              <Navbar />
+              <PaymentProvider>
+                <PaymentConfirmation />
+              </PaymentProvider>
+              <Footer />
+            </>
+          }
+        />
+      </Routes>
     </Router>
   );
 };
