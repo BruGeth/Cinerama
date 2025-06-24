@@ -174,11 +174,26 @@ const Events = () => {
   }, [isAnimating, currentStep, navigate]);
 
   // Handle final submission
-  const handleSubmit = useCallback(() => {
-    // Here you would typically send the data to your backend
-    console.log('Submitting event data:', formData);
-    alert('¡Evento enviado correctamente! Te contactaremos pronto.');
-    navigate('/corporate');
+  const handleSubmit = useCallback(async () => {
+   try {
+    const response = await fetch("http://localhost:8080/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      alert("✅ ¡Tu solicitud fue enviada exitosamente!");
+      navigate("/corporate");
+    } else {
+      alert("❌ Ocurrió un error: " + result.message);
+    }
+    } catch (error) {
+     alert("❌ No se pudo conectar con el servidor. Intenta nuevamente.");
+     console.error(error);
+   }
   }, [formData, navigate]);
 
   // Image error handling
