@@ -6,7 +6,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .corporate-container::before {
@@ -65,6 +65,7 @@
   gap: 2.5rem;
   max-width: 1000px;
   margin: 0 auto;
+  padding-bottom: 4rem;
 }
 
 /* CARD STYLES */
