@@ -1,5 +1,5 @@
 // Import React and hooks
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 // Import the CSS file for styles
 import '../styles/Confectionery.css';
 

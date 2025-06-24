@@ -102,7 +102,7 @@ const AppRouter = () => {
           }
         />
         <Route
-          path="/admin/products"
+          path="/admin/confectionery"
           element={
             <AdminRoute>
               <ConfectioneryManagement />
