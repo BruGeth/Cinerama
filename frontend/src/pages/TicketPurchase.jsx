@@ -162,9 +162,20 @@ const TicketPurchase = () => {
       {showSeatSelection && (
         <div className="seat-selection-container">
           <SeatSelection
-            onConfirmSeats={(seats) => console.log(seats)} // Capture selected seats
-            ticketCount={ticketCount} // Pass selected ticket quantities
-            onGoBack={handleGoBackToTickets} // Handle returning to ticket selection
+            onProceedToPayment={(selectedSeats) => {
+              // Navegate to PaymentConfirmation with the necesary data 
+              const params = new URLSearchParams({
+                seats: selectedSeats.join(","),
+                movie: movie.title,
+                showtime,
+                format,
+                ticketsGeneral: ticketCount.general || 0,
+                ticketsChild: ticketCount.niño || 0,
+              });
+              navigate(`/payment-confirmation?${params.toString()}`);
+            }}
+            ticketCount={ticketCount}
+            onGoBack={handleGoBackToTickets}
           />
         </div>
       )}
