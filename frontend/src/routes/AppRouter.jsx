@@ -6,21 +6,21 @@ import About from "../pages/About";
 import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
-import VerifyEmail from '../pages/VerifyEmail';
-import Confectionery from '../pages/Confectionery';
-import Cartelera from '../pages/Cartelera';
-import MovieDetail from '../pages/MovieDetail';
-import Corporate from '../pages/Corporate';
-import FestaRama from '../pages/FestaRama';
-import FestaRamaPackages from '../pages/FestaRamaPackages';
-import Profile from '../pages/Profile';
-import PrivateRoute from '../utils/PrivateRoute';
-import Cines from '../pages/Cines';
-import Promotions from '../pages/Promotions';
-import Events from '../pages/Events';
-import SpecialFunctions from '../pages/SpecialFunctions';
-import Advertising from '../pages/Advertising';
-import TicketPurchase from '../pages/TicketPurchase';
+import VerifyEmail from "../pages/VerifyEmail";
+import Confectionery from "../pages/Confectionery";
+import Cartelera from "../pages/Cartelera";
+import MovieDetail from "../pages/MovieDetail";
+import Corporate from "../pages/Corporate";
+import FestaRama from "../pages/FestaRama";
+import FestaRamaPackages from "../pages/FestaRamaPackages";
+import Profile from "../pages/Profile";
+import PrivateRoute from "../utils/PrivateRoute";
+import Cines from "../pages/Cines";
+import Promotions from "../pages/Promotions";
+import Events from "../pages/Events";
+import SpecialFunctions from "../pages/SpecialFunctions";
+import Advertising from "../pages/Advertising";
+import TicketPurchase from "../pages/TicketPurchase";
 import MoreInformation from "../components/MoreInformation";
 import AdminRoute from "../utils/AdminRoute";
 import AdminDashboard from "../pages/admin/AdminDashboard";
@@ -28,6 +28,8 @@ import PaymentConfirmation from "../pages/PaymentConfirmation"
 import { PaymentProvider } from "../context/PaymentContext";
 import MoviesManagement from "../pages/admin/MoviesManagement";
 import Users from "../pages/admin/Users";
+import ConfectioneryManagement from "../pages/admin/ConfectioneryManagement";
+
 
 const AppRouter = () => {
   return (
@@ -56,7 +58,11 @@ const AppRouter = () => {
                   <Route path="/confectionery" element={<Confectionery />} />
                   <Route path="/movies" element={<Cartelera />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/billboard/:id" element={<MovieDetail/>} />
+                  <Route path="/billboard/:id" element={<MovieDetail />} />
+                  <Route
+                    path="/purchase/:id/:showtime/:format"
+                    element={<TicketPurchase />}
+                  />
                   <Route path="/corporate" element={<Corporate />} />
                   <Route path="/festarama" element={<FestaRama />} />
                   <Route
@@ -65,10 +71,16 @@ const AppRouter = () => {
                   />
                   <Route path="/cinemas" element={<Cines />} />
                   <Route path="/promotions" element={<Promotions />} />
-                  <Route path="/more-information/:id" element={<MoreInformation/>} />
-                  <Route path='/events' element={<Events/>} />
-                  <Route path='/specialfunctions' element={<SpecialFunctions/>} />
-                  <Route path='/advertising' element={<Advertising/>} />
+                  <Route
+                    path="/more-information/:id"
+                    element={<MoreInformation />}
+                  />
+                  <Route path="/events" element={<Events />} />
+                  <Route
+                    path="/specialfunctions"
+                    element={<SpecialFunctions />}
+                  />
+                  <Route path="/advertising" element={<Advertising />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
@@ -77,8 +89,8 @@ const AppRouter = () => {
           }
         />
         <Route
-        path="/admin/dashboard"
-        element={
+          path="/admin/dashboard"
+          element={
             <AdminRoute>
               <AdminDashboard />
             </AdminRoute>
@@ -89,6 +101,14 @@ const AppRouter = () => {
           element={
             <AdminRoute>
               <MoviesManagement />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/confectionery"
+          element={
+            <AdminRoute>
+              <ConfectioneryManagement />
             </AdminRoute>
           }
         />
@@ -118,7 +138,7 @@ const AppRouter = () => {
     <Footer />
   </>
 } />
-      </Routes>
+  </Routes>
     </Router>
   );
 };
