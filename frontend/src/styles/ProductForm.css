@@ -38,3 +38,20 @@
   background-color: #f8d7da;
   color: #721c24;
 }
+
+.product-form {
+  padding: 24px 32px;
+  background: #fff;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.product-form .form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.product-form .form-group {
+  flex: 1;
+  min-width: 0;
+}

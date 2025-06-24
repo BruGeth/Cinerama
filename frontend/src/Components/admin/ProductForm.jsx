@@ -12,9 +12,9 @@ function ProductForm({ product, categories, onSave, onClose }) {
     categoryId: "",
     stock: "",
     stockUnit: "unidades",
-  })
+  });
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (product) {
@@ -26,55 +26,55 @@ function ProductForm({ product, categories, onSave, onClose }) {
         categoryId: product.category?.id?.toString() || "",
         stock: product.stock || "",
         stockUnit: product.stockUnit || "unidades",
-      })
+      });
     }
-  }, [product])
+  }, [product]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-    })
+    });
 
     // Clear error when user types
     if (errors[name]) {
       setErrors({
         ...errors,
         [name]: "",
-      })
+      });
     }
-  }
+  };
 
   const validate = () => {
-    const newErrors = {}
+    const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "El nombre es requerido"
+      newErrors.name = "El nombre es requerido";
     }
 
     if (!formData.price || Number.parseFloat(formData.price) <= 0) {
-      newErrors.price = "El precio debe ser mayor a 0"
+      newErrors.price = "El precio debe ser mayor a 0";
     }
 
     if (!formData.categoryId) {
-      newErrors.categoryId = "Debe seleccionar una categoría"
+      newErrors.categoryId = "Debe seleccionar una categoría";
     }
 
     if (formData.stock && Number.parseInt(formData.stock) < 0) {
-      newErrors.stock = "El stock debe ser mayor o igual a 0"
+      newErrors.stock = "El stock debe ser mayor o igual a 0";
     }
 
-    return newErrors
-  }
+    return newErrors;
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const validationErrors = validate()
+    const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
+      setErrors(validationErrors);
+      return;
     }
 
     // Convert numeric fields and prepare data according to API format
@@ -86,10 +86,10 @@ function ProductForm({ product, categories, onSave, onClose }) {
       categoryId: Number.parseInt(formData.categoryId),
       stock: formData.stock ? Number.parseInt(formData.stock) : 0,
       stockUnit: formData.stockUnit || "unidades",
-    }
+    };
 
-    onSave(productData)
-  }
+    onSave(productData);
+  };
 
   return (
     <div className="modal-overlay">
@@ -114,7 +114,9 @@ function ProductForm({ product, categories, onSave, onClose }) {
                 className={errors.name ? "error" : ""}
                 placeholder="Ej: Palomitas Grandes"
               />
-              {errors.name && <span className="error-message">{errors.name}</span>}
+              {errors.name && (
+                <span className="error-message">{errors.name}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -133,7 +135,9 @@ function ProductForm({ product, categories, onSave, onClose }) {
                   </option>
                 ))}
               </select>
-              {errors.categoryId && <span className="error-message">{errors.categoryId}</span>}
+              {errors.categoryId && (
+                <span className="error-message">{errors.categoryId}</span>
+              )}
             </div>
           </div>
 
@@ -163,7 +167,9 @@ function ProductForm({ product, categories, onSave, onClose }) {
                 className={errors.price ? "error" : ""}
                 placeholder="0.00"
               />
-              {errors.price && <span className="error-message">{errors.price}</span>}
+              {errors.price && (
+                <span className="error-message">{errors.price}</span>
+              )}
             </div>
 
             <div className="form-group">
@@ -190,19 +196,27 @@ function ProductForm({ product, categories, onSave, onClose }) {
                 onChange={handleChange}
                 min="0"
                 className={errors.stock ? "error" : ""}
-                placeholder="0"
+                placeholder="Ej: 20"
               />
-              {errors.stock && <span className="error-message">{errors.stock}</span>}
+              {errors.stock && (
+                <span className="error-message">{errors.stock}</span>
+              )}
             </div>
 
             <div className="form-group">
               <label htmlFor="stockUnit">Unidad de Stock</label>
-              <select id="stockUnit" name="stockUnit" value={formData.stockUnit} onChange={handleChange}>
-                <option value="unidades">Unidades</option>
-                <option value="kg">Kilogramos</option>
-                <option value="litros">Litros</option>
-                <option value="paquetes">Paquetes</option>
-                <option value="cajas">Cajas</option>
+              <select
+                id="stockUnit"
+                name="stockUnit"
+                value={formData.stockUnit}
+                onChange={handleChange}
+              >
+                <option value="unidad">Unidad</option>
+                <option value="envase">Envase</option>
+                <option value="litro">Litro</option>
+                <option value="porción">Porción</option>
+                <option value="paquete">Paquete</option>
+                <option value="caja">Caja</option>
               </select>
             </div>
           </div>
@@ -218,7 +232,7 @@ function ProductForm({ product, categories, onSave, onClose }) {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default ProductForm
+export default ProductForm;
