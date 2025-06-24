@@ -149,11 +149,22 @@
 
 .confectionery-management .product-image {
   height: 150px;
-  background: linear-gradient(135deg, #f0b000, #ff8c00);
+  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #f8f8f8;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 auto 1rem auto;
   position: relative;
+}
+
+.confectionery-management .product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .confectionery-management .product-icon {
