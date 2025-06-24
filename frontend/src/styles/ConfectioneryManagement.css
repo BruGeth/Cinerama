@@ -1,0 +1,402 @@
+.confectionery-management {
+  max-width: 1400px;
+}
+.confectionery-management .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.confectionery-management .page-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.confectionery-management .header-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.confectionery-management .tab-btn {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e0e0e0;
+  background: white;
+  color: #666;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.confectionery-management .tab-btn.active {
+  background-color: #e30000;
+  color: white;
+  border-color: #e30000;
+}
+
+.confectionery-management .tab-btn:hover:not(.active) {
+  border-color: #e30000;
+  color: #e30000;
+}
+
+.confectionery-management .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.confectionery-management .section-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.confectionery-management .filters {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.confectionery-management .category-filter {
+  padding: 0.5rem 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+}
+
+.confectionery-management .category-filter:focus {
+  outline: none;
+  border-color: #e30000;
+}
+
+.confectionery-management .add-btn {
+  background-color: #e30000;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.confectionery-management .add-btn:hover {
+  background-color: #c50000;
+}
+
+/* Error and Loading States */
+.confectionery-management .error-container {
+  text-align: center;
+  padding: 3rem;
+}
+
+.confectionery-management .error-message {
+  color: #dc3545;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.confectionery-management .retry-btn {
+  background-color: #e30000;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.confectionery-management .loading {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.confectionery-management .empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* Products Section */
+.confectionery-management .products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.confectionery-management .product-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.confectionery-management .product-card:hover {
+  transform: translateY(-2px);
+}
+
+.confectionery-management .product-image {
+  height: 150px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 auto 1rem auto;
+  position: relative;
+}
+
+.confectionery-management .product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.confectionery-management .product-icon {
+  font-size: 3rem;
+  color: white;
+  opacity: 0.8;
+}
+
+.confectionery-management .default-placeholder {
+  background: linear-gradient(135deg, #666, #999);
+}
+
+.confectionery-management .product-info {
+  padding: 1.5rem;
+}
+
+.confectionery-management .product-info h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.confectionery-management .product-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.confectionery-management .product-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.confectionery-management .product-category {
+  font-size: 0.8rem;
+  color: #888;
+  background: #f0f0f0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  align-self: flex-start;
+}
+
+.confectionery-management .product-pricing {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.confectionery-management .product-price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e30000;
+}
+
+.confectionery-management .product-stock {
+  display: flex;
+  align-items: center;
+}
+
+.confectionery-management .stock-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.confectionery-management .stock-badge.high {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.confectionery-management .stock-badge.low {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.confectionery-management .stock-badge.empty {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.confectionery-management .product-actions {
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.confectionery-management .edit-btn,
+.confectionery-management .delete-btn {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.confectionery-management .edit-btn {
+  background-color: #f0b000;
+  color: #000;
+}
+
+.confectionery-management .edit-btn:hover {
+  background-color: #d9a000;
+}
+
+.confectionery-management .delete-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.confectionery-management .delete-btn:hover {
+  background-color: #c82333;
+}
+
+/* Categories Section */
+.confectionery-management .categories-table {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.confectionery-management .categories-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.confectionery-management .categories-table th {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.confectionery-management .categories-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.confectionery-management .categories-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.confectionery-management .category-id {
+  color: #666;
+  font-family: monospace;
+}
+
+.confectionery-management .category-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.confectionery-management .product-count {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.confectionery-management .category-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.confectionery-management .edit-btn-small,
+.confectionery-management .delete-btn-small {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.confectionery-management .edit-btn-small {
+  background-color: #f0b000;
+  color: #000;
+}
+
+.confectionery-management .edit-btn-small:hover {
+  background-color: #d9a000;
+}
+
+.confectionery-management .delete-btn-small {
+  background-color: #dc3545;
+  color: white;
+}
+
+.confectionery-management .delete-btn-small:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.confectionery-management .delete-btn-small:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .confectionery-management .page-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .confectionery-management .section-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .confectionery-management .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .confectionery-management .product-actions {
+    flex-direction: column;
+  }
+
+  .confectionery-management .categories-table {
+    overflow-x: auto;
+  }
+
+  .confectionery-management .categories-table table {
+    min-width: 600px;
+  }
+}

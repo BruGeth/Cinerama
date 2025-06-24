@@ -5,9 +5,8 @@
   padding: 40px 20px; /* Adds padding inside the container */
   font-family: 'Segoe UI', sans-serif; /* Font style */
 }
-
 /* Title of the section */
-.confectionery-title {
+.confectionery-container .confectionery-title {
   text-align: center; /* Center the text */
   color: #d70000; /* Red color */
   font-size: 2.5rem; /* Large font size */
@@ -16,7 +15,7 @@
 }
 
 /* Subtitle or description text */
-.confectionery-description {
+.confectionery-container .confectionery-description {
   text-align: center; /* Center the text */
   color: #555; /* Medium gray color */
   font-size: 1.1rem; /* Slightly larger font */
@@ -24,7 +23,7 @@
 }
 
 /* Container for all category buttons */
-.category-buttons {
+.confectionery-container .category-buttons {
   display: flex; /* Arrange buttons in a row */
   justify-content: center; /* Center the buttons horizontally */
   gap: 12px; /* Space between buttons */
@@ -33,7 +32,7 @@
 }
 
 /* Style for each category button */
-.category-button {
+.confectionery-container .category-button {
   padding: 10px 20px; /* Padding inside the button */
   border-radius: 999px; /* Makes the button pill-shaped */
   font-weight: 600; /* Semi-bold text */
@@ -45,25 +44,25 @@
 }
 
 /* Style for the active (selected) category button */
-.category-button.active {
+.confectionery-container .category-button.active {
   background-color: #d70000; /* Red background */
   color: white; /* White text */
 }
 
 /* Hover effect for category buttons */
-.category-button:hover {
+.confectionery-container .category-button:hover {
   background-color: #f6cccc; /* Light red background on hover */
 }
 
 /* Grid layout for displaying products */
-.product-grid {
+.confectionery-container .product-grid {
   display: grid; /* CSS grid layout */
   gap: 24px; /* Space between grid items */
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
 }
 
 /* Horizontal layout used when a category is selected */
-.product-grid.horizontal {
+.confectionery-container .product-grid.horizontal {
   display: flex; /* Flex layout instead of grid */
   flex-wrap: nowrap; /* No wrapping, horizontal scrolling */
   overflow-x: auto; /* Enable horizontal scroll */
@@ -73,14 +72,14 @@
 }
 
 /* Individual card settings in horizontal mode */
-.product-grid.horizontal .product-card {
+.confectionery-container .product-grid.horizontal .product-card {
   min-width: 280px; /* Minimum width of card */
   flex-shrink: 0; /* Prevent shrinking */
   scroll-snap-align: start; /* Align card to start when snapped */
 }
 
 /* General card styling for each product */
-.product-card {
+.confectionery-container .product-card {
   background-color: white; /* White background */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.08); /* Subtle shadow */
   border-radius: 12px; /* Rounded corners */
@@ -91,12 +90,12 @@
 }
 
 /* Hover effect for product card */
-.product-card:hover {
+.confectionery-container .product-card:hover {
   transform: scale(1.02); /* Slightly enlarge on hover */
 }
 
 /* Product image style */
-.product-card img {
+.confectionery-container .product-card img {
   width: 100%; /* Full width */
   height: 180px; /* Fixed height */
   object-fit: contain; /* Keep aspect ratio */
@@ -104,27 +103,27 @@
 }
 
 /* Product name */
-.product-card h3 {
+.confectionery-container .product-card h3 {
   font-size: 1.1rem; /* Medium-large text */
   font-weight: 700; /* Bold text */
   margin-bottom: 6px; /* Space below title */
 }
 
 /* Product description */
-.product-card p {
+.confectionery-container .product-card p {
   font-size: 0.95rem; /* Slightly smaller text */
   color: #555; /* Gray text */
 }
 
 /* Product price style */
-.product-price {
+.confectionery-container .product-price {
   color: #d70000; /* Red color for price */
   font-weight: bold; /* Bold price */
   margin: 10px 0; /* Vertical spacing */
 }
 
 /* Button for each product (e.g., "Add" button) */
-.product-button {
+.confectionery-container .product-button {
   position: relative; /* Allows positioning pseudo-elements */
   padding: 10px 24px; /* Button padding */
   border: none; /* No border */
@@ -141,7 +140,7 @@
 }
 
 /* Glowing shimmer background effect */
-.product-button::before {
+.confectionery-container .product-button::before {
   content: "";
   position: absolute;
   top: -50%;
@@ -155,19 +154,19 @@
 }
 
 /* Activate shimmer effect on hover */
-.product-button:hover::before {
+.confectionery-container .product-button:hover::before {
   opacity: 1;
   animation: shimmer 1s infinite linear; /* Infinite rotating animation */
 }
 
 /* Button hover effect */
-.product-button:hover {
+.confectionery-container .product-button:hover {
   transform: translateY(-2px); /* Move button slightly up */
   box-shadow: 0 8px 18px rgba(255, 0, 0, 0.5); /* Stronger shadow */
 }
 
 /* Click effect */
-.product-button:active {
+.confectionery-container .product-button:active {
   transform: scale(0.95); /* Slight shrink on click */
   box-shadow: 0 2px 6px rgba(255, 0, 0, 0.3); /* Lighter shadow */
 }
