@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../styles/Events.css';
 
 const Events = () => {
@@ -175,25 +177,24 @@ const Events = () => {
 
   // Handle final submission
   const handleSubmit = useCallback(async () => {
-   try {
-    const response = await fetch("http://localhost:8080/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+  try {
+  const response = await fetch("http://localhost:8080/api/events", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(formData),
+  });
 
-    const result = await response.json();
-
-    if (response.ok) {
-      alert("✅ ¡Tu solicitud fue enviada exitosamente!");
-      navigate("/corporate");
-    } else {
-      alert("❌ Ocurrió un error: " + result.message);
-    }
-    } catch (error) {
-     alert("❌ No se pudo conectar con el servidor. Intenta nuevamente.");
-     console.error(error);
-   }
+  const result = await response.json();
+  if (response.ok) {
+    toast.success("🎬 ¡Tu solicitud fue enviada exitosamente!");
+    setTimeout(() => navigate("/corporate"), 3000); // redirecciona luego del toast
+  } else {
+    toast.error("❌ Error: " + result.message);
+  }
+  } catch (error) {
+  toast.error("❌ No se pudo conectar con el servidor. Intenta nuevamente.");
+  console.error(error);
+  }
   }, [formData, navigate]);
 
   // Image error handling
@@ -624,6 +625,15 @@ const Events = () => {
           </div>
         )}
       </div>
+      <ToastContainer
+      position="top-center"
+      autoClose={3000}
+      hideProgressBar={false}
+      newestOnTop
+      closeOnClick
+      pauseOnHover
+      theme="colored"
+    />
     </div>
   );
 };
