@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useMovies } from "../hooks/useMovies"; // Use custom hook to fetch movies from API
 import "../styles/FestaRamaPackages.css";
 import confetti from "canvas-confetti";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const FestaRamaPackages = () => {
   const navigate = useNavigate();
@@ -13,7 +16,7 @@ const FestaRamaPackages = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [formData, setFormData] = useState({
     package: "",
     cinema: "",
@@ -484,94 +487,41 @@ const FestaRamaPackages = () => {
 
   const handleSubmit = useCallback(async () => {
     try {
-      setLoading(true);
-      setError(null);
+    const payload = {
+      packageType: selectedPackage?.id,
+      cinema: selectedCinema,
+      movie: selectedMovie,
+      date: formData.eventDate,
+      time: formData.eventTime,
+      attendees: formData.numberOfKids,
+      birthdayChildName: formData.childName,
+      birthdayAge: formData.childAge,
+      contactName: formData.parentName,
+      contactEmail: formData.parentEmail,
+      contactPhone: formData.parentPhone,
+      message: formData.message || "", // optional
+    };
 
-      const requiredFields = [
-        "parentName",
-        "parentEmail",
-        "parentPhone",
-        "childName",
-      ];
-      const missingFields = requiredFields.filter((field) => !formData[field]);
+    const response = await fetch("http://localhost:8080/api/festarama", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-      if (missingFields.length > 0) {
-        throw new Error(
-          `Campos requeridos faltantes: ${missingFields.join(", ")}`
-        );
-      }
+    const result = await response.json();
+    toast.success(result.message);
 
-      if (!isValidEmail(formData.parentEmail)) {
-        throw new Error("Email inválido");
-      }
-
-      if (!isValidPhone(formData.parentPhone)) {
-        throw new Error("Teléfono inválido");
-      }
-
-      if (!selectedMovie || !selectedCinema || !selectedPackage) {
-        throw new Error("Selección incompleta");
-      }
-
-      const selectedMovieData = movieOptions.find(
-        (m) => m.id === selectedMovie
-      );
-      const selectedCinemaData = cinemaOptions.find(
-        (c) => c.id === selectedCinema
-      );
-
-      if (!selectedMovieData || !selectedCinemaData) {
-        throw new Error("Error al obtener detalles de la selección");
-      }
-
-      const submissionData = {
-        ...formData,
-        packageDetails: selectedPackage,
-        movieDetails: selectedMovieData,
-        cinemaDetails: selectedCinemaData,
-        timestamp: new Date().toISOString(),
-        sessionId: Math.random().toString(36).substr(2, 9),
-      };
-
-      console.log("Submitting FestaRama booking:", submissionData);
-
-      // Simulate API call
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (Math.random() > 0.05) {
-            resolve();
-          } else {
-            reject(
-              new Error("Error del servidor. Por favor intenta nuevamente.")
-            );
-          }
-        }, 1000);
-      });
-
-      alert(
-        "¡Reserva de FestaRama enviada correctamente! Te contactaremos pronto para confirmar los detalles."
-      );
-      navigate("/festarama");
-    } catch (err) {
-      console.error("Error submitting form:", err);
-      setError(
-        err.message ||
-          "Error al enviar la reserva. Por favor intenta nuevamente."
-      );
-    } finally {
-      setLoading(false);
+    if (response.ok) {
+      toast.success(result.message || "🎉 ¡Solicitud enviada exitosamente!");
+      navigate("/corporate");
+    } else {
+      toast.error(result.message || "❌ Ocurrió un error en el servidor.");
     }
-  }, [
-    formData,
-    selectedMovie,
-    selectedCinema,
-    selectedPackage,
-    movieOptions,
-    cinemaOptions,
-    navigate,
-    isValidEmail,
-    isValidPhone,
-  ]);
+  } catch (error) {
+    console.error(error);
+    toast.error("❌ No se pudo conectar con el servidor.");
+  }
+}, [formData, selectedPackage, selectedCinema, selectedMovie, navigate]);
 
   // Image error handling
   const handleImageError = useCallback((e, backgroundClass = "cinema-bg") => {
@@ -1242,6 +1192,15 @@ const FestaRamaPackages = () => {
           </div>
         )}
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
 
       {/* Add CSS for loading animation */}
       <style jsx>{`
@@ -1255,6 +1214,7 @@ const FestaRamaPackages = () => {
         }
       `}</style>
     </div>
+    
   );
 };
 
