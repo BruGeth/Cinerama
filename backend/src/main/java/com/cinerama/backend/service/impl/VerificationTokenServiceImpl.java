@@ -1,5 +1,6 @@
 package com.cinerama.backend.service.impl;
 
+import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.entity.VerificationToken;
 import com.cinerama.backend.repository.UserRepository;
@@ -37,15 +38,23 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     }
 
     @Override
-    public void verifyAccount(String token) {
-        VerificationToken verificationToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
-        if (verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Token expirado");
+    public void verifyAccount(VerificationRequest request) {
+        // Find the verification token by its value
+        VerificationToken token = tokenRepository.findByToken(request.getVerificationCode())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
+        // Check if the token is associated with the correct user
+        if (!token.getUser().getEmail().equalsIgnoreCase(request.getEmail())) {
+            throw new IllegalArgumentException("Email does not match the token");
         }
-        User user = verificationToken.getUser();
+        // Check if the token has expired
+        if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Expired token");
+        }
+        // Activate the user account
+        User user = token.getUser();
         user.setEnabled(true);
+        // Save the updated user and delete the token
         userRepository.save(user);
-        tokenRepository.delete(verificationToken);
+        tokenRepository.delete(token);
     }
 }
