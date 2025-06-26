@@ -16,13 +16,15 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
 
+    /* === Dependencies for email sending, template processing, and database operations === */
     private final JavaMailSender mailSender;
     private final SpringTemplateEngine thymeleaf;
     private final EventRepository eventRepository;
 
+    /* === Method to process event requests and send summary emails === */
     @Override
     public void processEvent(EventRequest req) throws MessagingException {
-        //Save to the database
+        // Save event details to the database
         Event event = new Event();
         event.setEventType(req.getEventType());
         event.setCinema(req.getCinema());
@@ -38,7 +40,7 @@ public class EventServiceImpl implements EventService {
         event.setMessage(req.getMessage());
         eventRepository.save(event);
 
-        //Create HTML content with Thymeleaf
+        // Create HTML content using Thymeleaf template engine
         Context ctx = new Context();
         ctx.setVariable("event", req);
         String html = thymeleaf.process("event-summary-email.html", ctx);
@@ -47,10 +49,10 @@ public class EventServiceImpl implements EventService {
         MimeMessage mime = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
 
-        helper.setFrom(((JavaMailSenderImpl) mailSender).getUsername()); // MUY IMPORTANTE
+        helper.setFrom(((JavaMailSenderImpl) mailSender).getUsername()); // IMPORTANT: Sender email
         helper.setTo(req.getContactEmail());
-        helper.setSubject("Resumen de tu evento en Cinerama"); // Sin emojis por compatibilidad
-        helper.setText(html, true); // true = contenido HTML
+        helper.setSubject("Resumen de tu evento en Cinerama");
+        helper.setText(html, true); // true = HTML content
 
         try {
             mailSender.send(mime);

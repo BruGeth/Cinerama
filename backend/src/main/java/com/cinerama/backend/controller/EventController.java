@@ -13,18 +13,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/events")
 @RequiredArgsConstructor
 public class EventController {
+    /* === Injected service to process event logic === */
     private final EventService service;  // ← Interface injection
 
+    /* === Endpoint to create a new event and send notification email === */
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(
             @Valid @RequestBody EventRequest request) {
 
         try {
+            /* === Process the event and send email === */
             service.processEvent(request);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(new EventResponse("OK", "E-mail sent successfully"));
         } catch (MessagingException ex) {
+            /* === Handle email sending errors === */
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EventResponse("ERROR", ex.getMessage()));
