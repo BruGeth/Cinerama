@@ -84,49 +84,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Optional containing the User if found, empty Optional otherwise
      */
     Optional<User> findByEmail(String email);
-
-    /**
-     * Finds a user by their verification code.
-     *
-     * <p>This method is used during the email verification process to locate
-     * the user account associated with a specific verification code. It enables
-     * the system to validate and activate user accounts.</p>
-     *
-     * <h3>Query Details:</h3>
-     * <ul>
-     *   <li>Generated query: SELECT * FROM users WHERE verification_code = ?</li>
-     *   <li>Searches for exact match on 6-digit verification code</li>
-     *   <li>Returns user account requiring activation</li>
-     * </ul>
-     *
-     * <h3>Usage Scenarios:</h3>
-     * <ul>
-     *   <li>Email verification during account activation</li>
-     *   <li>Verification code validation in authentication service</li>
-     *   <li>Account recovery and email confirmation processes</li>
-     * </ul>
-     *
-     * <h3>Security Considerations:</h3>
-     * <ul>
-     *   <li>Verification codes should be time-limited (handled by service)</li>
-     *   <li>Consider rate limiting to prevent brute force attacks</li>
-     *   <li>Codes should be single-use and cleared after verification</li>
-     *   <li>Implement account lockout for multiple failed attempts</li>
-     * </ul>
-     *
-     * <h3>Performance Considerations:</h3>
-     * <ul>
-     *   <li>Consider adding database index on verification_code field</li>
-     *   <li>Codes are typically short-lived, so query frequency may be low</li>
-     *   <li>Null verification codes (verified accounts) are excluded automatically</li>
-     * </ul>
-     *
-     * <p><strong>Security Note:</strong> This method should be used in conjunction
-     * with additional security measures such as rate limiting, attempt counting,
-     * and time-based expiration to prevent abuse.</p>
-     *
-     * @param verificationCode the 6-digit verification code to search for
-     * @return Optional containing the User if found, empty Optional otherwise
-     */
-    Optional<User> findByVerificationCode(String verificationCode);
 }
