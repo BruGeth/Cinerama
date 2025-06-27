@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final MailService mailService;
+    private final VerificationTokenServiceImpl verificationTokenService;
     private final CodeGenerator codeGenerator;
     private final JwtUtil jwtUtil;
 
@@ -58,34 +59,25 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword())) // Encrypt the password
                 .enabled(false) // Set the account as disabled until verification
-                .verificationCode(codeGenerator.generateCode()) // Generate a unique verification code
                 .role(defaultRole)
                 .build();
 
         // Save the user to the database
         User savedUser = userRepository.save(user);
 
-        // Send a verification email to the user
-        mailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getVerificationCode());
-
+        // Generate a verification code for the user and send a verification email
+        verificationTokenService.createVerificationToken(savedUser);
         return savedUser;
     }
 
     @Override
     public void verify(VerificationRequest request) {
-        // Find the user by email or throw an exception if not found
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        log.info("Verifying account for email: {}", request.getEmail());
 
-        // Check if the provided verification code matches the one stored
-        if (!request.getVerificationCode().equals(user.getVerificationCode())) {
-            throw new IllegalArgumentException("Invalid verification code");
-        }
+        // Validate the verification code and activate the user account
+        verificationTokenService.verifyAccount(request);
 
-        // Activate account and clear verification code for security
-        user.setEnabled(true);
-        user.setVerificationCode(null);
-        userRepository.save(user);
+        log.info("Account verified successfully for email: {}", request.getEmail());
     }
 
     @Override
