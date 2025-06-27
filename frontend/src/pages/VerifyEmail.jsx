@@ -6,6 +6,8 @@ import userService from "../services/userService"; // Import service for API req
 const VerifyEmail = () => {
   const [code, setCode] = useState(Array(6).fill("")); // State to store the 6-digit verification code
   const [activeIndex, setActiveIndex] = useState(0); // Tracks the current input focus
+  const [resendCount, setResendCount] = useState(0); // contador de reenvíos
+  const [resendMessage, setResendMessage] = useState(""); // mensaje de feedback
   const navigate = useNavigate(); // Hook for navigation
   const location = useLocation(); // Hook for retrieving the passed email from previous route
 
@@ -69,15 +71,33 @@ const VerifyEmail = () => {
             ))}
           </div>
 
-          <div className="verify-buttons"> {/* Submit and resend buttons */}
-            <button type="submit" className="send-button">Enviar</button>
-            <button 
-              type="button" 
-              className="resend-button" 
-              onClick={() => setCode(Array(6).fill(""))} // Clear input fields when resending
-            >
-              Reenviar
-            </button>
+          <div className="verify-buttons-group"> {/* Contenedor para mensaje y botones */}
+            {resendMessage && <div className="resend-message">{resendMessage}</div>}
+            <div className="verify-buttons">
+              <button type="submit" className="send-button">Enviar</button>
+              <button 
+                type="button" 
+                className="resend-button" 
+                onClick={async () => {
+                  setCode(Array(6).fill(""));// Reset code inputs
+                  if (resendCount >= 3) {
+                    setResendMessage("Has alcanzado el límite de reenvíos.");
+                    return;
+                  }
+                  const email = location.state?.email;
+                  try {
+                    await userService.sendVerificationCode(email);
+                    setResendCount(resendCount + 1);
+                    setResendMessage("Código reenviado correctamente.");
+                  } catch (error) {
+                    setResendMessage("Error al reenviar el código. Intenta más tarde.");
+                  }
+                }}
+                disabled={resendCount >= 3}
+              >
+                Reenviar
+              </button>
+            </div>
           </div>
         </form>
       </div>
