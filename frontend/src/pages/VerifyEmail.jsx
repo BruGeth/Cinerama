@@ -87,8 +87,13 @@ const VerifyEmail = () => {
                   const email = location.state?.email;
                   try {
                     await userService.sendVerificationCode(email);
-                    setResendCount(resendCount + 1);
-                    setResendMessage("Código reenviado correctamente.");
+                    const newCount = resendCount + 1;
+                    setResendCount(newCount);
+                    if (newCount >= 3) {
+                      setResendMessage("Límite de reenvíos alcanzado.");
+                    } else {
+                      setResendMessage(`Código reenviado correctamente. Intentos restantes: ${3 - newCount}`);
+                    }
                   } catch (error) {
                     setResendMessage("Error al reenviar el código. Intenta más tarde.");
                   }
