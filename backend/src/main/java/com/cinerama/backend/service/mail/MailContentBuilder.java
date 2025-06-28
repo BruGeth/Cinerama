@@ -27,4 +27,17 @@ public class MailContentBuilder {
         context.setVariable("verificationCode", verificationCode);
         return templateEngine.process("verification-email", context);
     }
+    /**
+     * Generates HTML password reset email from template with user-specific data.
+     *
+     * @param userName recipient's display name for personalization
+     * @param resetCode unique code to embed in email content for password reset
+     * @return rendered HTML email content ready for sending
+     */
+    public String buildPasswordResetEmail(String userName, String resetCode) {
+        Context context = new Context();
+        context.setVariable("userName", userName);
+        context.setVariable("resetCode", resetCode);
+        return templateEngine.process("password-reset-email", context);
+    }
 }
