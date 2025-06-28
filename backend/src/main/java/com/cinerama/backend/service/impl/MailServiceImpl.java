@@ -54,4 +54,29 @@ public class MailServiceImpl implements MailService {
             throw new RuntimeException("Failed to send verification email", e);
         }
     }
+    /**
+     * Sends a password reset email to the user.
+     *
+     * @param toEmail Recipient's email address.
+     * @param resetCode Unique password reset code.
+     * @throws RuntimeException If an error occurs while sending the email.
+     */
+    public void sendPasswordResetEmail(String toEmail, String resetCode) {
+        String subject = "Restablecimiento de Contraseña - Cinerama";
+        String content = contentBuilder.buildPasswordResetEmail(toEmail, resetCode); // renders Thymeleaf template
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setFrom(fromEmail);
+            helper.setTo(toEmail);
+            helper.setSubject(subject);
+            helper.setText(content, true); // true = HTML
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Failed to send password reset email", e);
+        }
+    }
 }
