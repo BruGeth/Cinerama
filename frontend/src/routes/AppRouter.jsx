@@ -7,6 +7,7 @@ import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import VerifyEmail from "../pages/VerifyEmail";
+import ForgotPassword from "../pages/ForgotPassword";
 import Confectionery from "../pages/Confectionery";
 import Cartelera from "../pages/Cartelera";
 import MovieDetail from "../pages/MovieDetail";
@@ -46,6 +47,7 @@ const AppRouter = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/verify" element={<VerifyEmail />} />
+                  <Route path="/recover-password" element={<ForgotPassword />} />
                   <Route
                     path="/profile"
                     element={
