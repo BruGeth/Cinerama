@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/ForgotPassword.css"; // Import styles
+import passwordResetService from "../services/passwordResetService"; // Import service for API requests
 
 const ForgotPassword = () => {
   // States for the different steps
@@ -72,21 +73,17 @@ const ForgotPassword = () => {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
-      alert("Por favor, ingresa tu correo electrónico.");
+      alert("Please enter your email.");
       return;
     }
 
     setLoading(true);
     try {
-      // Here would go the API call to send the code
-      console.log("Enviando código a:", email);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-
+      await passwordResetService.sendResetEmail(email);
       setCurrentStep(2);
-      setResendMessage("Código enviado correctamente a tu correo.");
+      setResendMessage("Code sent successfully to your email.");
     } catch (error) {
-      console.error("Error al enviar código:", error);
-      alert("Error al enviar el código. Inténtalo de nuevo.");
+      alert(error.message);
     } finally {
       setLoading(false);
     }
@@ -96,22 +93,17 @@ const ForgotPassword = () => {
   const handleCodeSubmit = async (e) => {
     e.preventDefault();
     const finalCode = code.join("");
-
     if (finalCode.length !== 6) {
-      alert("Por favor, ingresa un código de 6 números.");
+      alert("Please enter a 6-digit code.");
       return;
     }
 
     setLoading(true);
     try {
-      // Here would go the API call to verify the code
-      console.log("Verificando código:", finalCode, "para email:", email);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-
+      await passwordResetService.validateResetToken(email, finalCode);
       setCurrentStep(3);
     } catch (error) {
-      console.error("Error al verificar código:", error);
-      alert("Código inválido o expirado. Inténtalo de nuevo.");
+      alert(error.message);
     } finally {
       setLoading(false);
     }
@@ -120,64 +112,60 @@ const ForgotPassword = () => {
   // Step 3: Change password
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-
     if (!newPassword || !confirmPassword) {
-      alert("Por favor, completa todos los campos.");
+      alert("Please complete all fields.");
       return;
     }
-
     if (newPassword.length < 8) {
-      alert("La contraseña debe tener al menos 8 caracteres.");
+      alert("Password must be at least 8 characters.");
       return;
     }
-
     if (newPassword !== confirmPassword) {
-      alert("Las contraseñas no coinciden.");
+      alert("Passwords do not match.");
       return;
     }
 
     setLoading(true);
     try {
-      // Here would go the API call to change the password
-      console.log("Cambiando contraseña para:", email);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-
-      alert("¡Contraseña cambiada exitosamente!");
+      await passwordResetService.changePassword(
+        email,
+        newPassword,
+        confirmPassword
+      );
+      alert("Password changed successfully!");
       navigate("/login");
     } catch (error) {
-      console.error("Error al cambiar contraseña:", error);
-      alert("Error al cambiar la contraseña. Inténtalo de nuevo.");
+      alert(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  // Resend code
+  // Resend code (use the same as sendResetEmail)
   const handleResendCode = async () => {
     setCode(Array(6).fill(""));
     setActiveIndex(0);
 
     if (resendCount >= 3) {
-      setResendMessage("Has alcanzado el límite de reenvíos.");
+      setResendMessage("Resend limit reached.");
       return;
     }
 
     setLoading(true);
     try {
-      // Here would go the API call to resend the code
-      console.log("Reenviando código a:", email);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-
+      await passwordResetService.sendResetEmail(email);
       const newCount = resendCount + 1;
       setResendCount(newCount);
 
       if (newCount >= 3) {
-        setResendMessage("Límite de reenvíos alcanzado.");
+        setResendMessage("Resend limit reached.");
       } else {
-        setResendMessage(`Código reenviado correctamente. Intentos restantes: ${3 - newCount}`);
+        setResendMessage(
+          `Code resent successfully. Attempts left: ${3 - newCount}`
+        );
       }
     } catch (error) {
-      setResendMessage("Error al reenviar el código. Intenta más tarde.");
+      setResendMessage("Error resending code. Try again later.");
     } finally {
       setLoading(false);
     }
@@ -204,8 +192,7 @@ const ForgotPassword = () => {
         {/* Back button */}
         {currentStep > 1 && (
           <button className="back-button" onClick={goBack} type="button">
-            {/* Unicode left arrow */}
-            ←
+            {/* Unicode left arrow */}←
           </button>
         )}
 
@@ -213,7 +200,10 @@ const ForgotPassword = () => {
         {currentStep === 1 && (
           <>
             <h1>Recuperar Contraseña</h1>
-            <p>Ingresa tu correo electrónico y te enviaremos un código para restablecer tu contraseña.</p>
+            <p>
+              Ingresa tu correo electrónico y te enviaremos un código para
+              restablecer tu contraseña.
+            </p>
 
             <form onSubmit={handleEmailSubmit}>
               <div className="email-input-container">
@@ -229,7 +219,11 @@ const ForgotPassword = () => {
 
               <div className="forgot-password-buttons-group">
                 <div className="forgot-password-buttons">
-                  <button type="submit" className="send-button" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="send-button"
+                    disabled={loading}
+                  >
                     {loading ? "Enviando..." : "Enviar Código"}
                   </button>
                   <Link to="/login" className="back-to-login-button">
@@ -272,9 +266,15 @@ const ForgotPassword = () => {
               </div>
 
               <div className="forgot-password-buttons-group">
-                {resendMessage && <div className="resend-message">{resendMessage}</div>}
+                {resendMessage && (
+                  <div className="resend-message">{resendMessage}</div>
+                )}
                 <div className="forgot-password-buttons">
-                  <button type="submit" className="send-button" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="send-button"
+                    disabled={loading}
+                  >
                     {loading ? "Verificando..." : "Verificar"}
                   </button>
                   <button
@@ -295,7 +295,9 @@ const ForgotPassword = () => {
         {currentStep === 3 && (
           <>
             <h1>Nueva Contraseña</h1>
-            <p>Ingresa tu nueva contraseña. Debe tener al menos 8 caracteres.</p>
+            <p>
+              Ingresa tu nueva contraseña. Debe tener al menos 8 caracteres.
+            </p>
 
             <form onSubmit={handlePasswordSubmit}>
               <div className="password-inputs">
@@ -308,7 +310,11 @@ const ForgotPassword = () => {
                     className="password-input"
                     required
                   />
-                  <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)}>
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
                     {showPassword ? "🚫" : "👁️"}
                   </button>
                 </div>
@@ -334,7 +340,11 @@ const ForgotPassword = () => {
 
               <div className="forgot-password-buttons-group">
                 <div className="forgot-password-buttons">
-                  <button type="submit" className="send-button" disabled={loading}>
+                  <button
+                    type="submit"
+                    className="send-button"
+                    disabled={loading}
+                  >
                     {loading ? "Cambiando..." : "Cambiar Contraseña"}
                   </button>
                 </div>
