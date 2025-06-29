@@ -4,5 +4,6 @@ import com.cinerama.backend.entity.User;
 
 public interface PasswordResetService {
     void createPasswordResetToken(User user);
-    void resetPassword(String token, String newPassword);
+    void validatePasswordResetToken(String email, String token);
+    void changePassword(String email, String newPassword, String confirmPassword);
 }

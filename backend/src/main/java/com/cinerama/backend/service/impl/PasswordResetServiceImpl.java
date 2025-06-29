@@ -32,22 +32,36 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         PasswordResetToken resetToken = PasswordResetToken.builder()
                 .token(token)
                 .user(user)
-                .expiryDate(LocalDateTime.now().plusHours(1))
+                .expiryDate(LocalDateTime.now().plusMinutes(15))
                 .build();
         tokenRepository.save(resetToken);
         mailService.sendPasswordResetEmail(user.getEmail(), token);
     }
 
     @Override
-    public void resetPassword(String token, String newPassword) {
+    public void validatePasswordResetToken(String email, String token) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Token inválido"));
-        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Token expirado");
+                .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
+        if (!resetToken.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("Token does not belong to this user");
         }
-        User user = resetToken.getUser();
+        if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Expired token");
+        }
+    }
+
+    @Override
+    public void changePassword(String email, String newPassword, String confirmPassword) {
+        if (!newPassword.equals(confirmPassword)) {
+            throw new IllegalArgumentException("Passwords do not match");
+        }
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        tokenRepository.delete(resetToken);
+        // Delete all tokens associated with the user
+        tokenRepository.deleteAll(tokenRepository.findAllByUser(user));
     }
 }
