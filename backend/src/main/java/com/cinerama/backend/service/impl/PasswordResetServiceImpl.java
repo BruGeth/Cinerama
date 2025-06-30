@@ -7,6 +7,7 @@ import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.MailService;
 import com.cinerama.backend.service.PasswordResetService;
 import com.cinerama.backend.util.CodeGenerator;
+import com.cinerama.backend.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     @Override
     public void validatePasswordResetToken(String email, String token) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException());
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
         if (!resetToken.getUser().getId().equals(user.getId())) {

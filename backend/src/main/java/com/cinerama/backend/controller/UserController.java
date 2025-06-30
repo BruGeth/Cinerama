@@ -3,6 +3,7 @@ package com.cinerama.backend.controller;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.UserService;
+import com.cinerama.backend.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -98,9 +99,8 @@ public class UserController {
                 .getPrincipal();
 
         // Fetch user details from database using the authenticated email
-        // TODO: Replace RuntimeException with proper UserNotFoundException
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Return complete user profile
         // TODO: Create UserProfileResponse DTO to exclude password and other sensitive fields
