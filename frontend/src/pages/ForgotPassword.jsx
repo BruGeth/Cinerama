@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/ForgotPassword.css"; // Import styles
 import passwordResetService from "../services/passwordResetService"; // Import service for API requests
+import errorMessages from "../utils/errorMessages";
 
 const ForgotPassword = () => {
   // States for the different steps
@@ -15,6 +16,7 @@ const ForgotPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resendCount, setResendCount] = useState(0);
   const [resendMessage, setResendMessage] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -73,17 +75,33 @@ const ForgotPassword = () => {
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
     if (!email) {
-      alert("Please enter your email.");
+      setEmailError("Por favor ingresa tu correo electrónico.");
       return;
     }
+    setEmailError(""); // Clear previous error
 
     setLoading(true);
     try {
       await passwordResetService.sendResetEmail(email);
       setCurrentStep(2);
-      setResendMessage("Code sent successfully to your email.");
+      setResendMessage(
+        "Codigo enviado correctamente. Puedes reenviarlo hasta 3 veces."
+      );
     } catch (error) {
-      alert(error.message);
+      let code = error.code || error.message;
+      try {
+        // if error is an Axios error, extract code from response
+        if (error.response && error.response.data) {
+          code = error.response.data.code || error.response.data.error || code;
+        } else if (typeof error === "string") {
+          const parsed = JSON.parse(error);
+          code = parsed.code || parsed.error || code;
+        } else if (error.message) {
+          const parsed = JSON.parse(error.message);
+          code = parsed.code || parsed.error || code;
+        }
+      } catch {}
+      setEmailError(errorMessages[code] || errorMessages.UNKNOWN_ERROR);
     } finally {
       setLoading(false);
     }
@@ -147,7 +165,7 @@ const ForgotPassword = () => {
     setActiveIndex(0);
 
     if (resendCount >= 3) {
-      setResendMessage("Resend limit reached.");
+      setResendMessage("Limite de reenvíos alcanzado.");
       return;
     }
 
@@ -158,14 +176,14 @@ const ForgotPassword = () => {
       setResendCount(newCount);
 
       if (newCount >= 3) {
-        setResendMessage("Resend limit reached.");
+        setResendMessage("Limite de reenvíos alcanzado.");
       } else {
         setResendMessage(
-          `Code resent successfully. Attempts left: ${3 - newCount}`
+          `Codigo reenviado. Intentos restantes: ${3 - newCount}`
         );
       }
     } catch (error) {
-      setResendMessage("Error resending code. Try again later.");
+      setResendMessage("Error al enviar el codigo. Intenta mas tarde.");
     } finally {
       setLoading(false);
     }
@@ -211,10 +229,13 @@ const ForgotPassword = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="tu@email.com"
+                  placeholder="example@email.com"
                   className="email-input"
                   required
                 />
+                {emailError && (
+                  <div className="email-error-message">{emailError}</div>
+                )}
               </div>
 
               <div className="forgot-password-buttons-group">
