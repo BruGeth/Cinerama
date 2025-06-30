@@ -12,12 +12,12 @@ const ForgotPassword = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resendCount, setResendCount] = useState(0);
   const [resendMessage, setResendMessage] = useState("");
   const [emailError, setEmailError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tokenError, setTokenError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
 
   // Handle code input change and auto-advance
@@ -112,16 +112,29 @@ const ForgotPassword = () => {
     e.preventDefault();
     const finalCode = code.join("");
     if (finalCode.length !== 6) {
-      alert("Please enter a 6-digit code.");
+      setTokenError("Por favor ingresa el código de 6 dígitos.");
       return;
     }
 
+    setTokenError("");
     setLoading(true);
     try {
       await passwordResetService.validateResetToken(email, finalCode);
       setCurrentStep(3);
     } catch (error) {
-      alert(error.message);
+      let code = error.code || error.message;
+      try {
+        if (error.response && error.response.data) {
+          code = error.response.data.code || error.response.data.error || code;
+        } else if (typeof error === "string") {
+          const parsed = JSON.parse(error);
+          code = parsed.code || parsed.error || code;
+        } else if (error.message) {
+          const parsed = JSON.parse(error.message);
+          code = parsed.code || parsed.error || code;
+        }
+      } catch {}
+      setTokenError(errorMessages[code] || errorMessages.UNKNOWN_ERROR);
     } finally {
       setLoading(false);
     }
@@ -131,18 +144,19 @@ const ForgotPassword = () => {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (!newPassword || !confirmPassword) {
-      alert("Please complete all fields.");
+      setPasswordError(errorMessages.EMPTY_FIELDS || "Por favor completa todos los campos.");
       return;
     }
     if (newPassword.length < 8) {
-      alert("Password must be at least 8 characters.");
+      setPasswordError(errorMessages.PASSWORD_TOO_SHORT || "La contraseña debe tener al menos 8 caracteres.");
       return;
     }
     if (newPassword !== confirmPassword) {
-      alert("Passwords do not match.");
+      setPasswordError(errorMessages.PASSWORDS_DO_NOT_MATCH || "Las contraseñas no coinciden.");
       return;
     }
 
+    setPasswordError("");
     setLoading(true);
     try {
       await passwordResetService.changePassword(
@@ -150,10 +164,22 @@ const ForgotPassword = () => {
         newPassword,
         confirmPassword
       );
-      alert("Password changed successfully!");
+      // Puedes personalizar el mensaje de éxito si quieres
       navigate("/login");
     } catch (error) {
-      alert(error.message);
+      let code = error.code || error.message;
+      try {
+        if (error.response && error.response.data) {
+          code = error.response.data.code || error.response.data.error || code;
+        } else if (typeof error === "string") {
+          const parsed = JSON.parse(error);
+          code = parsed.code || parsed.error || code;
+        } else if (error.message) {
+          const parsed = JSON.parse(error.message);
+          code = parsed.code || parsed.error || code;
+        }
+      } catch {}
+      setPasswordError(errorMessages[code] || errorMessages.UNKNOWN_ERROR);
     } finally {
       setLoading(false);
     }
@@ -163,13 +189,14 @@ const ForgotPassword = () => {
   const handleResendCode = async () => {
     setCode(Array(6).fill(""));
     setActiveIndex(0);
+    setTokenError(""); // Limpiar error de token al reenviar
 
     if (resendCount >= 3) {
       setResendMessage("Limite de reenvíos alcanzado.");
       return;
     }
 
-    setLoading(true);
+    setLoading("resend"); // Usar string para distinguir loading de reenviar
     try {
       await passwordResetService.sendResetEmail(email);
       const newCount = resendCount + 1;
@@ -285,7 +312,9 @@ const ForgotPassword = () => {
                   />
                 ))}
               </div>
-
+              {tokenError && (
+                <div className="token-error-message">{tokenError}</div>
+              )}
               <div className="forgot-password-buttons-group">
                 {resendMessage && (
                   <div className="resend-message">{resendMessage}</div>
@@ -294,17 +323,17 @@ const ForgotPassword = () => {
                   <button
                     type="submit"
                     className="send-button"
-                    disabled={loading}
+                    disabled={loading === true || loading === "resend"}
                   >
-                    {loading ? "Verificando..." : "Verificar"}
+                    {loading === true ? "Verificando..." : "Verificar"}
                   </button>
                   <button
                     type="button"
                     className="resend-button"
                     onClick={handleResendCode}
-                    disabled={resendCount >= 3 || loading}
+                    disabled={resendCount >= 3 || loading === true || loading === "resend"}
                   >
-                    Reenviar
+                    {loading === "resend" ? "Reenviando..." : "Reenviar"}
                   </button>
                 </div>
               </div>
@@ -321,42 +350,32 @@ const ForgotPassword = () => {
             </p>
 
             <form onSubmit={handlePasswordSubmit}>
+
               <div className="password-inputs">
                 <div className="password-input-container">
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Nueva contraseña"
                     className="password-input"
                     required
                   />
-                  <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? "🚫" : "👁️"}
-                  </button>
                 </div>
 
                 <div className="password-input-container">
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
+                    type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirmar contraseña"
                     className="password-input"
                     required
                   />
-                  <button
-                    type="button"
-                    className="password-toggle"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? "🚫" : "👁️"}
-                  </button>
                 </div>
+                {passwordError && (
+                  <div className="token-error-message">{passwordError}</div>
+                )}
               </div>
 
               <div className="forgot-password-buttons-group">
