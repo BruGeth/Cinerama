@@ -402,7 +402,7 @@ const SpecialFunctions = () => {
     setLoading(true);
     setError(null);
 
-    // Validaciones requeridas
+
     const requiredFields = [
       "contactName",
       "contactEmail",
