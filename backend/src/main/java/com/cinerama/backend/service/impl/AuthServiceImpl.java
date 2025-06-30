@@ -6,6 +6,8 @@ import com.cinerama.backend.dto.RegisterRequest;
 import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.Role;
 import com.cinerama.backend.entity.User;
+import com.cinerama.backend.exception.PasswordsNotMatchException;
+import com.cinerama.backend.exception.UserNotFoundException;
 import com.cinerama.backend.repository.RoleRepository;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.AuthService;
@@ -45,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
     public User register(RegisterRequest request) {
         // Check if the provided passwords match
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
+            throw new PasswordsNotMatchException("Passwords do not match");
         }
 
         // Check
@@ -87,7 +89,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> {
                     log.error("No user found with email {}", request.getEmail());
-                    return new IllegalArgumentException("Invalid email or password");
+                    return new UserNotFoundException("Invalid email or password");
                 });
 
         log.info("User found: {}", user.getEmail());
