@@ -3,6 +3,8 @@ package com.cinerama.backend.service.impl;
 import com.cinerama.backend.entity.PasswordResetToken;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.exception.*;
+import com.cinerama.backend.exception.user.PasswordsNotMatchException;
+import com.cinerama.backend.exception.user.UserNotFoundException;
 import com.cinerama.backend.repository.PasswordResetTokenRepository;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.MailService;

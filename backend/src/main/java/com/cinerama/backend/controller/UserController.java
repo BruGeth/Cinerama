@@ -3,7 +3,7 @@ package com.cinerama.backend.controller;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.UserService;
-import com.cinerama.backend.exception.UserNotFoundException;
+import com.cinerama.backend.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;

@@ -6,7 +6,7 @@ import com.cinerama.backend.dto.ValidateResetTokenRequest;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.PasswordResetService;
-import com.cinerama.backend.exception.UserNotFoundException;
+import com.cinerama.backend.exception.user.UserNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

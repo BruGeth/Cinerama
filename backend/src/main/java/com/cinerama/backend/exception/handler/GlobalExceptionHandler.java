@@ -3,6 +3,8 @@ package com.cinerama.backend.exception.handler;
 import com.cinerama.backend.exception.*;
 import com.cinerama.backend.exception.model.ErrorCode;
 import com.cinerama.backend.exception.model.ErrorResponse;
+import com.cinerama.backend.exception.user.PasswordsNotMatchException;
+import com.cinerama.backend.exception.user.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
