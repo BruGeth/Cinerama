@@ -53,12 +53,7 @@ const Login = () => {
     try {
       // Attempt login using the provided credentials
       console.log("Intentando login con:", credentials);
-      const response = await login(credentials);
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("Error en loginUser:", error);
-        throw new Error(error.message || error.error || "Login failed.");
-      }
+      await login(credentials); // throw error if login fails
       console.log("Login exitoso, isAdmin:", isAdmin());
       // Store email in local storage if "Remember me" is checked
       if (rememberMe) {
