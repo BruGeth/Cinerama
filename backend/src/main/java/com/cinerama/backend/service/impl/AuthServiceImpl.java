@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 /**
  * Authentication service implementation providing secure user registration and login.
  *
@@ -43,6 +42,14 @@ public class AuthServiceImpl implements AuthService {
     private final CodeGenerator codeGenerator;
     private final JwtUtil jwtUtil;
 
+    /**
+     * Registers a new user with the provided registration details.
+     *
+     * @param request the registration request containing user details
+     * @return the registered user entity
+     * @throws PasswordsNotMatchException if the provided passwords do not match
+     * @throws RuntimeException if the default role "ROLE_USER" is not found
+     */
     @Override
     public User register(RegisterRequest request) {
         // Check if the provided passwords match
@@ -50,10 +57,9 @@ public class AuthServiceImpl implements AuthService {
             throw new PasswordsNotMatchException("Passwords do not match");
         }
 
-        // Check
+        // Check if the role "ROLE_USER" exists in the database
         Role defaultRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
-
 
         // Create a new user entity with the provided details
         User user = User.builder()
@@ -72,6 +78,12 @@ public class AuthServiceImpl implements AuthService {
         return savedUser;
     }
 
+    /**
+     * Verifies a user's account using the provided verification request.
+     *
+     * @param request the verification request containing the email and verification code
+     * @throws IllegalArgumentException if the verification code is invalid
+     */
     @Override
     public void verify(VerificationRequest request) {
         log.info("Verifying account for email: {}", request.getEmail());
@@ -82,6 +94,15 @@ public class AuthServiceImpl implements AuthService {
         log.info("Account verified successfully for email: {}", request.getEmail());
     }
 
+    /**
+     * Logs in a user by validating credentials and generating a JWT token.
+     *
+     * @param request the login request containing email and password
+     * @return a response containing the user's name and JWT token
+     * @throws UserNotFoundException if no user is found with the provided email
+     * @throws IllegalArgumentException if the password does not match
+     * @throws IllegalStateException if the user account is not verified
+     */
     @Override
     public LoginResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
