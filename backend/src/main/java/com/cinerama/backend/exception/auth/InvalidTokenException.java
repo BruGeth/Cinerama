@@ -1,4 +1,4 @@
-package com.cinerama.backend.exception;
+package com.cinerama.backend.exception.auth;
 
 public class InvalidTokenException extends RuntimeException {
     public InvalidTokenException(String message) {
