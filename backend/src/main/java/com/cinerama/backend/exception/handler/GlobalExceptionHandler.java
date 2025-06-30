@@ -38,6 +38,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  *   <li>MethodArgumentNotValidException - Validation errors (400)</li>
  *   <li>ConstraintViolationException - Constraint violations (400)</li>
  *   <li>Generic Exception - Internal Server Error (500)</li>
+ *   <li>AccessDeniedException - Forbidden (403)</li>
+ *   <li>AuthorizationDeniedException - Forbidden (403)</li>
+ *   <li>UserNotFoundException - Not Found (404)</li>
+ *   <li>TokenNotBelongUserException - Forbidden (403)</li>
+ *   <li>ExpiredTokenException - Unauthorized (401)</li>
+ *   <li>PasswordsNotMatchException - Bad Request (400)</li>
+ *   <li>InvalidTokenException - Bad Request (400)</li>
+ *   <li>Other unhandled exceptions - Internal Server Error (500)</li>
+ *   <li>Custom exceptions can be added as needed</li>
  * </ul>
  *
  * <h2>Response Format:</h2>
