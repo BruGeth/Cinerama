@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import "../styles/SpecialFunctions.css"
 import "../styles/Advertising.css"
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Advertising = () => {
   const navigate = useNavigate()
@@ -31,7 +33,7 @@ const Advertising = () => {
   const cinemaOptions = useMemo(
     () => [
       {
-        id: "cinema-miraflores",
+        id: "Cinema-Miraflores",
         name: "Cinerama Miraflores",
         description: "Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium",
         capacity: "180 personas",
@@ -41,7 +43,7 @@ const Advertising = () => {
         location: "Miraflores",
       },
       {
-        id: "cinema-minka",
+        id: "Cinema-Minka",
         name: "Cinerama Minka",
         description: "Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada",
         capacity: "220 personas",
@@ -50,7 +52,7 @@ const Advertising = () => {
         gradient: "linear-gradient(135deg, #ef4444 0%, #fcd34d 100%)",
         location: "Callao",
       },
-      
+
     ],
     [],
   )
@@ -59,40 +61,28 @@ const Advertising = () => {
   const advertisingOptions = useMemo(
     () => [
       {
-        id: "pantalla",
-        title: "Publicidad en Pantalla",
+        id: "Pantalla",
+        title: " 🎬 Publicidad en Pantalla",
         description: "Anuncios proyectados en pantalla grande antes de las funciones",
-        image: "/placeholder.svg?height=200&width=300",
+        image: 'images/PublicidadPantalla.jpg',
         gradient: "linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)",
-        icon: "🎬",
-        availableCinemas: ["cinema-miraflores", "cinema-minka", "cinema-comas"],
+        availableCinemas: ["Cinema-Miraflores", "Cinema-Minka"],
       },
       {
-        id: "lobby",
-        title: "Publicidad en Lobby",
+        id: "Lobby",
+        title: " 🏢 Publicidad en Lobby",
         description: "Espacios publicitarios en las áreas comunes del cinema",
-        image: "/placeholder.svg?height=200&width=300",
+        image: 'images/PublicidadLobby.jpg',
         gradient: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)",
-        icon: "🏢",
-        availableCinemas: ["cinema-miraflores", "cinema-minka", "cinema-comas"],
+        availableCinemas: ["Cinema-Miraflores", "Cinema-Minka"],
       },
       {
-        id: "elementos-corporeos",
-        title: "Publicidad en Elementos Corpóreos",
-        description: "Displays y elementos físicos estratégicamente ubicados",
-        image: "/placeholder.svg?height=200&width=300",
-        gradient: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
-        icon: "📱",
-        availableCinemas: ["cinema-miraflores", "cinema-minka", "cinema-comas"],
-      },
-      {
-        id: "digital",
-        title: "Publicidad Digital",
+        id: "Digital",
+        title: " 💻 Publicidad Digital",
         description: "Campañas digitales en plataformas online y redes sociales",
-        image: "/placeholder.svg?height=200&width=300",
+        image: 'images/PublicidadDigital.png',
         gradient: "linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)",
-        icon: "💻",
-        availableCinemas: ["cinema-miraflores", "cinema-minka", "cinema-comas"],
+        availableCinemas: ["Cinema-Miraflores", "Cinema-Minka"],
       },
     ],
     [],
@@ -348,71 +338,71 @@ const Advertising = () => {
       setLoading(true)
       setError(null)
 
-      const requiredFields = ["contactName", "contactEmail", "contactPhone", "category", "duration"]
-      const missingFields = requiredFields.filter((field) => !formData[field])
+      const requiredFields = ["contactName", "contactEmail", "contactPhone", "category", "duration"];
+      const missingFields = requiredFields.filter((field) => !formData[field]);
 
       if (missingFields.length > 0) {
-        throw new Error(`Campos requeridos faltantes: ${missingFields.join(", ")}`)
+        throw new Error(`Campos requeridos faltantes: ${missingFields.join(", ")}`);
       }
 
       if (!isValidEmail(formData.contactEmail)) {
-        throw new Error("Email inválido")
+        throw new Error("Email inválido");
       }
 
       if (!isValidPhone(formData.contactPhone)) {
-        throw new Error("Teléfono inválido")
+        throw new Error("Teléfono inválido");
       }
 
       if (!selectedAdvertising || !selectedCinema) {
-        throw new Error("Selección de publicidad o cine incompleta")
+        throw new Error("Selección de publicidad o cine incompleta");
       }
 
-      const selectedAdvertisingData = advertisingOptions.find((a) => a.id === selectedAdvertising)
-      const selectedCinemaData = cinemaOptions.find((c) => c.id === selectedCinema)
+      const selectedAdvertisingData = advertisingOptions.find((a) => a.id === selectedAdvertising);
+      const selectedCinemaData = cinemaOptions.find((c) => c.id === selectedCinema);
 
       if (!selectedAdvertisingData || !selectedCinemaData) {
-        throw new Error("Error al obtener detalles de la selección")
+        throw new Error("Error al obtener detalles de la selección");
       }
 
-      const submissionData = {
-        ...formData,
-        advertisingDetails: selectedAdvertisingData,
-        cinemaDetails: selectedCinemaData,
-        timestamp: new Date().toISOString(),
-        userAgent: navigator.userAgent,
-        sessionId: Math.random().toString(36).substr(2, 9),
+      // Payload that matches the backend
+      const payload = {
+        advertisingType: selectedAdvertisingData.id,
+        cinema: selectedCinemaData.id,
+        category: formData.category,
+        duration: formData.duration,
+        startDate: formData.startDate || null,
+        endDate: formData.endDate || null,
+        budget: formData.budget || null,
+        requirements: formData.requirements || null,
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        contactPhone: formData.contactPhone,
+        company: formData.company || null,
+        message: formData.message || null
+      };
+
+      const response = await fetch("http://localhost:8080/api/advertising", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success(result.message || "🎉 ¡Solicitud de publicidad enviada correctamente!");
+        navigate("/corporate");
+      } else {
+        toast.error(result.message || "❌ Error al enviar solicitud.");
       }
-
-      console.log("Submitting advertising data:", submissionData)
-
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (Math.random() > 0.05) {
-            resolve()
-          } else {
-            reject(new Error("Error del servidor. Por favor intenta nuevamente."))
-          }
-        }, 1000)
-      })
-
-      alert("¡Solicitud de publicidad enviada correctamente! Te contactaremos pronto.")
-      navigate("/corporate")
     } catch (err) {
-      console.error("Error submitting form:", err)
-      setError(err.message || "Error al enviar la solicitud. Por favor intenta nuevamente.")
+      console.error("Error submitting form:", err);
+      toast.error(err.message || "❌ Error inesperado al enviar la solicitud.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [
-    formData,
-    selectedAdvertising,
-    selectedCinema,
-    advertisingOptions,
-    cinemaOptions,
-    navigate,
-    isValidEmail,
-    isValidPhone,
-  ])
+  }, [formData, selectedAdvertising, selectedCinema, advertisingOptions, cinemaOptions, navigate,
+    isValidEmail, isValidPhone,])
 
   // Image error handling
   const handleImageError = useCallback((e, backgroundClass = "cinema-bg") => {
@@ -688,7 +678,14 @@ const Advertising = () => {
                   style={{ "--card-gradient": advertising.gradient }}
                 >
                   <div className="events-card-image advertising-bg">
-                    <div className="advertising-icon-large">{advertising.icon}</div>
+                    <img
+                      src={advertising.image || "/placeholder.svg?height=200&width=300"}
+                      alt={`${advertising.title} - Publicidad`}
+                      className="events-card-img"
+                      loading="lazy"
+                      onError={(e) => handleImageError(e, "advertising-bg")}
+                    />
+                    <div className="advertising-icon-large">{advertising.title.split(' ')[0]}</div>
                     <div className="events-card-overlay">
                       <h3>{advertising.title}</h3>
                     </div>
@@ -1013,7 +1010,16 @@ const Advertising = () => {
           </div>
         )}
       </div>
-      </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
+    </div>
   )
 }
 

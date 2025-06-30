@@ -1,6 +1,11 @@
         @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
+          0% {
+            transform: rotate(0deg);
+          }
+
+          100% {
+            transform: rotate(360deg);
+          }
         }
 
         .advertising-bg {
@@ -142,4 +147,79 @@
         /* Remove any spinning animations */
         .advertising-grid-horizontal * {
           animation: none !important;
+        }
+
+        /* Improve image display in the cards */
+        .events-card-image {
+          position: relative;
+          height: 180px;
+
+          /* Fixed height for consistency */
+          overflow: hidden;
+          border-radius: 8px 8px 0 0;
+        }
+
+        .events-card-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s ease;
+        }
+
+        .events-card:hover .events-card-img {
+          transform: scale(1.05);
+        }
+
+        /* Improve the background when there is no image */
+        .advertising-bg {
+          background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 180px;
+          position: relative;
+        }
+
+        .advertising-bg::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: var(--card-gradient, linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%));
+          opacity: 0.1;
+        }
+
+        .advertising-icon-large {
+          font-size: 3rem;
+          opacity: 0.6;
+          z-index: 1;
+          position: relative;
+        }
+
+        /* Grid to center the 3 cards */
+        .advertising-grid-horizontal {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+          margin: 0 auto;
+          max-width: 1200px;
+          width: 100%;
+          padding: 0 16px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+          .advertising-grid-horizontal {
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 800px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .advertising-grid-horizontal {
+            grid-template-columns: 1fr;
+            max-width: 400px;
+          }
         }
