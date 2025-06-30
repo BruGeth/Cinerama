@@ -1,6 +1,8 @@
 package com.cinerama.backend.exception.handler;
 
-import com.cinerama.backend.exception.*;
+import com.cinerama.backend.exception.auth.ExpiredTokenException;
+import com.cinerama.backend.exception.auth.InvalidTokenException;
+import com.cinerama.backend.exception.auth.TokenNotBelongUserException;
 import com.cinerama.backend.exception.model.ErrorCode;
 import com.cinerama.backend.exception.model.ErrorResponse;
 import com.cinerama.backend.exception.user.PasswordsNotMatchException;
