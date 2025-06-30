@@ -2,7 +2,7 @@ package com.cinerama.backend.controller;
 
 import com.cinerama.backend.dto.TicketPurchaseRequest;
 import com.cinerama.backend.dto.TicketPurchaseResponse;
-import com.cinerama.backend.service.mail.TicketService;
+import com.cinerama.backend.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
