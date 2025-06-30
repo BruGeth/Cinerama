@@ -18,6 +18,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Implementation of the PasswordResetService interface.
+ * Handles password reset token creation, validation, and password change operations.
+ */
 @Service
 public class PasswordResetServiceImpl implements PasswordResetService {
 
@@ -31,6 +35,11 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     private CodeGenerator codeGenerator;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    /**
+     * Creates a password reset token for the user and sends it via email.
+     *
+     * @param user The user for whom the password reset token is created.
+     */
     @Override
     public void createPasswordResetToken(User user) {
         String token = codeGenerator.generateCode();
@@ -43,6 +52,16 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         mailService.sendPasswordResetEmail(user.getEmail(), token);
     }
 
+    /**
+     * Validates the password reset token for the user.
+     *
+     * @param email The email of the user.
+     * @param token The password reset token to validate.
+     * @throws UserNotFoundException if the user with the given email does not exist.
+     * @throws InvalidTokenException if the token is invalid.
+     * @throws TokenNotBelongUserException if the token does not belong to the user.
+     * @throws ExpiredTokenException if the token has expired.
+     */
     @Override
     public void validatePasswordResetToken(String email, String token) {
         User user = userRepository.findByEmail(email)
@@ -57,6 +76,15 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         }
     }
 
+    /**
+     * Changes the user's password using the provided email and new password.
+     *
+     * @param email The email of the user.
+     * @param newPassword The new password to set.
+     * @param confirmPassword The confirmation of the new password.
+     * @throws PasswordsNotMatchException if the new password and confirmation do not match.
+     * @throws UserNotFoundException if the user with the given email does not exist.
+     */
     @Override
     public void changePassword(String email, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {

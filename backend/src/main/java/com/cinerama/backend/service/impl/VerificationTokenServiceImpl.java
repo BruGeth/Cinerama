@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Implementation of the VerificationTokenService interface.
+ * Handles verification token creation, validation, and user account activation.
+ */
 @Service
 public class VerificationTokenServiceImpl implements VerificationTokenService {
 
