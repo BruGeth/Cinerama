@@ -1,4 +1,4 @@
-package com.cinerama.backend.exception;
+package com.cinerama.backend.exception.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

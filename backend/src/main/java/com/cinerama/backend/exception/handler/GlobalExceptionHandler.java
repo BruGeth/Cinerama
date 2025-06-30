@@ -1,6 +1,8 @@
 package com.cinerama.backend.exception.handler;
 
 import com.cinerama.backend.exception.*;
+import com.cinerama.backend.exception.model.ErrorCode;
+import com.cinerama.backend.exception.model.ErrorResponse;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

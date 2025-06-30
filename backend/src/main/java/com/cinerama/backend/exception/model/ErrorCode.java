@@ -1,4 +1,4 @@
-package com.cinerama.backend.exception;
+package com.cinerama.backend.exception.model;
 
 public enum ErrorCode {
     USER_NOT_FOUND,
