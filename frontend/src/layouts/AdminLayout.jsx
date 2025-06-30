@@ -19,7 +19,7 @@ function AdminLayout({ children }) {
     { path: "/admin/movies", label: "Películas", icon: "🎬" },
     { path: "/admin/cinemas", label: "Salas", icon: "🏢" },
     { path: "/admin/showtimes", label: "Horarios", icon: "⏰" },
-    { path: "/admin/products", label: "Confitería", icon: "🍿" },
+    { path: "/admin/confectionery", label: "Confitería", icon: "🍿" },
     { path: "/admin/reports", label: "Reportes", icon: "📈" },
     { path: "/admin/users", label: "Usuarios", icon: "👥" },
   ];

@@ -1,0 +1,67 @@
+package com.cinerama.backend.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * Represents a payment order associated with a PayPal transaction.
+ * Stores transaction details such as the total amount, status, timestamp,
+ * buyer information, and the list of purchased items (CartItems).
+ */
+@Entity
+@Table(name = "orders")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Order {
+
+    /**
+     * Primary key for the order entry (auto-generated).
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    /**
+     * PayPal-generated order ID used to identify the transaction.
+     */
+    private String paypalOrderId;
+
+    /**
+     * Total amount charged for the order.
+     */
+    private BigDecimal amount;
+
+    /**
+     * Status of the order (e.g., CREATED, COMPLETED, FAILED).
+     */
+    private String status;
+
+    /**
+     * Date and time when the order was created or completed.
+     */
+    private LocalDateTime timestamp;
+
+    /**
+     * Currency code used for the transaction (e.g., USD).
+     */
+    private String currency;
+
+    /**
+     * Email of the payer retrieved from PayPal after order capture.
+     */
+    private String payerEmail;
+
+    /**
+     * List of items included in the order. Each CartItem is linked back to this order.
+     * Cascade operations and orphan removal are enabled to manage persistence automatically.
+     */
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cart;
+}
