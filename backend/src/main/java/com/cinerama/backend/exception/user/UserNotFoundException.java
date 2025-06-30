@@ -1,4 +1,4 @@
-package com.cinerama.backend.exception;
+package com.cinerama.backend.exception.user;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException() {
