@@ -61,6 +61,7 @@ export const AuthProvider = ({ children }) => {
       // Call the userService to log in the user
       const response = await userService.loginUser(credentials);
       const { name, token } = response;
+      localStorage.setItem("token", token);
 
       const decoded = jwtDecode(token);
       const userFromToken = {

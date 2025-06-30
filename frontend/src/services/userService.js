@@ -42,7 +42,6 @@ const userService = {
 
     const data = await response.json(); // Contains the token and user data
     console.log("Respuesta del backend (login):", data);
-    localStorage.setItem("token", data.token); // save token in localStorage
     return data;
   },
 
