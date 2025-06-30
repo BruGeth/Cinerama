@@ -1,5 +1,9 @@
 package com.cinerama.backend.exception.model;
 
+/**
+ * Enum representing various error codes used in the application.
+ * Each error code corresponds to a specific type of error that can occur.
+ */
 public enum ErrorCode {
     USER_NOT_FOUND,
     INVALID_TOKEN,
