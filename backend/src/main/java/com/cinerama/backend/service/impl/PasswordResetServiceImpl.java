@@ -2,12 +2,12 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.entity.PasswordResetToken;
 import com.cinerama.backend.entity.User;
+import com.cinerama.backend.exception.*;
 import com.cinerama.backend.repository.PasswordResetTokenRepository;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.MailService;
 import com.cinerama.backend.service.PasswordResetService;
 import com.cinerama.backend.util.CodeGenerator;
-import com.cinerama.backend.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,22 +44,22 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException());
         PasswordResetToken resetToken = tokenRepository.findByToken(token)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
+                .orElseThrow(() -> new InvalidTokenException("Invalid token"));
         if (!resetToken.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("Token does not belong to this user");
+            throw new TokenNotBelongUserException("Token does not belong to this user");
         }
         if (resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("Expired token");
+            throw new ExpiredTokenException("Expired token");
         }
     }
 
     @Override
     public void changePassword(String email, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
-            throw new IllegalArgumentException("Passwords do not match");
+            throw new PasswordsNotMatchException("Passwords do not match");
         }
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
         // Delete all tokens associated with the user
