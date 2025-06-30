@@ -72,7 +72,10 @@ public class WebSecurityConfig {
      *
      * <h3>Endpoint Access Rules:</h3>
      * <ul>
-     *   <li><strong>/api/auth/**</strong> - Public access (register, login, verify)</li>
+     *   <li><strong>/api/auth/**</strong> - Public access (register, login, verify, etc.)</li>
+     *   <li><strong>/api/seats/available**</strong> - Public access to available seats</li>
+     *   <li><strong>/api/user/register</strong> - Public access for user registration - To See</li>
+     *   <li><strong>GET requests to /api/genres/**, /api/movies/**, /api/showtimes/**, /api/confectionery-categories/**, /api/confectionery-products/**, /api/orders/**</strong> - Public access for fetching data</li>
      *   <li><strong>All other endpoints</strong> - Requires valid JWT token</li>
      * </ul>
      *
