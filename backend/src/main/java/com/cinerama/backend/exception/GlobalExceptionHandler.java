@@ -9,9 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Global exception handler for the Cinerama cinema booking system.
  *
@@ -72,10 +69,11 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity containing error message with 400 status
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.INVALID_ARGUMENT, ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     /**
@@ -103,10 +101,11 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity containing error message with 409 status
      */
     @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalStateException(IllegalStateException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.CONFLICT, ex.getMessage()),
+                HttpStatus.CONFLICT
+        );
     }
 
     /**
@@ -141,12 +140,15 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity containing field-specific error messages with 400 status
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        StringBuilder sb = new StringBuilder();
         ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage())
+                sb.append(error.getField()).append(": ").append(error.getDefaultMessage()).append("; ")
         );
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.VALIDATION_ERROR, sb.toString()),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     /**
@@ -174,10 +176,11 @@ public class GlobalExceptionHandler {
      * @return ResponseEntity containing error message with 400 status
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.CONSTRAINT_VIOLATION, ex.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     /**
@@ -208,17 +211,48 @@ public class GlobalExceptionHandler {
      * @param ex the generic Exception that was thrown
      * @return ResponseEntity containing generic error message with 500 status
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "An unexpected error occurred.");
-        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler({ AccessDeniedException.class, AuthorizationDeniedException.class })
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(Exception ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.ACCESS_DENIED, "Access denied"),
+                HttpStatus.FORBIDDEN
+        );
     }
 
-    @ExceptionHandler({ AccessDeniedException.class, AuthorizationDeniedException.class })
-    public ResponseEntity<Map<String, String>> handleAccessDeniedException(Exception ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", "Access denied");
-        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.INTERNAL_ERROR, "An unexpected error occurred."),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+    /**
+     * Handles UserNotFoundException for cases where a user is not found.
+     *
+     * <p>This handler catches UserNotFoundException instances thrown when
+     * attempting to access or manipulate a user that does not exist in the system.
+     * It maps these exceptions to HTTP 404 Not Found responses.</p>
+     *
+     * <h3>Common Scenarios:</h3>
+     * <ul>
+     *   <li>Fetching user details by ID or email</li>
+     *   <li>Updating or deleting non-existent users</li>
+     * </ul>
+     *
+     * <h3>Response Structure:</h3>
+     * <ul>
+     *   <li>HTTP Status: 404 Not Found</li>
+     *   <li>Body: {"error": "User not found"}</li>
+     * </ul>
+     *
+     * @param ex the UserNotFoundException that was thrown
+     * @return ResponseEntity containing error message with 404 status
+     */
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.USER_NOT_FOUND, ex.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
     }
 }
