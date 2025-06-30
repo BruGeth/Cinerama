@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for handling user verification operations.
+ * Provides endpoints to send verification codes to users.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
