@@ -97,7 +97,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints for user authentication (register, login, verify)
                         .requestMatchers("/api/auth/**", "/api/seats/available**", "/api/user/register"
-                                         ,"/api/events","/api/festarama","/api/specialfunctions").permitAll()
+                                         ,"/api/events","/api/festarama","/api/specialfunctions","/api/advertising" ).permitAll()
                         // Public access to movie-related endpoints
                         .requestMatchers(HttpMethod.GET, "/api/genres/**", "/api/movies/**","/api/showtimes/**").permitAll()
                         // Public access to user profile endpoint
