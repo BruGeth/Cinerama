@@ -219,13 +219,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        return new ResponseEntity<>(
-                new ErrorResponse(ErrorCode.INTERNAL_ERROR, "An unexpected error occurred."),
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
-    }
     /**
      * Handles UserNotFoundException for cases where a user is not found.
      *
@@ -253,6 +246,148 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(
                 new ErrorResponse(ErrorCode.USER_NOT_FOUND, ex.getMessage()),
                 HttpStatus.NOT_FOUND
+        );
+    }
+
+    /**
+     * Handles TokenNotBelongUserException for cases where a token does not belong to the user.
+     *
+     * <p>This handler catches TokenNotBelongUserException instances thrown when
+     * a token is used that does not match the user it is associated with.
+     * It maps these exceptions to HTTP 403 Forbidden responses.</p>
+     *
+     * <h3>Common Scenarios:</h3>
+     * <ul>
+     *   <li>Using a token from a different user</li>
+     * </ul>
+     *
+     * <h3>Response Structure:</h3>
+     * <ul>
+     *   <li>HTTP Status: 403 Forbidden</li>
+     *   <li>Body: {"error": "Token does not belong to user"}</li>
+     * </ul>
+     *
+     * @param ex the TokenNotBelongUserException that was thrown
+     * @return ResponseEntity containing error message with 403 status
+     */
+    @ExceptionHandler(TokenNotBelongUserException.class)
+    public ResponseEntity<ErrorResponse> handleTokenNotBelongUser(TokenNotBelongUserException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(ErrorCode.TOKEN_NOT_BELONG_USER, ex.getMessage()));
+    }
+
+    /**
+     * Handles ExpiredTokenException for cases where a token has expired.
+     *
+     * <p>This handler catches ExpiredTokenException instances thrown when
+     * a token is used after its expiration time. It maps these exceptions to
+     * HTTP 401 Unauthorized responses.</p>
+     *
+     * <h3>Common Scenarios:</h3>
+     * <ul>
+     *   <li>Using an expired verification or authentication token</li>
+     * </ul>
+     *
+     * <h3>Response Structure:</h3>
+     * <ul>
+     *   <li>HTTP Status: 401 Unauthorized</li>
+     *   <li>Body: {"error": "Token has expired"}</li>
+     * </ul>
+     *
+     * @param ex the ExpiredTokenException that was thrown
+     * @return ResponseEntity containing error message with 401 status
+     */
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredToken(ExpiredTokenException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse(ErrorCode.EXPIRED_TOKEN, ex.getMessage()));
+    }
+
+    /**
+     * Handles PasswordsNotMatchException for cases where passwords do not match.
+     *
+     * <p>This handler catches PasswordsNotMatchException instances thrown when
+     * the provided passwords do not match during operations like registration or
+     * password reset. It maps these exceptions to HTTP 400 Bad Request responses.</p>
+     *
+     * <h3>Common Scenarios:</h3>
+     * <ul>
+     *   <li>Registration with mismatched password and confirm password fields</li>
+     *   <li>Password reset attempts with non-matching new passwords</li>
+     * </ul>
+     *
+     * <h3>Response Structure:</h3>
+     * <ul>
+     *   <li>HTTP Status: 400 Bad Request</li>
+     *   <li>Body: {"error": "Passwords do not match"}</li>
+     * </ul>
+     *
+     * @param ex the PasswordsNotMatchException that was thrown
+     * @return ResponseEntity containing error message with 400 status
+     */
+    @ExceptionHandler(PasswordsNotMatchException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordsNotMatch(PasswordsNotMatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ErrorCode.PASSWORDS_NOT_MATCH, ex.getMessage()));
+    }
+
+    /**
+     * Handles InvalidTokenException for cases where a token is invalid.
+     *
+     * <p>This handler catches InvalidTokenException instances thrown when
+     * a token is malformed or does not meet the expected format. It maps
+     * these exceptions to HTTP 400 Bad Request responses.</p>
+     *
+     * <h3>Common Scenarios:</h3>
+     * <ul>
+     *   <li>Using a token that is not properly formatted</li>
+     *   <li>Tokens that do not conform to expected standards</li>
+     * </ul>
+     *
+     * <h3>Response Structure:</h3>
+     * <ul>
+     *   <li>HTTP Status: 400 Bad Request</li>
+     *   <li>Body: {"error": "Invalid token"}</li>
+     * </ul>
+     *
+     * @param ex the InvalidTokenException that was thrown
+     * @return ResponseEntity containing error message with 400 status
+     */
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidToken(InvalidTokenException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ErrorCode.INVALID_TOKEN, ex.getMessage()));
+    }
+
+    /**
+     * Handles all other unhandled exceptions as internal server errors.
+     *
+     * <p>This is the fallback exception handler that catches any exception
+     * not specifically handled by other methods. It prevents internal system
+     * details from being exposed to clients while providing a generic error response.</p>
+     *
+     * <h3>Security Features:</h3>
+     * <ul>
+     *   <li>Hides internal system details from clients</li>
+     *   <li>Provides generic error message</li>
+     *   <li>Logs actual exception for debugging (if logging configured)</li>
+     *   <li>Prevents information disclosure</li>
+     * </ul>
+     *
+     * <h3>Response Structure:</h3>
+     * <ul>
+     *   <li>HTTP Status: 500 Internal Server Error</li>
+     *   <li>Body: {"error": "An unexpected error occurred."}</li>
+     * </ul>
+     *
+     * @param ex the generic Exception that was thrown
+     * @return ResponseEntity containing generic error message with 500 status
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(
+                new ErrorResponse(ErrorCode.INTERNAL_ERROR, "An unexpected error occurred."),
+                HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 }
