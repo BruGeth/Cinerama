@@ -8,6 +8,8 @@ const VerifyEmail = () => {
   const [activeIndex, setActiveIndex] = useState(0); // Tracks the current input focus
   const [resendCount, setResendCount] = useState(0); // Counter for resend attempts
   const [resendMessage, setResendMessage] = useState(""); // Message to display after resending code
+  const [codeError, setCodeError] = useState(""); // Error message for code
+  const [loading, setLoading] = useState(false); // false | 'verify' | 'resend'
   const navigate = useNavigate(); // Hook for navigation
   const location = useLocation(); // Hook for retrieving the passed email from previous route
 
@@ -17,7 +19,7 @@ const VerifyEmail = () => {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
-
+      setCodeError("");
       if (value !== "" && index < 5) {
         setActiveIndex(index + 1);
         document.getElementById(`code-input-${index + 1}`).focus();
@@ -55,6 +57,7 @@ const VerifyEmail = () => {
       const pasteArr = paste.split("");
       setCode(pasteArr);
       setActiveIndex(5);
+      setCodeError("");
       setTimeout(() => {
         document.getElementById("code-input-5").focus();
       }, 0);
@@ -68,35 +71,32 @@ const VerifyEmail = () => {
     const finalCode = code.join(""); // Converts array into string
     // Validate code length
     if (finalCode.length !== 6) {
-      alert("Por favor, ingresa un código de 6 números.");
+      setCodeError("Por favor, ingresa un código de 6 números.");
       return;
     }
 
+    setCodeError("");
+    setLoading("verify");
     try {
       const email = location.state?.email; // Retrieve email from navigation state
-      console.log("Email recibido en verify:", email);
       await userService.verifyUser({ email, verificationCode: finalCode }); // Send verification request
-
-      console.log("Verificación exitosa.");
       navigate("/login"); // Redirect user on success
     } catch (error) {
-      console.error("Error al verificar:", error.message);
-      alert("Código inválido o expirado. Inténtalo de nuevo."); // Display error message
+      setCodeError("Código inválido o expirado. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="verify-email-page">
       <div className="verify-card">
-        <h1>Confirma tu identidad</h1> {/* Title */}
+        <h1>Confirma tu identidad</h1>
         <p>
           Acaba de llegar un código a su correo para que verifique su identidad
-        </p>{" "}
-        {/* Instructions */}
+        </p>
         <form onSubmit={handleSubmit}>
           <div className="code-inputs">
-            {" "}
-            {/* Numeric inputs for verification code */}
             {code.map((num, index) => (
               <input
                 id={`code-input-${index}`}
@@ -116,26 +116,33 @@ const VerifyEmail = () => {
               />
             ))}
           </div>
-
+          {codeError && (
+            <div className="token-error-message">{codeError}</div>
+          )}
           <div className="verify-buttons-group">
-            {" "}
-            {/* Container of messages and buttons */}
             {resendMessage && (
               <div className="resend-message">{resendMessage}</div>
             )}
             <div className="verify-buttons">
-              <button type="submit" className="send-button">
-                Enviar
+              <button
+                type="submit"
+                className="send-button"
+                disabled={loading === 'verify' || loading === 'resend'}
+              >
+                {loading === 'verify' ? 'Verificando...' : 'Verificar'}
               </button>
               <button
                 type="button"
                 className="resend-button"
                 onClick={async () => {
-                  setCode(Array(6).fill("")); // Reset code inputs
+                  setCode(Array(6).fill(""));
+                  setActiveIndex(0);
+                  setCodeError("");
                   if (resendCount >= 3) {
                     setResendMessage("Has alcanzado el límite de reenvíos.");
                     return;
                   }
+                  setLoading("resend");
                   const email = location.state?.email;
                   try {
                     await userService.sendVerificationCode(email);
@@ -145,20 +152,20 @@ const VerifyEmail = () => {
                       setResendMessage("Límite de reenvíos alcanzado.");
                     } else {
                       setResendMessage(
-                        `Código reenviado correctamente. Intentos restantes: ${
-                          3 - newCount
-                        }`
+                        `Código reenviado correctamente. Intentos restantes: ${3 - newCount}`
                       );
                     }
                   } catch (error) {
                     setResendMessage(
                       "Error al reenviar el código. Intenta más tarde."
                     );
+                  } finally {
+                    setLoading(false);
                   }
                 }}
-                disabled={resendCount >= 3}
+                disabled={resendCount >= 3 || loading === 'verify' || loading === 'resend'}
               >
-                Reenviar
+                {loading === 'resend' ? 'Reenviando...' : 'Reenviar'}
               </button>
             </div>
           </div>
