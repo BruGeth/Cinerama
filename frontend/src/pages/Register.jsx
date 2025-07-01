@@ -167,7 +167,7 @@ const Register = () => {
           </div>
 
           {/* Terms and conditions checkbox */}
-          <div className="form-group checkbox-group">
+          <div className="checkbox-group">
             <input
               type="checkbox"
               id="acceptTerms"

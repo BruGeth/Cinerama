@@ -6,6 +6,8 @@ import com.cinerama.backend.dto.RegisterRequest;
 import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.Role;
 import com.cinerama.backend.entity.User;
+import com.cinerama.backend.exception.user.PasswordsNotMatchException;
+import com.cinerama.backend.exception.user.UserNotFoundException;
 import com.cinerama.backend.repository.RoleRepository;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.AuthService;
@@ -18,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 /**
  * Authentication service implementation providing secure user registration and login.
@@ -37,20 +38,28 @@ public class AuthServiceImpl implements AuthService {
     private RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final MailService mailService;
+    private final VerificationTokenServiceImpl verificationTokenService;
     private final CodeGenerator codeGenerator;
     private final JwtUtil jwtUtil;
 
+    /**
+     * Registers a new user with the provided registration details.
+     *
+     * @param request the registration request containing user details
+     * @return the registered user entity
+     * @throws PasswordsNotMatchException if the provided passwords do not match
+     * @throws RuntimeException if the default role "ROLE_USER" is not found
+     */
     @Override
     public User register(RegisterRequest request) {
         // Check if the provided passwords match
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new IllegalArgumentException("Passwords do not match");
+            throw new PasswordsNotMatchException("Passwords do not match");
         }
 
-        // Check
+        // Check if the role "ROLE_USER" exists in the database
         Role defaultRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
-
 
         // Create a new user entity with the provided details
         User user = User.builder()
@@ -58,36 +67,42 @@ public class AuthServiceImpl implements AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword())) // Encrypt the password
                 .enabled(false) // Set the account as disabled until verification
-                .verificationCode(codeGenerator.generateCode()) // Generate a unique verification code
                 .role(defaultRole)
                 .build();
 
         // Save the user to the database
         User savedUser = userRepository.save(user);
 
-        // Send a verification email to the user
-        mailService.sendVerificationEmail(savedUser.getEmail(), savedUser.getVerificationCode());
-
+        // Generate a verification code for the user and send a verification email
+        verificationTokenService.createVerificationToken(savedUser);
         return savedUser;
     }
 
+    /**
+     * Verifies a user's account using the provided verification request.
+     *
+     * @param request the verification request containing the email and verification code
+     * @throws IllegalArgumentException if the verification code is invalid
+     */
     @Override
     public void verify(VerificationRequest request) {
-        // Find the user by email or throw an exception if not found
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        log.info("Verifying account for email: {}", request.getEmail());
 
-        // Check if the provided verification code matches the one stored
-        if (!request.getVerificationCode().equals(user.getVerificationCode())) {
-            throw new IllegalArgumentException("Invalid verification code");
-        }
+        // Validate the verification code and activate the user account
+        verificationTokenService.verifyAccount(request);
 
-        // Activate account and clear verification code for security
-        user.setEnabled(true);
-        user.setVerificationCode(null);
-        userRepository.save(user);
+        log.info("Account verified successfully for email: {}", request.getEmail());
     }
 
+    /**
+     * Logs in a user by validating credentials and generating a JWT token.
+     *
+     * @param request the login request containing email and password
+     * @return a response containing the user's name and JWT token
+     * @throws UserNotFoundException if no user is found with the provided email
+     * @throws IllegalArgumentException if the password does not match
+     * @throws IllegalStateException if the user account is not verified
+     */
     @Override
     public LoginResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
@@ -95,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> {
                     log.error("No user found with email {}", request.getEmail());
-                    return new IllegalArgumentException("Invalid email or password");
+                    return new UserNotFoundException("Invalid email or password");
                 });
 
         log.info("User found: {}", user.getEmail());

@@ -188,38 +188,6 @@ public class User {
     private boolean enabled = false;
 
     /**
-     * 6-digit verification code for email confirmation.
-     *
-     * <p>This field stores a randomly generated 6-digit numeric code sent
-     * to the user's email during registration. The code is used to verify
-     * email ownership and activate the account.</p>
-     *
-     * <h3>Code Characteristics:</h3>
-     * <ul>
-     *   <li>6-character numeric string (e.g., "123456")</li>
-     *   <li>Generated randomly during registration</li>
-     *   <li>Time-limited validity (handled by service logic)</li>
-     *   <li>Single-use and cleared after successful verification</li>
-     * </ul>
-     *
-     * <h3>Database Configuration:</h3>
-     * <ul>
-     *   <li>Maximum length of 6 characters</li>
-     *   <li>Nullable field (null after verification or expiration)</li>
-     *   <li>Used for lookup during verification process</li>
-     * </ul>
-     *
-     * <h3>Security Considerations:</h3>
-     * <ul>
-     *   <li>Should be excluded from API responses</li>
-     *   <li>Rate limiting should be implemented for code generation</li>
-     *   <li>Consider implementing expiration logic at service level</li>
-     * </ul>
-     */
-    @Column(length = 6)
-    private String verificationCode;
-
-    /**
      * Timestamp of account creation for audit and analytics.
      *
      * <p>This field automatically captures the exact date and time when

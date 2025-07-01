@@ -72,7 +72,10 @@ public class WebSecurityConfig {
      *
      * <h3>Endpoint Access Rules:</h3>
      * <ul>
-     *   <li><strong>/api/auth/**</strong> - Public access (register, login, verify)</li>
+     *   <li><strong>/api/auth/**</strong> - Public access (register, login, verify, etc.)</li>
+     *   <li><strong>/api/seats/available**</strong> - Public access to available seats</li>
+     *   <li><strong>/api/user/register</strong> - Public access for user registration - To See</li>
+     *   <li><strong>GET requests to /api/genres/**, /api/movies/**, /api/showtimes/**, /api/confectionery-categories/**, /api/confectionery-products/**, /api/orders/**</strong> - Public access for fetching data</li>
      *   <li><strong>All other endpoints</strong> - Requires valid JWT token</li>
      * </ul>
      *
@@ -98,10 +101,12 @@ public class WebSecurityConfig {
                         // Public endpoints for user authentication (register, login, verify)
                         .requestMatchers("/api/auth/**", "/api/seats/available**", "/api/user/register").permitAll()
                         // Public access to genre, movie, showtime, and confectionery category endpoints
-                        .requestMatchers(HttpMethod.GET, "/api/genres/**", "/api/movies/**","/api/showtimes/**","/api/confectionery-categories/**","/api/confectionery-products/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/genres/**",
+                                              "/api/movies/**","/api/showtimes/**",
+                                                "/api/confectionery-categories/**",
+                                 "/api/confectionery-products/**","/api/orders/**").permitAll()
                         // Public access to user profile endpoint
                         .requestMatchers("/api/user/", "/api/tickets/**", "/api/seats/**").authenticated()
-                        .requestMatchers("/api/orders/**").permitAll()//Added
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
                 )

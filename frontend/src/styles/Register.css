@@ -58,6 +58,7 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    justify-content: center;
 }
 
 /* Size for checkbox inputs */
@@ -68,7 +69,10 @@
 
 /* Removes bottom margin for checkbox labels */
 .checkbox-group label {
+    display: inline;
     margin-bottom: 0;
+    width: auto;
+    user-select: none;
 }
 
 /* Red border for inputs with validation errors */
@@ -82,6 +86,7 @@
     font-size: 0.8rem;
     margin-top: 0.3rem;
     display: block;
+    
 }
 
 /* General error messages aligned to center */

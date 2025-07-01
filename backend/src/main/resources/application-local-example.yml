@@ -1,5 +1,9 @@
+server:
+  port: your-application-port
+
 spring:
   datasource:
+    url: your-db-url
     username: your-db-user
     password: your-db-password
 
@@ -9,3 +13,8 @@ spring:
 
 jwt:
   secret: your-jwt-secret-key
+  expiration: your-jwt-expiration-time
+
+paypal:
+    client-id: your-paypal-client-id
+    client-secret: your-paypal-client-secret

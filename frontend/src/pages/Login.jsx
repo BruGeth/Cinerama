@@ -51,33 +51,38 @@ const Login = () => {
     setError("");
 
     try {
-    // Attempt login using the provided credentials
-    console.log("Intentando login con:", credentials);
-    await login(credentials);
-    console.log("Login exitoso, isAdmin:", isAdmin());
-    // Store email in local storage if "Remember me" is checked
-    if (rememberMe) {
-      localStorage.setItem("userEmail", credentials.email);
-    } else {
-      localStorage.removeItem("userEmail");
-    }
-    setTimeout(() => {
-      if (isAdmin()) {
-        console.log("Redirigiendo a dashboard");
-        navigate("/admin/dashboard");
+      // Attempt login using the provided credentials
+      console.log("Intentando login con:", credentials);
+      await login(credentials); // throw error if login fails
+      console.log("Login exitoso, isAdmin:", isAdmin());
+      // Store email in local storage if "Remember me" is checked
+      if (rememberMe) {
+        localStorage.setItem("userEmail", credentials.email);
       } else {
-        console.log("Redirigiendo a home");
-        // Redirect to homepage after successful login
-        navigate("/");
+        localStorage.removeItem("userEmail");
       }
-    }, 100);
-  } catch (err) {
-    console.error("Login error:", err.message);
-    setError("Invalid credentials. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+      setTimeout(() => {
+        if (isAdmin()) {
+          console.log("Redirigiendo a dashboard");
+          navigate("/admin/dashboard");
+        } else {
+          console.log("Redirigiendo a home");
+          // Redirect to homepage after successful login
+          navigate("/");
+        }
+      }, 100);
+    } catch (err) {
+      console.error("Login error:", err.message);
+      if (err.message === "Account is not verified") {
+        // Ya se envió el código desde el AuthContext
+        navigate("/verify", { state: { email: credentials.email } });
+      } else {
+        setError("Invalid credentials. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="login-container">

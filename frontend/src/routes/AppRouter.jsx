@@ -7,6 +7,7 @@ import NotFound from "../pages/NotFound";
 import Register from "../pages/Register";
 import Login from "../pages/Login";
 import VerifyEmail from "../pages/VerifyEmail";
+import ForgotPassword from "../pages/ForgotPassword";
 import Confectionery from "../pages/Confectionery";
 import Cartelera from "../pages/Cartelera";
 import MovieDetail from "../pages/MovieDetail";
@@ -24,12 +25,11 @@ import TicketPurchase from "../pages/TicketPurchase";
 import MoreInformation from "../components/MoreInformation";
 import AdminRoute from "../utils/AdminRoute";
 import AdminDashboard from "../pages/admin/AdminDashboard";
-import PaymentConfirmation from "../pages/PaymentConfirmation"
+import PaymentConfirmation from "../pages/PaymentConfirmation";
 import { PaymentProvider } from "../context/PaymentContext";
 import MoviesManagement from "../pages/admin/MoviesManagement";
 import Users from "../pages/admin/Users";
 import ConfectioneryManagement from "../pages/admin/ConfectioneryManagement";
-
 
 const AppRouter = () => {
   return (
@@ -47,6 +47,7 @@ const AppRouter = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/verify" element={<VerifyEmail />} />
+                  <Route path="/recover-password" element={<ForgotPassword />} />
                   <Route
                     path="/profile"
                     element={
@@ -119,26 +120,32 @@ const AppRouter = () => {
               <Users />
             </AdminRoute>
           }
-          />
-        <Route path="/purchase/:id/:showtime/:format" element={
-  <>
-    <Navbar />
-    <PaymentProvider>
-      <TicketPurchase />
-    </PaymentProvider>
-    <Footer />
-  </>
-} />
-<Route path="/payment-confirmation" element={
-  <>
-    <Navbar />
-    <PaymentProvider>
-      <PaymentConfirmation />
-    </PaymentProvider>
-    <Footer />
-  </>
-} />
-  </Routes>
+        />
+        <Route
+          path="/purchase/:id/:showtime/:format"
+          element={
+            <>
+              <Navbar />
+              <PaymentProvider>
+                <TicketPurchase />
+              </PaymentProvider>
+              <Footer />
+            </>
+          }
+        />
+        <Route
+          path="/payment-confirmation"
+          element={
+            <>
+              <Navbar />
+              <PaymentProvider>
+                <PaymentConfirmation />
+              </PaymentProvider>
+              <Footer />
+            </>
+          }
+        />
+      </Routes>
     </Router>
   );
 };
