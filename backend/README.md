@@ -13,34 +13,38 @@ This is the backend service for the **Cinerama** project, built with **Spring Bo
 - MySQL Driver
 - Logback for logging
 - Spring Mail (for sending emails via SMTP)
+- Apache POI
+- Lombok (for reducing boilerplate code)
+- JUnit 5 (for testing)
+- Mockito (for mocking in tests)
+- H2 Database (for in-memory testing)
+- JWT (for authentication)
+- PayPal SDK (for payment processing)
 
 ---
 
 ## 🧩 Planned Libraries
 
 - Google Guava (planned)
-- Apache POI (planned)
 - Apache Commons (planned)
 
 ---
 
-## 🚀 Running the Backend Locally
+## 🚀 Getting Started
 
-1. Make sure you have **MySQL** installed and running.
-2. Create a database called `cinerama_db` (or adjust the name in `application.yml`).
-3. Configure your local environment using a personal `application-local.yml` file.
+### 1. Prerequisites
 
----
+- **Java 17** or higher
+- **Maven 3.8+**
+- **MySQL** installed and running
 
-## 🔐 Local Configuration (`application-local.yml`)
+### 2. Database Setup
 
-Create a new file in:
+Create a database named `cinerama_db` (or update the name in your configuration).
 
-```bash
-src/main/resources/application-local.yml
-```
+### 3. Local Configuration
 
-Use the following structure:
+Create a file at `src/main/resources/application-local.yml` with the following structure:
 
 ```yaml
 server:
@@ -56,7 +60,10 @@ spring:
     password: your_gmail_app_password
     
 jwt:
-    secret: your_jwt_secret 
+    secret: your_jwt_secret
+paypal:
+  client-id: tu_paypal_client_id
+  client-secret: tu_paypal_client_secret
 ```
 
 >Do not commit this file. It is ignored by `.gitignore` for security.
@@ -66,30 +73,42 @@ You can use the provided `application-local-example.yml` as a template.
 ---
 
 ## 📫 Email Configuration (Gmail SMTP)
-Make sure to [create an App Password in Gmail](https://myaccount.google.com/apppasswords
-) and enable 2FA.
 
-The backend will use `JavaMailSender` to send real verification emails when the registration flow is triggered.
+1. Enable 2-Step Verification on your Google account.
+2. Generate an [App Password](https://myaccount.google.com/apppasswords).
+3. Use this password in the `spring.mail.password` field.
+
+The backend will send real verification emails during user registration.
 
 ---
 
-## ▶️ Start the application
+## ▶️ Running the Application
 
 ```bash
 mvn spring-boot:run
 ```
-The backend should now be running at `http://localhost:8080`.
+
+The API will be available at `http://localhost:8080`.
 
 ---
 
-## 📋 Notes
-- Log files are generated under the `/logs` directory, separated by log levels (INFO, DEBUG, ERROR).
+## 🗂️ Logging
 
-- The `logs/` directory is excluded from version control via (`.gitignore`).
+- Log files are generated in the `/logs` directory, separated by log level (`INFO`, `DEBUG`, `ERROR`).
+- The `logs/` directory is excluded from version control.
 
-- Spring Security is configured with a basic setup. JWT authentication may be added later.
+---
 
-- Multi-database support (MySQL and Oracle) is planned for future versions.
+## 🔐 Security
+
+- Basic security is configured with Spring Security.
+- JWT authentication is planned for future releases.
+
+---
+
+## 🗃️ Multi-Database Support
+
+- Support for MySQL and Oracle is planned for future versions.
 
 ---
 
@@ -102,4 +121,11 @@ mvn clean install
 # Run tests
 mvn test
 ```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open an [issue](https://github.com/BruGeth/Cinerama/issues) or [pull request](https://github.com/BruGeth/Cinerama/pulls) for suggestions or improvements.
+
 ---

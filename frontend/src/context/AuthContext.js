@@ -61,6 +61,7 @@ export const AuthProvider = ({ children }) => {
       // Call the userService to log in the user
       const response = await userService.loginUser(credentials);
       const { name, token } = response;
+      localStorage.setItem("token", token);
 
       const decoded = jwtDecode(token);
       const userFromToken = {
@@ -74,6 +75,14 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user", JSON.stringify(userFromToken));
       return token;
     } catch (error) {
+      // if the error is due to unverified account, resend verification code
+      if (error.message === "Account is not verified") {
+        try {
+          await userService.sendVerificationCode(credentials.email);
+        } catch (sendError) {
+          console.error("Error al reenviar el código de verificación:", sendError);
+        }
+      }
       console.error("Login error:", error);
       throw error;
     }

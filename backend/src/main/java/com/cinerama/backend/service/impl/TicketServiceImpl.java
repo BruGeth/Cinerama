@@ -8,7 +8,7 @@ import com.cinerama.backend.entity.Show;
 import com.cinerama.backend.repository.BookingRepository;
 import com.cinerama.backend.repository.SeatRepository;
 import com.cinerama.backend.repository.ShowRepository;
-import com.cinerama.backend.service.mail.TicketService;
+import com.cinerama.backend.service.TicketService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

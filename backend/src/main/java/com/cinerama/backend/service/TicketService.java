@@ -1,4 +1,4 @@
-package com.cinerama.backend.service.mail;
+package com.cinerama.backend.service;
 
 import com.cinerama.backend.dto.TicketPurchaseRequest;
 import com.cinerama.backend.dto.TicketPurchaseResponse;

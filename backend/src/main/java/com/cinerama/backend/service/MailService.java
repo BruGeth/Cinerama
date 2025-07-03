@@ -12,4 +12,12 @@ public interface MailService {
      * @throws RuntimeException if email delivery fails
      */
     void sendVerificationEmail(String toEmail, String verificationCode);
+    /**
+     * Sends a password reset email with a secure reset code.
+     *
+     * @param toEmail recipient's email address
+     * @param resetCode unique code for resetting the password
+     * @throws RuntimeException if email delivery fails
+     */
+    void sendPasswordResetEmail(String toEmail, String resetCode);
 }

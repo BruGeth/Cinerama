@@ -37,12 +37,11 @@ const userService = {
     if (!response.ok) {
       const error = await response.json();
       console.error("Error en loginUser:", error);
-      throw new Error(error.message || "Login failed.");
+      throw new Error(error.message || error.error || "Login failed.");
     }
 
     const data = await response.json(); // Contains the token and user data
     console.log("Respuesta del backend (login):", data);
-    localStorage.setItem("token", data.token); // save token in localStorage
     return data;
   },
 
@@ -95,6 +94,25 @@ const userService = {
 
     const message = await response.text();
     console.log("Server response:", message);
+  },
+
+  sendVerificationCode: async (email) => {
+    const response = await fetch(
+      `${API_BASE_URL}/auth/send?email=${encodeURIComponent(email)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(
+        error.message ||
+          error.error ||
+          "Failed to send verification code."
+      );
+    }
+    return await response.text();
   },
 };
 
