@@ -26,7 +26,7 @@ public class EventController {
             service.processEvent(request);
             return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(new EventResponse("OK", "E-mail sent successfully"));
+                    .body(new EventResponse("OK", "🎉 ¡Solicitud enviada exitosamente!"));
         } catch (MessagingException ex) {
             /* === Handle email sending errors === */
             return ResponseEntity
