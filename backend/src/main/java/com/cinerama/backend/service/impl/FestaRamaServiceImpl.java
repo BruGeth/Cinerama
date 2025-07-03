@@ -12,6 +12,25 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+/**
+ * Service implementation for managing FestaRama reservations.
+ *
+ * <p>This service handles the business logic for processing FestaRama reservations,
+ * including saving reservation details to the database and sending summary emails
+ * to the contact person.</p>
+ *
+ * <h2>Methods:</h2>
+ * <ul>
+ *   <li><b>procesarReserva:</b> Processes a FestaRama reservation and sends a summary email</li>
+ * </ul>
+ *
+ * <h2>Usage:</h2>
+ * <p>This service is used in the application layer to handle FestaRama-related operations.</p>
+ *
+ * @see com.cinerama.backend.repository.FestaRamaRepository
+ * @see com.cinerama.backend.dto.FestaRamaRequest
+ */
+
 @Service
 @RequiredArgsConstructor
 public class FestaRamaServiceImpl implements FestaRamaService {

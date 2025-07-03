@@ -12,6 +12,25 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+/**
+ * Service implementation for managing Event requests.
+ *
+ * <p>This service handles the business logic for processing Event requests,
+ * including saving event details to the database and sending summary emails
+ * to the contact person.</p>
+ *
+ * <h2>Methods:</h2>
+ * <ul>
+ *   <li><b>processEvent:</b> Processes an Event request and sends a summary email</li>
+ * </ul>
+ *
+ * <h2>Usage:</h2>
+ * <p>This service is used in the application layer to handle Event-related operations.</p>
+ *
+ * @see com.cinerama.backend.repository.EventRepository
+ * @see com.cinerama.backend.dto.EventRequest
+ */
+
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {

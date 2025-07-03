@@ -12,6 +12,25 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+/**
+ * Service implementation for managing SpecialFunction requests.
+ *
+ * <p>This service handles the business logic for processing SpecialFunction requests,
+ * including saving function details to the database and sending summary emails
+ * to the contact person.</p>
+ *
+ * <h2>Methods:</h2>
+ * <ul>
+ *   <li><b>processFunction:</b> Processes a SpecialFunction request and sends a summary email</li>
+ * </ul>
+ *
+ * <h2>Usage:</h2>
+ * <p>This service is used in the application layer to handle SpecialFunction-related operations.</p>
+ *
+ * @see com.cinerama.backend.repository.SpecialFunctionRepository
+ * @see com.cinerama.backend.dto.SpecialFunctionRequest
+ */
+
 @Service
 @RequiredArgsConstructor
 public class SpecialFunctionServiceImpl implements SpecialFunctionService {
