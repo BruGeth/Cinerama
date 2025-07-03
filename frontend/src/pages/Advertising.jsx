@@ -90,10 +90,10 @@ const Advertising = () => {
 
   // Category options for advertising
   const categoryOptions = [
-    { value: "pagina-web", label: "Página Web" },
-    { value: "blog", label: "Blog" },
-    { value: "boleteria-express", label: "Boletería Express" },
-    { value: "aplicativo-movil", label: "Aplicativo Móvil" },
+    { value: "Pagina Web", label: "Página Web" },
+    { value: "Blog", label: "Blog" },
+    { value: "Boleteria Express", label: "Boletería Express" },
+    { value: "Aplicativo Movil", label: "Aplicativo Móvil" },
   ]
 
   // Budget ranges
@@ -391,7 +391,9 @@ const Advertising = () => {
 
       if (response.ok) {
         toast.success(result.message || "🎉 ¡Solicitud de publicidad enviada correctamente!");
-        navigate("/corporate");
+        setTimeout(() => {
+          navigate("/corporate");
+        }, 3000);
       } else {
         toast.error(result.message || "❌ Error al enviar solicitud.");
       }
@@ -567,7 +569,7 @@ const Advertising = () => {
               marginBottom: "16px",
             }}
           ></div>
-          <p>Enviando solicitud...</p>
+          <p>Enviando Publicidad...</p>
         </div>
       )}
 
@@ -1004,7 +1006,7 @@ const Advertising = () => {
                 ← Regresar
               </button>
               <button className="events-btn-primary" onClick={handleSubmit} disabled={loading}>
-                {loading ? "Enviando..." : "Solicitar Cotización 📢"}
+                {loading ? "Enviando ..." : "Enviar Solicitud"}
               </button>
             </div>
           </div>
