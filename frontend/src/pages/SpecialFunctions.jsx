@@ -13,7 +13,9 @@ const SpecialFunctions = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [movieList, setMovieList] = useState([]);
   const [formData, setFormData] = useState({
+
     cinema: "",
     movie: "",
     institutionType: "",
@@ -32,12 +34,17 @@ const SpecialFunctions = () => {
 
   // Fetch movies from API using custom hook
   const { movies, loading: moviesLoading } = useMovies();
-
+  useEffect(() => {
+    if (Array.isArray(movies)) {
+      setMovieList(movies);
+    }
+  }, [movies]);
+  
   // Cinema options (static)
   const cinemaOptions = useMemo(
     () => [
       {
-        id: "cinema-miraflores",
+        id: "Cinerama Miraflores",
         name: "Cinerama Miraflores",
         description:
           "Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium",
@@ -49,7 +56,7 @@ const SpecialFunctions = () => {
         location: "Miraflores",
       },
       {
-        id: "cinema-minka",
+        id: "Cinerama Minka",
         name: "Cinerama Minka",
         description:
           "Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada",
@@ -81,45 +88,29 @@ const SpecialFunctions = () => {
 
   // Filter and transform movies from API - Only the 3 specific movies
   const movieOptions = useMemo(() => {
-    try {
-      if (!movies || !Array.isArray(movies)) {
-        throw new Error("Could not load movie data");
-      }
-      // Filter only the 3 specific movies requested
-      const targetMovies = [
-        "Destino Final: Lazos de Sangre",
-        "Star Wars: Episodio III - La venganza de los Sith",
-        "Thunderbolts",
-      ];
-      const filteredMovies = movies
-        .filter((movie) => {
-          if (!movie || !movie.title) return false;
-          return targetMovies.includes(movie.title);
-        })
-        .map((movie) => ({
-          id: movie.id ? movie.id.toString() : Math.random().toString(),
-          title: movie.title || "No title",
-          description: movie.descriptionMovie || "No description",
-          image: movie.imageUrl || "/placeholder.svg?height=400&width=300",
-          genre: movie.genreName || "No genre",
-          duration: `${movie.duration || 120} min`,
-          rating: movie.rating || "PG-13",
-          availableCinemas: ["cinema-miraflores", "cinema-minka"],
-          gradient: getMovieGradient(movie.genreName || "Drama"),
-          showtimes: movie.showtimes || [],
-          originalData: movie,
-        }))
-        .filter(Boolean);
+    if (!Array.isArray(movieList)) return [];
 
-      if (filteredMovies.length === 0) {
-        throw new Error("No matching movies found in the billboard");
-      }
-      return filteredMovies;
-    } catch (err) {
-      setError(`Error loading movies: ${err.message}`);
-      return [];
-    }
-  }, [movies, getMovieGradient]);
+    return movieList
+      .filter((movie) =>
+        [
+          "Thunderbolts",
+          "Destino Final: Lazos de Sangre",
+          "Star Wars: Episodio III - La venganza de los Sith",
+        ].includes(movie.title)
+      )
+      .map((movie) => ({
+        id: movie.id.toString(),
+        title: movie.title,
+        description: movie.descriptionMovie,
+        image: movie.imageUrl,
+        duration: `${movie.duration} min`,
+        rating: movie.rating,
+        genre: movie.genre,
+        availableCinemas: movie.availableCinemas,
+        gradient: getMovieGradient(movie.genre),
+        originalData: movie,
+      }));
+  }, [movieList]);
 
   // Institution types for the details form
   const institutionTypes = [
@@ -153,18 +144,8 @@ const SpecialFunctions = () => {
 
   // Get available movies based on selected cinema
   const availableMovies = useMemo(() => {
-    try {
-      if (!selectedCinema) return movieOptions;
-      return movieOptions.filter((movie) => {
-        return (
-          movie.availableCinemas &&
-          movie.availableCinemas.includes(selectedCinema)
-        );
-      });
-    } catch (err) {
-      return movieOptions;
-    }
-  }, [selectedCinema, movieOptions]);
+    return movieOptions;
+  }, [movieOptions]);
 
   // Email validation helper
   const isValidEmail = useCallback((email) => {
@@ -221,11 +202,10 @@ const SpecialFunctions = () => {
     [isAnimating, cinemaOptions]
   );
 
-  // Handle movie selection with error handling
+  // Handle movie selection
   const handleMovieSelect = useCallback(
     (movieId) => {
       try {
-        // Validate movie exists
         const movie = movieOptions.find((m) => m.id === movieId);
         if (!movie) {
           throw new Error("Película no válida seleccionada");
@@ -234,11 +214,6 @@ const SpecialFunctions = () => {
         setError(null);
         setSelectedMovie(movieId);
         setFormData((prev) => ({ ...prev, movie: movieId }));
-
-        // Haptic feedback if available
-        if (navigator.vibrate) {
-          navigator.vibrate(50);
-        }
       } catch (err) {
         console.error("Error selecting movie:", err);
         setError(`Error al seleccionar la película: ${err.message}`);
@@ -398,80 +373,79 @@ const SpecialFunctions = () => {
 
   // Handle final submission with comprehensive error handling
   const handleSubmit = useCallback(async () => {
-  try {
-    setLoading(true);
-    setError(null);
+    try {
+      setLoading(true);
+      setError(null);
 
+      const requiredFields = [
+        "contactName",
+        "contactEmail",
+        "contactPhone",
+        "institutionType",
+        "capacity",
+      ];
+      const missingFields = requiredFields.filter((field) => !formData[field]);
 
-    const requiredFields = [
-      "contactName",
-      "contactEmail",
-      "contactPhone",
-      "institutionType",
-      "capacity",
-    ];
-    const missingFields = requiredFields.filter((field) => !formData[field]);
+      if (missingFields.length > 0) {
+        throw new Error(
+          `Campos requeridos faltantes: ${missingFields.join(", ")}`
+        );
+      }
 
-    if (missingFields.length > 0) {
-      throw new Error(
-        `Campos requeridos faltantes: ${missingFields.join(", ")}`
-      );
+      if (!isValidEmail(formData.contactEmail)) {
+        throw new Error("Email inválido");
+      }
+
+      if (!isValidPhone(formData.contactPhone)) {
+        throw new Error("Teléfono inválido");
+      }
+
+      if (!selectedMovie || !selectedCinema) {
+        throw new Error("Selección de película o cine incompleta");
+      }
+
+      // Prepara payload
+      const payload = {
+        cinema: selectedCinema,
+        movie: selectedMovie,
+        institutionType: formData.institutionType,
+        capacity: formData.capacity,
+        date: formData.date,
+        time: formData.time,
+        duration: formData.duration,
+        attendees: formData.attendees,
+        requirements: formData.requirements,
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        contactPhone: formData.contactPhone,
+        company: formData.company,
+        message: formData.message,
+      };
+
+      // Actual call to the backend
+      const response = await fetch("http://localhost:8080/api/specialfunctions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success(result.message || "🎉 ¡Función especial enviada correctamente!");
+        setTimeout(() => {
+          navigate("/corporate");
+        }, 3000);
+      } else {
+        throw new Error(result.message || "Error al enviar la solicitud");
+      }
+    } catch (err) {
+      console.error("Error al enviar la función especial:", err);
+      toast.error(err.message || "❌ Error inesperado al enviar la función especial.");
+    } finally {
+      setLoading(false);
     }
-
-    if (!isValidEmail(formData.contactEmail)) {
-      throw new Error("Email inválido");
-    }
-
-    if (!isValidPhone(formData.contactPhone)) {
-      throw new Error("Teléfono inválido");
-    }
-
-    if (!selectedMovie || !selectedCinema) {
-      throw new Error("Selección de película o cine incompleta");
-    }
-
-    // Prepara payload
-    const payload = {
-      cinema: selectedCinema,
-      movie: selectedMovie,
-      institutionType: formData.institutionType,
-      capacity: formData.capacity,
-      date: formData.date,
-      time: formData.time,
-      duration: formData.duration,
-      attendees: formData.attendees,
-      requirements: formData.requirements,
-      contactName: formData.contactName,
-      contactEmail: formData.contactEmail,
-      contactPhone: formData.contactPhone,
-      company: formData.company,
-      message: formData.message,
-    };
-
-    // Actual call to the backend
-    const response = await fetch("http://localhost:8080/api/specialfunctions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      toast.success(result.message || "🎉 ¡Función especial enviada correctamente!");
-      setTimeout(() => {
-        navigate("/corporate");
-      }, 1500);
-    } else {
-      throw new Error(result.message || "Error al enviar la solicitud");
-    }
-  } catch (err) {
-    console.error("Error al enviar la función especial:", err);
-    toast.error(err.message || "❌ Error inesperado al enviar la función especial.");
-  } finally {
-    setLoading(false);
-  }
-  }, [formData, selectedMovie, selectedCinema, isValidEmail, isValidPhone, navigate ]);
+  }, [formData, selectedMovie, selectedCinema, isValidEmail, isValidPhone, navigate]);
 
   // Image error handling with fallback
   const handleImageError = useCallback((e, backgroundClass = "cinema-bg") => {
@@ -701,9 +675,8 @@ const SpecialFunctions = () => {
           {steps.map((step, index) => (
             <div
               key={step.number}
-              className={`events-step ${step.active ? "active" : ""} ${
-                currentStep === step.number ? "current" : ""
-              }`}
+              className={`events-step ${step.active ? "active" : ""} ${currentStep === step.number ? "current" : ""
+                }`}
             >
               <div className="events-step-number">{step.number}</div>
               <span className="events-step-title">{step.title}</span>
@@ -734,9 +707,8 @@ const SpecialFunctions = () => {
               {cinemaOptions.map((cinema) => (
                 <div
                   key={cinema.id}
-                  className={`events-card cinema-card ${
-                    selectedCinema === cinema.id ? "selected" : ""
-                  }`}
+                  className={`events-card cinema-card ${selectedCinema === cinema.id ? "selected" : ""
+                    }`}
                   onClick={() => handleCinemaSelect(cinema.id)}
                   style={{ "--card-gradient": cinema.gradient }}
                 >
@@ -776,9 +748,8 @@ const SpecialFunctions = () => {
                       </div>
                     </div>
                     <div
-                      className={`events-radio ${
-                        selectedCinema === cinema.id ? "checked" : ""
-                      }`}
+                      className={`events-radio ${selectedCinema === cinema.id ? "checked" : ""
+                        }`}
                     >
                       <div className="events-radio-inner"></div>
                     </div>
@@ -792,9 +763,8 @@ const SpecialFunctions = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !selectedCinema ? "disabled" : ""
-                }`}
+                className={`events-btn-primary ${!selectedCinema ? "disabled" : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={!selectedCinema}
               >
@@ -834,9 +804,8 @@ const SpecialFunctions = () => {
                   availableMovies.map((movie) => (
                     <div
                       key={movie.id}
-                      className={`movie-card ${
-                        selectedMovie === movie.id ? "selected" : ""
-                      }`}
+                      className={`movie-card ${selectedMovie === movie.id ? "selected" : ""
+                        }`}
                       onClick={() => handleMovieSelect(movie.id)}
                       style={{ "--card-gradient": movie.gradient }}
                     >
@@ -887,9 +856,8 @@ const SpecialFunctions = () => {
                 Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !selectedMovie ? "disabled" : ""
-                }`}
+                className={`events-btn-primary ${!selectedMovie ? "disabled" : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={!selectedMovie}
               >
@@ -1006,11 +974,10 @@ const SpecialFunctions = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !formData.institutionType || !formData.capacity
-                    ? "disabled"
-                    : ""
-                }`}
+                className={`events-btn-primary ${!formData.institutionType || !formData.capacity
+                  ? "disabled"
+                  : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={!formData.institutionType || !formData.capacity}
               >
@@ -1107,13 +1074,12 @@ const SpecialFunctions = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !formData.contactName ||
+                className={`events-btn-primary ${!formData.contactName ||
                   !formData.contactEmail ||
                   !formData.contactPhone
-                    ? "disabled"
-                    : ""
-                }`}
+                  ? "disabled"
+                  : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={
                   !formData.contactName ||
@@ -1249,14 +1215,14 @@ const SpecialFunctions = () => {
         )}
       </div>
       <ToastContainer
-      position="top-center"
-      autoClose={3000}
-      hideProgressBar={false}
-      newestOnTop
-      closeOnClick
-      pauseOnHover
-      theme="colored"
-    />
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };
