@@ -2,97 +2,98 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Resumen de Evento - Cinerama</title>
+    <title>Verificación de Cuenta - Cinerama</title>
     <style>
         body {
-          font-family: 'Arial', sans-serif;
-          background: #f5f5f5;
-          margin: 0;
-          padding: 0;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
         }
         .container {
-          max-width: 600px;
-          margin: 0 auto;
-          background: #ffffff;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
         }
         .header {
-          background: #000000;
-          padding: 20px;
-          text-align: center;
+            background-color: #000000;
+            padding: 20px;
+            text-align: center;
         }
-        .logo-ciner {
-          color: #f0b000;
-          font-weight: bold;
-          font-size: 28px;
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ffffff;
         }
-        .logo-ama {
-          color: #e30000;
-          font-weight: bold;
-          font-size: 28px;
-        }
+        .logo-ciner { color: #f0b000; }
+        .logo-ama { color: #e30000; }
         .content {
-          padding: 30px 20px;
-          color: #333;
+            padding: 30px 20px;
         }
-        .section {
-          margin: 24px 0;
+        .verification-code {
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            margin: 30px 0;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+            color: #e30000;
+            letter-spacing: 5px;
         }
         .footer {
-          background: #e30000;
-          color: #ffffff;
-          text-align: center;
-          padding: 20px;
-          font-size: 14px;
+            background-color: #e30000;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+        .social-links {
+            margin-top: 20px;
         }
         .social-links a {
-          color: #ffffff;
-          margin: 0 8px;
-          text-decoration: none;
-          font-size: 14px;
+            color: #ffffff;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        .disclaimer {
+            font-size: 12px;
+            color: #999;
+            margin-top: 30px;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <span class="logo-ciner">CINER</span><span class="logo-ama">AMA</span>
+        <div class="logo">
+            <span class="logo-ciner">CINER</span><span class="logo-ama">AMA</span>
+        </div>
     </div>
 
     <div class="content">
-        <h2>Hola <span th:text="${event.contactName}">cliente</span>,</h2>
-        <p>Gracias por tu interés en <strong>Cinerama</strong>. Aquí tienes el resumen de tu evento:</p>
+        <h2>Hola <span th:text="${userName}"></span>,</h2>
 
-        <div class="section">
-            <h3>Tipo de Evento</h3>
-            <p th:text="${event.eventType}">Tipo de evento</p>
+        <p>Gracias por registrarte en <strong>Cinerama</strong>. Para completar tu registro y verificar tu cuenta, utiliza el siguiente código:</p>
+
+        <div class="verification-code" th:text="${verificationCode}"></div>
+
+        <p>Este código expirará en 24 horas. Si no solicitaste esta cuenta, puedes ignorar este correo.</p>
+
+        <p>¡Esperamos verte pronto en nuestras salas de cine!</p>
+
+        <p>Atentamente,<br>El equipo de Cinerama</p>
+
+        <div class="disclaimer">
+            Este es un mensaje automático. Por favor no respondas a este correo.
         </div>
-
-        <div class="section">
-            <h3>Cine Seleccionado</h3>
-            <p th:text="${event.cinema}">Cine</p>
-        </div>
-
-        <div class="section">
-            <h3>Detalles del Evento</h3>
-            <ul>
-                <li><b>Fecha:</b> <span th:text="${event.date}">Fecha</span></li>
-                <li><b>Hora:</b> <span th:text="${event.time}">Hora</span></li>
-                <li><b>Duración:</b>
-                    <span th:text="${event.duration ?: 'No especificada'}">No especificada</span>
-                </li>
-                <li><b>Asistentes:</b> <span th:text="${event.attendees}">Asistentes</span></li>
-                <li th:if="${event.requirements}">
-                    <b>Requerimientos:</b> <span th:text="${event.requirements}">Requerimientos</span>
-                </li>
-            </ul>
-        </div>
-
-        <p>Nos pondremos en contacto contigo en las próximas 24 horas para confirmar la disponibilidad.</p>
-        <p>Atentamente,<br>Equipo de Cinerama</p>
     </div>
 
     <div class="footer">
-        © 2025 Cinerama · Todos los derechos reservados.
+        <p>© 2025 Cinerama. Todos los derechos reservados.</p>
         <div class="social-links">
             <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">Twitter</a>
         </div>
