@@ -32,7 +32,6 @@ public class PayPalOrderService {
      * @return raw JSON response from PayPal or an error message
      */
     public String createOrder(Double amount, String currency) {
-
         // Validate input
         if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("El monto debe ser mayor a 0.");
