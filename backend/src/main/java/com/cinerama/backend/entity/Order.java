@@ -64,4 +64,19 @@ public class Order {
      */
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cart;
+/**
+ * Calculates the total cost of all items in the order based on quantity and price.
+ * This ensures that the amount charged matches the cart contents.
+ *
+ * @return the total calculated amount
+ */
+public BigDecimal getCalculatedTotal() {
+    if (cart == null || cart.isEmpty()) {
+        return BigDecimal.ZERO;
+    }
+
+    return cart.stream()
+            .map(item -> BigDecimal.valueOf(item.getPrice()).multiply(BigDecimal.valueOf(item.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+}
 }
