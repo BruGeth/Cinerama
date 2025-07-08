@@ -15,6 +15,9 @@ import java.util.Map;
 @Component
 public class PayPalConfig {
 
+    // Logger for debugging PayPal OAuth communication
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(PayPalConfig.class);
+
     @Value("${paypal.client-id}")
     private String clientId;
 
