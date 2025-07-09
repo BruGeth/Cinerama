@@ -33,11 +33,11 @@ const PaymentConfirmation = () => {
     try {
       // Create PayPal order and redirect to approval URL
       const { approvalUrl } = await createOrder(amountUSD);
-      console.log("Redirigiendo a PayPal:", approvalUrl);
+      console.log("Redirecting to PayPal:", approvalUrl);
       window.location.href = approvalUrl;
     } catch (error) {
       // Handle payment initiation error
-      console.error("Error iniciando pago:", error);
+      console.error("Error initiating PayPal payment:", error);
       setMessage("Ocurrió un error al iniciar el pago con PayPal.");
       setIsProcessing(false);
     }

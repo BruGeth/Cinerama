@@ -23,10 +23,13 @@ const Success = () => {
       if (!paymentId || !payerId) {
         setMessage("Faltan datos en la confirmación del pago.");
         setStatus("error");
+        console.error("Missing paymentId or payerId in query params");
         return;
       }
+
       if (hasRun.current) return;
       hasRun.current = true;
+
       try {
         // Get user token from localStorage (if needed for authentication)
         const token = localStorage.getItem("token");
@@ -45,7 +48,7 @@ const Success = () => {
 
         // Parse backend response
         const result = await response.json();
-        console.log(" Respuesta de backend:", result);
+        console.log("Backend response:", result);
 
         // If payment was successful, update message and status
         if (response.ok) {
@@ -53,12 +56,13 @@ const Success = () => {
           setStatus("success");
         } else {
           // If backend returned an error, show error message
+          console.error("Payment capture failed:", result);
           setMessage(`Error al capturar el pago: ${result.error || "Desconocido"}`);
           setStatus("error");
         }
       } catch (error) {
         // Handle network or unexpected errors
-        console.error(" Error al finalizar el pago:", error);
+        console.error("Unexpected error during payment capture:", error);
         setMessage("Ocurrió un error al procesar el pago.");
         setStatus("error");
       }
