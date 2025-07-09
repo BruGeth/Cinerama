@@ -6,7 +6,7 @@ export const PaymentContext = createContext();
 // Custom hook to access the context safely
 export const usePayment = () => {
   const context = useContext(PaymentContext);
-  if (!context) throw new Error("usePayment debe usarse dentro de un PaymentProvider");
+  if (!context) throw new Error("usePayment must be used within a PaymentProvider");
   return context;
 };
 
