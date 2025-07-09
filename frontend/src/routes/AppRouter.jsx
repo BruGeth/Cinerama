@@ -30,6 +30,7 @@ import { PaymentProvider } from "../context/PaymentContext";
 import MoviesManagement from "../pages/admin/MoviesManagement";
 import Users from "../pages/admin/Users";
 import ConfectioneryManagement from "../pages/admin/ConfectioneryManagement";
+import Success from "../pages/Success"
 
 const AppRouter = () => {
   return (
@@ -82,6 +83,7 @@ const AppRouter = () => {
                     element={<SpecialFunctions />}
                   />
                   <Route path="/advertising" element={<Advertising />} />
+                  <Route path="/success" element={<Success />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
