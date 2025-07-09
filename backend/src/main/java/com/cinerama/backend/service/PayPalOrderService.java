@@ -1,84 +1,65 @@
 package com.cinerama.backend.service;
 
+import com.paypal.api.payments.*;
+import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.http.*;
 
-/**
- * Service responsible for capturing PayPal orders.
- * Sends a request to the PayPal API to finalize payment for a given order ID.
- */
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 @Service
 public class PayPalOrderService {
 
-    private final PayPalAuthService authService;
-    /**
-     * Constructor that injects the PayPal authentication service.
-     *
-     * @param authService service used to retrieve the PayPal access token
-     */
     @Autowired
-    public PayPalOrderService(PayPalAuthService authService) {
-        this.authService = authService;
-    }
+    private APIContext apiContext;
     /**
-     * Creates a PayPal order with the provided amount and currency.
-     * Validates input and communicates with the PayPal checkout API.
+     * Create a payment order in PayPal.
      *
-     * @param amount   the total value of the order
-     * @param currency the currency code (e.g., "USD")
-     * @return raw JSON response from PayPal or an error message
+     * @param total Total amount of the order.
+     * @param moneda Currency in which the payment is made (e.g. “USD”).
+     * @param returnUrl URL to which the user is redirected after the payment is complete.
+     * URL to which the user will be redirected if he/she cancels the payment.
+     * @return A map with the payment ID and approval URL.
+     * @throws PayPalRESTException If an error occurs when creating the order in PayPal.
      */
-    public String createOrder(Double amount, String currency) {
-        // Validate input
-        if (amount == null || amount <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor a 0.");
-        }
-        if (currency == null || currency.trim().isEmpty()) {
-            throw new IllegalArgumentException("La moneda no puede estar vacía.");
-        }
+    public Map<String, String> crearOrden(Double total, String moneda, String returnUrl, String cancelUrl) throws PayPalRESTException {
 
-        // Obtain access token and set up request details
-        String accessToken = authService.getAccessToken();
-        String url = "https://api-m.sandbox.paypal.com/v2/checkout/orders";
+        Amount amount = new Amount();
+        amount.setCurrency(moneda);
+        amount.setTotal(String.format("%.2f", total));
 
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(5000);
-        requestFactory.setReadTimeout(5000);
-        RestTemplate restTemplate = new RestTemplate(requestFactory);
+        Transaction transaction = new Transaction();
+        transaction.setAmount(amount);
+        transaction.setDescription("Compra en Cinerama ");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(accessToken);
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        Payer payer = new Payer();
+        payer.setPaymentMethod("paypal");
 
-        // Construct JSON body for the order creation
-        String jsonBody = "{"
-                + "\"intent\":\"CAPTURE\","
-                + "\"purchase_units\":[{"
-                + "    \"amount\":{"
-                + "        \"currency_code\":\"" + currency + "\","
-                + "        \"value\":\"" + amount + "\""
-                + "    }"
-                + "}]"
-                + "}";
+        RedirectUrls redirectUrls = new RedirectUrls();
+        redirectUrls.setReturnUrl(returnUrl);
+        redirectUrls.setCancelUrl(cancelUrl);
 
-        HttpEntity<String> request = new HttpEntity<>(jsonBody, headers);
+        Payment payment = new Payment();
+        payment.setIntent("sale");
+        payment.setPayer(payer);
+        payment.setRedirectUrls(redirectUrls);
+        payment.setTransactions(List.of(transaction));
 
-        try {
+        Payment createdPayment = payment.create(apiContext);
+        String paymentId = createdPayment.getId();
 
-            // Send POST request to PayPal
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, request, String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return response.getBody();// Return raw response from PayPal
-            } else {
+        String approvalUrl = createdPayment.getLinks().stream()
+                .filter(link -> "approval_url".equals(link.getRel()))
+                .map(Links::getHref)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No se encontró el enlace de aprobación de PayPal"));
 
-                return "Error en creación de orden: " + response.getStatusCode();
-            }
-        } catch (Exception e) {
-
-            return "Excepción en creación de orden: " + e.getMessage();
-        }
+        Map<String, String> resultado = new HashMap<>();
+        resultado.put("payment_id", paymentId);
+        resultado.put("approval_url", approvalUrl);
+        return resultado;
     }
 }
