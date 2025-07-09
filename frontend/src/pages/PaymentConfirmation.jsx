@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import "../styles/PaymentConfirmation.css";
 import { usePayment } from "../context/PaymentContext";
 
 const PaymentConfirmation = () => {
+  // Get URL query parameters
   const [searchParams] = useSearchParams();
-  const [showPayPal, setShowPayPal] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  // Access payment-related actions and state from context
+  // Access payment context
   const {
     createOrder,
     paymentStatus,
@@ -16,69 +16,39 @@ const PaymentConfirmation = () => {
     setMessage
   } = usePayment();
 
-  // Extract booking details from the URL query parameters
+  // Extract purchase details from query params
   const seats = searchParams.get("seats")?.split(",") || [];
   const movie = searchParams.get("movie");
   const showtime = searchParams.get("showtime");
   const format = searchParams.get("format");
   const ticketsGeneral = parseInt(searchParams.get("ticketsGeneral") || "0");
   const ticketsChild = parseInt(searchParams.get("ticketsChild") || "0");
-  const totalAmount = ticketsGeneral * 15 + ticketsChild * 10;// Calculate total based on ticket types
+  const totalAmount = ticketsGeneral * 15 + ticketsChild * 10;
   const tipoCambio = 0.2818;
   const amountUSD = Math.round(totalAmount * tipoCambio * 100) / 100;
 
-  // Check if PayPal Client ID is defined in environment variables
-  if (!process.env.REACT_APP_PAYPAL_CLIENT_ID) {
-    return <p>Error: PayPal Client ID no está definido</p>;
-  }
-
-  // Create a PayPal order using the backend API
-  const handleCreateOrder = async () => {
+  // Handle PayPal payment button click
+  const handlePayWithPayPal = async () => {
+    setIsProcessing(true);
     try {
-      const id = await createOrder(amountUSD);
-      console.log("ID de orden enviado a PayPal:", id);
-      return id;
+      // Create PayPal order and redirect to approval URL
+      const { approvalUrl } = await createOrder(amountUSD);
+      console.log("Redirigiendo a PayPal:", approvalUrl);
+      window.location.href = approvalUrl;
     } catch (error) {
-      console.error("Error creando orden:", error);
-      throw error;
+      // Handle payment initiation error
+      console.error("Error iniciando pago:", error);
+      setMessage("Ocurrió un error al iniciar el pago con PayPal.");
+      setIsProcessing(false);
     }
   };
 
-  // Handle PayPal approval and trigger backend capture
-  const handleOnApprove = async (data) => {
-    try {
-      console.log("Orden aprobada por PayPal:", data.orderID);
-
-      // Capture the order through the backend API
-      const token = localStorage.getItem("token"); // use JWT if required
-      const response = await fetch(`/api/orders/${data.orderID}/capture`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // include authorization if required
-        },
-      });
-
-      const result = await response.json();
-      console.log("Respuesta de captura:", result);
-
-      if (response.ok) {
-        if (setMessage) setMessage("¡Pago realizado con éxito!");
-        // Optionally redirect or reset booking flow here
-      } else {
-        if (setMessage) setMessage(`Error al capturar la orden: ${result.error}`);
-      }
-
-    } catch (error) {
-      console.error("Error al capturar la orden:", error);
-      if (setMessage) setMessage(`Hubo un problema al finalizar el pago: ${error.message}`);
-    }
-  };
   return (
     <div className="payment-container">
       <h1 className="payment-title">CONFIRMACIÓN Y PAGO</h1>
       <p className="payment-instruction">Revisa los detalles antes de proceder</p>
 
+      {/* Purchase summary */}
       <div className="payment-summary">
         <h2>Detalle de la compra</h2>
         <p>Película: <strong>{movie}</strong></p>
@@ -87,42 +57,27 @@ const PaymentConfirmation = () => {
         <p>Formato: <strong>{format}</strong></p>
         <p>Entradas: <strong>{ticketsGeneral} General, {ticketsChild} Niño</strong></p>
         <h3 className="total-price">
-          Total: S/{totalAmount} (≈ ${amountUSD} USD)
+          Total: S/{totalAmount} ≈ ${amountUSD} USD
         </h3>
-
       </div>
 
+      {/* Payment method section */}
       <div className="payment-method">
         <h2>Selecciona el método de pago</h2>
-
-        {!showPayPal && (
-          <button className="paypal-button" onClick={() => setShowPayPal(true)}>
-            Pagar con PayPal
-          </button>
-        )}
-
-        {showPayPal && (
-          <PayPalScriptProvider
-            options={{
-              "client-id": process.env.REACT_APP_PAYPAL_CLIENT_ID,
-              currency: "USD",
-            }}
-          >
-            <PayPalButtons
-              style={{ shape: "rect", layout: "vertical", color: "gold", label: "paypal" }}
-              createOrder={() => handleCreateOrder()}
-              onApprove={(data) => handleOnApprove(data)}
-              onError={(err) => {
-                console.error("Error con PayPal:", err);
-                if (setMessage) setMessage(`Error en el proceso de pago: ${err.message || err}`);
-              }}
-            />
-          </PayPalScriptProvider>
-        )}
+        <button
+          className="paypal-button"
+          onClick={handlePayWithPayPal}
+          disabled={isProcessing}
+        >
+          {isProcessing ? "Redirigiendo a PayPal..." : "Pagar con PayPal"}
+        </button>
       </div>
 
+      {/* Display payment messages */}
       {message && <p className="payment-message">{message}</p>}
-      {paymentStatus === "completed" && <p className="success-message">¡Pago realizado con éxito!</p>}
+      {paymentStatus === "completed" && (
+        <p className="success-message">¡Pago realizado con éxito!</p>
+      )}
     </div>
   );
 };
