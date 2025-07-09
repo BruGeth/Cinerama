@@ -32,7 +32,13 @@ const TicketPurchase = () => {
 
   // Increment ticket count for the specified type
   const increaseTicket = (type) => {
-    setTicketCount({ ...ticketCount, [type]: (ticketCount[type] || 0) + 1 });
+    const currentTotal = (parseInt(ticketCount.general) || 0) + (parseInt(ticketCount.niño) || 0);
+    if (currentTotal >= 10) return;
+
+    setTicketCount({
+      ...ticketCount,
+      [type]: (ticketCount[type] || 0) + 1,
+    });
   };
 
   // Decrement ticket count for the specified type (ensuring non-negative values)
@@ -66,14 +72,14 @@ const TicketPurchase = () => {
       {/* Back button */}
       <h1>{movie.title}</h1> {/* Display movie title */}
       <p>
-        <strong>Selected time:</strong> {showtime} -{" "}
-        <strong>Format:</strong> {format}
+        <strong>Tiempo seleccionado:</strong> {showtime} -{" "}
+        <strong>Formato:</strong> {format}
       </p>
       {/* Display selected showtime and format */}
       {/* Ticket selection section */}
       {showTicketOptions && (
         <div className="ticket-options">
-          <h3>Select ticket quantity</h3>
+          <h3>Seleccione la cantidad de tickets</h3>
           <div className="ticket-inputs">
             <label>
               {/* General ticket selection */}
@@ -88,9 +94,11 @@ const TicketPurchase = () => {
                 <input
                   type="number"
                   min="0"
-                  value={ticketCount.general}
+                  value={
+                    ticketCount.general === 0 || ticketCount.general === "" ? "" : ticketCount.general
+                  }
                   className="ticket-input"
-                  placeholder="Quantity"
+                  placeholder="Cantidad"
                   onChange={(e) =>
                     handleChangeTicketCount("general", e.target.value)
                   }
@@ -117,9 +125,11 @@ const TicketPurchase = () => {
                 <input
                   type="number"
                   min="0"
-                  value={ticketCount.niño}
+                  value={
+                    ticketCount.niño === 0 || ticketCount.niño === "" ? "" : ticketCount.niño
+                  }
                   className="ticket-input"
-                  placeholder="Quantity"
+                  placeholder="Cantidad"
                   onChange={(e) =>
                     handleChangeTicketCount("niño", e.target.value)
                   }
@@ -135,18 +145,20 @@ const TicketPurchase = () => {
           </div>
 
           {/* Summary of selected tickets */}
-          {(ticketCount.general || ticketCount.niño) && (
+          {(parseInt(ticketCount.general) > 0 || parseInt(ticketCount.niño) > 0) && (
             <div className="summary">
-              <h4>Purchase summary:</h4>
+              <h4>Resumen:</h4>
               <ul>
-                {ticketCount.general && (
-                  <li>{ticketCount.general} General ticket(s)</li>
+                {parseInt(ticketCount.general) > 0 && (
+                  <li>{ticketCount.general} ticket(s) General</li>
                 )}
-                {ticketCount.niño && <li>{ticketCount.niño} Child ticket(s)</li>}
+                {parseInt(ticketCount.niño) > 0 && (
+                  <li>{ticketCount.niño} ticket(s) Niño</li>
+                )}
               </ul>
               <h3>
                 Total: S/
-                {15 * (ticketCount.general || 0) + 10 * (ticketCount.niño || 0)}
+                {15 * (parseInt(ticketCount.general) || 0) + 10 * (parseInt(ticketCount.niño) || 0)}
               </h3>
               <button
                 className="confirm-button"
