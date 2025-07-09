@@ -1,4 +1,4 @@
-package com.cinerama.backend.service;
+package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.entity.Order;
 import com.cinerama.backend.repository.OrderRepository;

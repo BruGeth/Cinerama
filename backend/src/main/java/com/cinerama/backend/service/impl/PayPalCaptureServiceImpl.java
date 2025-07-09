@@ -1,4 +1,4 @@
-package com.cinerama.backend.service;
+package com.cinerama.backend.service.impl;
 
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
