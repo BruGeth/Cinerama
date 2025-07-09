@@ -1,5 +1,6 @@
 package com.cinerama.backend.service.impl;
 
+import com.cinerama.backend.service.PayPalOrderService;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
@@ -11,7 +12,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 @Service
-public class PayPalOrderService {
+public class PayPalOrderServiceImpl implements PayPalOrderService {
 
     @Autowired
     private APIContext apiContext;
