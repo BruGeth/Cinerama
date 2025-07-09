@@ -1,5 +1,6 @@
 package com.cinerama.backend.service.impl;
 
+import com.cinerama.backend.service.PayPalCaptureService;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.PaymentExecution;
 import com.paypal.base.rest.APIContext;
@@ -8,20 +9,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PayPalCaptureService {
+public class PayPalCaptureServiceImpl implements PayPalCaptureService {
 
-    /**
-     * Service to capture a PayPal payment.
-     * Uses the payment ID and the payer ID to complete the transaction.
-     *
-     * @param paymentId The ID of the payment to capture.
-     * @param payerId The ID of the payer who made the payment.
-     * @return The Payment object resulting from the capture.
-     * @throws PayPalRESTException If an error occurs when executing the payment.
-     */
     @Autowired
     private APIContext apiContext;
 
+    /**
+     * Captures a PayPal payment using the provided payment ID and payer ID.
+     *
+     * @param paymentId The ID of the payment to capture.
+     * @param payerId   The ID of the payer confirming the payment.
+     * @return The captured Payment object from PayPal.
+     * @throws PayPalRESTException if execution fails.
+     */
+    @Override
     public Payment ejecutarPago(String paymentId, String payerId) throws PayPalRESTException {
         Payment payment = new Payment();
         payment.setId(paymentId);
