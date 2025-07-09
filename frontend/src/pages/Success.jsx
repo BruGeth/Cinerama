@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import "../styles/Succes.css";
 
@@ -6,7 +6,8 @@ const Success = () => {
   // Get query parameters from the URL
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
+  // Ref to prevent multiple executions of the payment capture logic
+  const hasRun = useRef(false);
   // State for payment message and status
   const [message, setMessage] = useState("Procesando el pago...");
   const [status, setStatus] = useState("loading");
@@ -24,7 +25,8 @@ const Success = () => {
         setStatus("error");
         return;
       }
-
+      if (hasRun.current) return;
+      hasRun.current = true;
       try {
         // Get user token from localStorage (if needed for authentication)
         const token = localStorage.getItem("token");
