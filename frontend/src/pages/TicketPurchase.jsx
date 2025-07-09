@@ -14,7 +14,7 @@ const TicketPurchase = () => {
   const [showSeatSelection, setShowSeatSelection] = useState(false);
 
   // State to manage ticket quantity
-  const [ticketCount, setTicketCount] = useState({ general: "", niño: "" });
+  const [ticketCount, setTicketCount] = useState({ general: "", child: "" });
 
   // If loading, display a loading message
   if (loading) return <h2 style={{ color: "white" }}>Loading...</h2>;
@@ -32,7 +32,13 @@ const TicketPurchase = () => {
 
   // Increment ticket count for the specified type
   const increaseTicket = (type) => {
-    setTicketCount({ ...ticketCount, [type]: (ticketCount[type] || 0) + 1 });
+    const currentTotal = (parseInt(ticketCount.general) || 0) + (parseInt(ticketCount.child) || 0);
+    if (currentTotal >= 10) return;
+
+    setTicketCount({
+      ...ticketCount,
+      [type]: (ticketCount[type] || 0) + 1,
+    });
   };
 
   // Decrement ticket count for the specified type (ensuring non-negative values)
@@ -45,7 +51,7 @@ const TicketPurchase = () => {
 
   // Proceed to seat selection if at least one ticket is selected
   const handleContinueToSeats = () => {
-    if (ticketCount.general || ticketCount.niño) {
+    if (ticketCount.general || ticketCount.child) {
       setShowTicketOptions(false);
       setShowSeatSelection(true);
     }
@@ -66,14 +72,14 @@ const TicketPurchase = () => {
       {/* Back button */}
       <h1>{movie.title}</h1> {/* Display movie title */}
       <p>
-        <strong>Selected time:</strong> {showtime} -{" "}
-        <strong>Format:</strong> {format}
+        <strong>Tiempo seleccionado:</strong> {showtime} -{" "}
+        <strong>Formato:</strong> {format}
       </p>
       {/* Display selected showtime and format */}
       {/* Ticket selection section */}
       {showTicketOptions && (
         <div className="ticket-options">
-          <h3>Select ticket quantity</h3>
+          <h3>Seleccione la cantidad de tickets</h3>
           <div className="ticket-inputs">
             <label>
               {/* General ticket selection */}
@@ -88,9 +94,11 @@ const TicketPurchase = () => {
                 <input
                   type="number"
                   min="0"
-                  value={ticketCount.general}
+                  value={
+                    ticketCount.general === 0 || ticketCount.general === "" ? "" : ticketCount.general
+                  }
                   className="ticket-input"
-                  placeholder="Quantity"
+                  placeholder="Cantidad"
                   onChange={(e) =>
                     handleChangeTicketCount("general", e.target.value)
                   }
@@ -110,23 +118,25 @@ const TicketPurchase = () => {
               <div className="ticket-counter">
                 <button
                   className="counter-button"
-                  onClick={() => decreaseTicket("niño")}
+                  onClick={() => decreaseTicket("child")}
                 >
                   -
                 </button>
                 <input
                   type="number"
                   min="0"
-                  value={ticketCount.niño}
+                  value={
+                    ticketCount.child === 0 || ticketCount.child === "" ? "" : ticketCount.child
+                  }
                   className="ticket-input"
-                  placeholder="Quantity"
+                  placeholder="Cantidad"
                   onChange={(e) =>
-                    handleChangeTicketCount("niño", e.target.value)
+                    handleChangeTicketCount("child", e.target.value)
                   }
                 />
                 <button
                   className="counter-button"
-                  onClick={() => increaseTicket("niño")}
+                  onClick={() => increaseTicket("child")}
                 >
                   +
                 </button>
@@ -135,18 +145,20 @@ const TicketPurchase = () => {
           </div>
 
           {/* Summary of selected tickets */}
-          {(ticketCount.general || ticketCount.niño) && (
+          {(parseInt(ticketCount.general) > 0 || parseInt(ticketCount.child) > 0) && (
             <div className="summary">
-              <h4>Purchase summary:</h4>
+              <h4>Resumen:</h4>
               <ul>
-                {ticketCount.general && (
-                  <li>{ticketCount.general} General ticket(s)</li>
+                {parseInt(ticketCount.general) > 0 && (
+                  <li>{ticketCount.general} ticket(s) General</li>
                 )}
-                {ticketCount.niño && <li>{ticketCount.niño} Child ticket(s)</li>}
+                {parseInt(ticketCount.child) > 0 && (
+                  <li>{ticketCount.child} ticket(s) Niño</li>
+                )}
               </ul>
               <h3>
                 Total: S/
-                {15 * (ticketCount.general || 0) + 10 * (ticketCount.niño || 0)}
+                {15 * (parseInt(ticketCount.general) || 0) + 10 * (parseInt(ticketCount.child) || 0)}
               </h3>
               <button
                 className="confirm-button"
@@ -163,14 +175,14 @@ const TicketPurchase = () => {
         <div className="seat-selection-container">
           <SeatSelection
             onProceedToPayment={(selectedSeats) => {
-              // Navegate to PaymentConfirmation with the necesary data 
+              // Navigate to PaymentConfirmation with the necessary data 
               const params = new URLSearchParams({
                 seats: selectedSeats.join(","),
                 movie: movie.title,
                 showtime,
                 format,
                 ticketsGeneral: ticketCount.general || 0,
-                ticketsChild: ticketCount.niño || 0,
+                ticketsChild: ticketCount.child || 0,
               });
               navigate(`/payment-confirmation?${params.toString()}`);
             }}

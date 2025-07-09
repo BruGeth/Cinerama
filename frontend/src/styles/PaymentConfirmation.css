@@ -1,73 +1,90 @@
+html, body {
+  background-color: #0d0d0d;
+  margin: 0;
+  padding: 0;
+  color: #f5f5f5;
+  font-family: 'Segoe UI', sans-serif;
+}
+
 .payment-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 50px;
-  background-color: #e0cbcb;
-}
-html, body {
-  background-color: #000000;
-  margin: 0;
-  padding: 0;
+  background-color: #1a1a1a;
+  border-radius: 12px;
+  box-shadow: 0 0 14px rgba(255, 235, 59, 0.1);
 }
 
 .payment-title {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
-  margin-bottom: 10px;
+  color: #e53935;
   text-align: center;
-  color: #ff0000;
+  margin-bottom: 15px;
 }
 
 .payment-instruction {
-  font-size: 16px;
-  margin-bottom: 20px;
   text-align: center;
-  color: #000000;
+  color: #f5f5f5;
+  margin-bottom: 25px;
 }
 
 .payment-summary {
-  background-color: #e6ae2e;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  color: #222 !important;
+  background-color: #2c2c2c;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
 }
 
-.payment-summary h2 {
-  margin-top: 0;
-  color: #222 !important;
+.payment-summary h2,
+.payment-summary h3 {
+  color: #ffeb3b;
 }
 
 .payment-summary p,
-.payment-summary strong,
-.payment-summary h3 {
-  color: #222 !important;
-}
-
-.payment-method h2 {
-  margin-top: 0;
-  color: #ff0000;
-  text-align: center;
+.payment-summary strong {
+  color: #f5f5f5;
 }
 
 .total-price {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
-  color: #ff0000;
+  color: #ff5722;
+  margin-top: 10px;
+}
+
+.payment-method h2 {
+  color: #e53935;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .paypal-button {
-  background-color: #ffc439;
+  background-color: #ffd54f;
+  color: #000;
+  font-weight: bold;
   border: none;
-  padding: 12px 24px;
-  font-size: 16px;
+  padding: 14px 28px;
+  border-radius: 8px;
   cursor: pointer;
-  border-radius: 5px;
+  transition: background 0.3s ease;
 }
 
-.payment-message,
-.success-message {
+.paypal-button:hover {
+  background-color: #fbc02d;
+}
+
+.success-message,
+.payment-message {
   text-align: center;
   margin-top: 20px;
   font-weight: 600;
+  color: #66bb6a;
+}
+.payment-method {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; 
+  margin-top: 20px;
 }
