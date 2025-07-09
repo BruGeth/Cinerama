@@ -18,8 +18,12 @@ public class PaymentController {
     private final PayPalCaptureService captureService;
     private final PaymentService paymentService;
 
-    /**
-     * Constructor injecting PayPal services and PaymentService used for order creation and capture.
+/**
+     * Constructs the PaymentController with dependencies for order and capture services.
+     *
+     * @param paymentService  service for handling payment operations
+     * @param orderService    service for creating PayPal orders
+     * @param captureService  service for capturing PayPal payments
      */
     public PaymentController(PaymentService paymentService, PayPalOrderService orderService, PayPalCaptureService captureService) {
         this.orderService = orderService;
@@ -28,51 +32,35 @@ public class PaymentController {
     }
 
     /**
-     * Original endpoint to create a PayPal order directly using PayPalOrderService.
-     * Returns the raw JSON response from PayPal as a String.
+     * Endpoint to create a PayPal order using PaymentService.
      *
-     * @param amount   the total amount to charge
-     * @param currency the currency code (e.g., "USD")
-     * @return response containing the raw order data from PayPal
-     */
-    @PostMapping("/create/raw")
-    public ResponseEntity<String> createOrderRaw(@RequestParam Double amount, @RequestParam String currency) {
-        String order = orderService.createOrder(amount, currency);
-        return ResponseEntity.ok(order);
-    }
-
-    /**
-     * New endpoint to create a PayPal order using PaymentService, which may include cart validation.
-     *
-     * @param amount   the total amount to charge
-     * @param currency the currency code (e.g., "USD")
-     * @return structured response with order ID and validation message
+     * @param amount      the total payment amount
+     * @param currency    the currency code (e.g., "USD")
+     * @param returnUrl   the URL to redirect to after successful payment
+     * @param cancelUrl   the URL to redirect to if payment is cancelled
+     * @return structured response with PayPal order approval URL or error message
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createOrderValidated(@RequestParam Double amount, @RequestParam String currency) {
-        return paymentService.createPayment(amount, currency);
+    public ResponseEntity<?> createOrder(
+            @RequestParam Double amount,
+            @RequestParam String currency,
+            @RequestParam String returnUrl,
+            @RequestParam String cancelUrl
+    ) {
+        return paymentService.createPayment(amount, currency, returnUrl, cancelUrl);
     }
-
     /**
-     * Endpoint to capture a PayPal order directly using PayPalCaptureService (raw flow).
+     * New endpoint to capture a PayPal order using PaymentService, which may include order updates.
      *
-     * @param orderId the PayPal order ID to be captured
-     * @return raw response string from PayPal
-     */
-    @PostMapping("/capture/raw")
-    public ResponseEntity<String> captureRaw(@RequestParam String orderId) {
-        String result = captureService.captureOrder(orderId);
-        return ResponseEntity.ok(result);
-    }
-
-    /**
-     * New endpoint to capture and update order status using PaymentService.
-     *
-     * @param orderId the PayPal order ID to be captured
-     * @return structured response indicating success and database update
+     * @param paymentId the PayPal payment ID to capture
+     * @param payerId   the PayPal payer ID to execute the payment
+     * @return structured response with capture status and updated order details
      */
     @PostMapping("/capture")
-    public ResponseEntity<?> captureWithUpdate(@RequestParam String orderId) {
-        return paymentService.capturePayment(orderId);
+    public ResponseEntity<?> captureWithUpdate(
+            @RequestParam String paymentId,
+            @RequestParam String payerId
+    ) {
+        return paymentService.capturePayment(paymentId, payerId);
     }
 }
