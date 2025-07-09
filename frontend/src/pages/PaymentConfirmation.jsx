@@ -24,8 +24,8 @@ const PaymentConfirmation = () => {
   const ticketsGeneral = parseInt(searchParams.get("ticketsGeneral") || "0");
   const ticketsChild = parseInt(searchParams.get("ticketsChild") || "0");
   const totalAmount = ticketsGeneral * 15 + ticketsChild * 10;
-  const tipoCambio = 0.2818;
-  const amountUSD = Math.round(totalAmount * tipoCambio * 100) / 100;
+  const exchangeRate = 0.2818;
+  const amountUSD = Math.round(totalAmount * exchangeRate * 100) / 100;
 
   // Handle PayPal payment button click
   const handlePayWithPayPal = async () => {

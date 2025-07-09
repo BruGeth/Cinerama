@@ -14,7 +14,7 @@ const TicketPurchase = () => {
   const [showSeatSelection, setShowSeatSelection] = useState(false);
 
   // State to manage ticket quantity
-  const [ticketCount, setTicketCount] = useState({ general: "", niño: "" });
+  const [ticketCount, setTicketCount] = useState({ general: "", child: "" });
 
   // If loading, display a loading message
   if (loading) return <h2 style={{ color: "white" }}>Loading...</h2>;
@@ -32,7 +32,7 @@ const TicketPurchase = () => {
 
   // Increment ticket count for the specified type
   const increaseTicket = (type) => {
-    const currentTotal = (parseInt(ticketCount.general) || 0) + (parseInt(ticketCount.niño) || 0);
+    const currentTotal = (parseInt(ticketCount.general) || 0) + (parseInt(ticketCount.child) || 0);
     if (currentTotal >= 10) return;
 
     setTicketCount({
@@ -51,7 +51,7 @@ const TicketPurchase = () => {
 
   // Proceed to seat selection if at least one ticket is selected
   const handleContinueToSeats = () => {
-    if (ticketCount.general || ticketCount.niño) {
+    if (ticketCount.general || ticketCount.child) {
       setShowTicketOptions(false);
       setShowSeatSelection(true);
     }
@@ -118,7 +118,7 @@ const TicketPurchase = () => {
               <div className="ticket-counter">
                 <button
                   className="counter-button"
-                  onClick={() => decreaseTicket("niño")}
+                  onClick={() => decreaseTicket("child")}
                 >
                   -
                 </button>
@@ -126,17 +126,17 @@ const TicketPurchase = () => {
                   type="number"
                   min="0"
                   value={
-                    ticketCount.niño === 0 || ticketCount.niño === "" ? "" : ticketCount.niño
+                    ticketCount.child === 0 || ticketCount.child === "" ? "" : ticketCount.child
                   }
                   className="ticket-input"
                   placeholder="Cantidad"
                   onChange={(e) =>
-                    handleChangeTicketCount("niño", e.target.value)
+                    handleChangeTicketCount("child", e.target.value)
                   }
                 />
                 <button
                   className="counter-button"
-                  onClick={() => increaseTicket("niño")}
+                  onClick={() => increaseTicket("child")}
                 >
                   +
                 </button>
@@ -145,20 +145,20 @@ const TicketPurchase = () => {
           </div>
 
           {/* Summary of selected tickets */}
-          {(parseInt(ticketCount.general) > 0 || parseInt(ticketCount.niño) > 0) && (
+          {(parseInt(ticketCount.general) > 0 || parseInt(ticketCount.child) > 0) && (
             <div className="summary">
               <h4>Resumen:</h4>
               <ul>
                 {parseInt(ticketCount.general) > 0 && (
                   <li>{ticketCount.general} ticket(s) General</li>
                 )}
-                {parseInt(ticketCount.niño) > 0 && (
-                  <li>{ticketCount.niño} ticket(s) Niño</li>
+                {parseInt(ticketCount.child) > 0 && (
+                  <li>{ticketCount.child} ticket(s) Niño</li>
                 )}
               </ul>
               <h3>
                 Total: S/
-                {15 * (parseInt(ticketCount.general) || 0) + 10 * (parseInt(ticketCount.niño) || 0)}
+                {15 * (parseInt(ticketCount.general) || 0) + 10 * (parseInt(ticketCount.child) || 0)}
               </h3>
               <button
                 className="confirm-button"
@@ -175,14 +175,14 @@ const TicketPurchase = () => {
         <div className="seat-selection-container">
           <SeatSelection
             onProceedToPayment={(selectedSeats) => {
-              // Navegate to PaymentConfirmation with the necesary data 
+              // Navigate to PaymentConfirmation with the necessary data 
               const params = new URLSearchParams({
                 seats: selectedSeats.join(","),
                 movie: movie.title,
                 showtime,
                 format,
                 ticketsGeneral: ticketCount.general || 0,
-                ticketsChild: ticketCount.niño || 0,
+                ticketsChild: ticketCount.child || 0,
               });
               navigate(`/payment-confirmation?${params.toString()}`);
             }}
