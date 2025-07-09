@@ -4,20 +4,21 @@ import com.cinerama.backend.entity.Order;
 import com.cinerama.backend.repository.OrderRepository;
 import com.cinerama.backend.service.PaymentService;
 import com.paypal.api.payments.Payment;
+import com.paypal.api.payments.Error;
 import com.paypal.base.rest.PayPalRESTException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.paypal.api.payments.Error;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Service responsible for handling the payment process using PayPal.
- * It delegates order creation and capture logic to the appropriate PayPal services.
+ * Service responsible for handling the PayPal payment process.
+ * Delegates creation and capture logic to appropriate PayPal services.
  */
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -26,15 +27,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PayPalOrderServiceImpl orderService;
     private final PayPalCaptureServiceImpl captureService;
-    private final OrderRepository orderRepository; // Added for updating and saving orders after capture
+    private final OrderRepository orderRepository;
 
-    private Double convertirSolesADolares(Double montoEnSoles) {
-        double tipoCambio = 0.2818;
-        return Math.round(montoEnSoles * tipoCambio * 100.0) / 100.0;
+    private Double convertSolesToDollars(Double amountInSoles) {
+        double exchangeRate = 0.2818;
+        return Math.round(amountInSoles * exchangeRate * 100.0) / 100.0;
     }
 
     /**
-     * Constructs the PaymentService with dependencies for order and capture operations.
+     * Constructs the PaymentService with dependencies for order and capture.
      */
     public PaymentServiceImpl(PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService, OrderRepository orderRepository) {
         this.orderService = orderService;
@@ -43,39 +44,40 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Creates a PayPal order based on the provided amount and currency.
+     * Creates a PayPal order using the given amount and currency.
      *
-     * @param amount   the total payment amount
-     * @param currency the currency code (e.g., "USD")
-     * @return HTTP response with PayPal order ID or error message
+     * @param amount     Payment amount
+     * @param currency   Currency code (e.g., "USD")
+     * @param returnUrl  Redirect URL after approval
+     * @param cancelUrl  Redirect URL on cancelation
+     * @return ResponseEntity containing the creation result
      */
+    @Override
     public ResponseEntity<?> createPayment(Double amount, String currency, String returnUrl, String cancelUrl) {
         try {
-            logger.info("Creando orden de pago: {} {}", amount, currency);
+            logger.info("Creating payment order: {} {}", amount, currency);
 
-            Double montoUSD;
+            Double amountUSD;
             if ("USD".equalsIgnoreCase(currency)) {
-                montoUSD = amount;
-                logger.info("Monto recibido en USD: {}", montoUSD);
+                amountUSD = amount;
+                logger.info("Amount in USD: {}", amountUSD);
             } else {
-                montoUSD = convertirSolesADolares(amount);
-                logger.info("Monto convertido a USD: {} (original: {} {})", montoUSD, amount, currency);
+                amountUSD = convertSolesToDollars(amount);
+                logger.info("Converted to USD: {} (original: {} {})", amountUSD, amount, currency);
             }
 
+            Map<String, String> result = orderService.createOrder(amountUSD, "USD", returnUrl, cancelUrl);
 
-            Map<String, String> resultado = orderService.crearOrden(montoUSD, "USD", returnUrl, cancelUrl);
-
-            if (resultado == null || !resultado.containsKey("approval_url") || !resultado.containsKey("payment_id")) {
-                logger.error("No se recibió approval_url o payment_id desde PayPalOrderService");
-                return ResponseEntity.status(500).body(Map.of("error", "No se pudo crear el enlace de aprobación de PayPal."));
+            if (result == null || !result.containsKey("approval_url") || !result.containsKey("payment_id")) {
+                logger.error("Missing approval_url or payment_id from PayPalOrderService");
+                return ResponseEntity.status(500).body(Map.of("error", "Failed to create PayPal approval link."));
             }
 
-            logger.info("✅ Orden generada. paymentId={}, approvalUrl={}", resultado.get("payment_id"), resultado.get("approval_url"));
-
-            return ResponseEntity.ok(resultado);
+            logger.info("✅ Order created successfully. paymentId={}, approvalUrl={}", result.get("payment_id"), result.get("approval_url"));
+            return ResponseEntity.ok(result);
 
         } catch (Exception e) {
-            logger.error("❌ Error creando el pago con PayPal: {}", e.getMessage(), e);
+            logger.error("❌ Error creating PayPal payment: {}", e.getMessage(), e);
             return ResponseEntity.status(500).body(Map.of(
                     "code", "PAYPAL_ERROR",
                     "message", e.getMessage()
@@ -83,20 +85,28 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-
     /**
-     * Captures a PayPal payment using the provided payment ID and payer ID.
-     * Updates the order status and saves it to the database.
+     * Captures an approved PayPal payment and saves order details to the database.
      *
-     * @param paymentId the PayPal payment ID to capture
-     * @param payerId   the PayPal payer ID to execute the payment
-     * @return HTTP response with capture status and order details or error message
+     * @param paymentId  PayPal payment ID
+     * @param payerId    PayPal payer ID
+     * @return ResponseEntity containing capture status or error info
      */
+    @Override
     public ResponseEntity<?> capturePayment(String paymentId, String payerId) {
         try {
-            logger.info("Capturando pago con paymentId={}, payerId={}", paymentId, payerId);
+            logger.info("Capturing payment: paymentId={}, payerId={}", paymentId, payerId);
 
-            Payment payment = captureService.ejecutarPago(paymentId, payerId);
+            Payment payment = captureService.executePayment(paymentId, payerId);
+
+            // Prevent duplicate entries
+            if (orderRepository.existsByPaypalOrderId(payment.getId())) {
+                logger.warn("⚠️ Duplicate order capture attempt detected: {}", payment.getId());
+                return ResponseEntity.status(409).body(Map.of(
+                        "code", "DUPLICATE_ORDER",
+                        "message", "This PayPal order has already been captured."
+                ));
+            }
 
             Order order = Order.builder()
                     .paypalOrderId(payment.getId())
@@ -108,7 +118,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .build();
 
             orderRepository.save(order);
-            logger.info("✅ Order guardado con éxito: {}", order.getId());
+            logger.info("✅ Order saved successfully: {}", order.getId());
 
             Map<String, String> response = new HashMap<>();
             response.put("status", payment.getState());
@@ -124,15 +134,13 @@ public class PaymentServiceImpl implements PaymentService {
             String info = paypalError != null ? paypalError.getInformationLink() : "https://developer.paypal.com/";
 
             logger.error("PayPal error - code: {}, message: {}", code, message, ex);
-
             return ResponseEntity.status(400).body(Map.of(
                     "code", code,
                     "message", message,
                     "info", info
             ));
-
         } catch (Exception e) {
-            logger.error("Error inesperado al capturar el pago:", e);
+            logger.error("Unexpected error during capture:", e);
             return ResponseEntity.status(500).body(Map.of(
                     "code", "CAPTURE_ERROR",
                     "message", e.getMessage()

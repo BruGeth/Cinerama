@@ -11,30 +11,35 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 
+/**
+ * Service responsible for creating PayPal orders through the SDK.
+ */
 @Service
 public class PayPalOrderServiceImpl implements PayPalOrderService {
 
     @Autowired
     private APIContext apiContext;
+
     /**
-     * Create a payment order in PayPal.
+     * Creates a payment order in PayPal.
      *
-     * @param total Total amount of the order.
-     * @param moneda Currency in which the payment is made (e.g. “USD”).
-     * @param returnUrl URL to which the user is redirected after the payment is complete.
-     * URL to which the user will be redirected if he/she cancels the payment.
-     * @return A map with the payment ID and approval URL.
-     * @throws PayPalRESTException If an error occurs when creating the order in PayPal.
+     * @param total      Total amount for the order.
+     * @param currency   Currency code in which the payment is made (e.g. "USD").
+     * @param returnUrl  URL to which the user is redirected after completing the payment.
+     * @param cancelUrl  URL to which the user is redirected if they cancel the payment.
+     * @return A map containing the PayPal payment ID and approval URL.
+     * @throws PayPalRESTException If an error occurs during the PayPal order creation process.
      */
-    public Map<String, String> crearOrden(Double total, String moneda, String returnUrl, String cancelUrl) throws PayPalRESTException {
+    @Override
+    public Map<String, String> createOrder(Double total, String currency, String returnUrl, String cancelUrl) throws PayPalRESTException {
 
         Amount amount = new Amount();
-        amount.setCurrency(moneda);
+        amount.setCurrency(currency);
         amount.setTotal(String.format("%.2f", total));
 
         Transaction transaction = new Transaction();
         transaction.setAmount(amount);
-        transaction.setDescription("Compra en Cinerama ");
+        transaction.setDescription("Purchase from Cinerama");
 
         Payer payer = new Payer();
         payer.setPaymentMethod("paypal");
@@ -56,11 +61,11 @@ public class PayPalOrderServiceImpl implements PayPalOrderService {
                 .filter(link -> "approval_url".equals(link.getRel()))
                 .map(Links::getHref)
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("No se encontró el enlace de aprobación de PayPal"));
+                .orElseThrow(() -> new RuntimeException("PayPal approval URL not found"));
 
-        Map<String, String> resultado = new HashMap<>();
-        resultado.put("payment_id", paymentId);
-        resultado.put("approval_url", approvalUrl);
-        return resultado;
+        Map<String, String> result = new HashMap<>();
+        result.put("payment_id", paymentId);
+        result.put("approval_url", approvalUrl);
+        return result;
     }
 }

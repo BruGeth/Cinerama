@@ -8,6 +8,10 @@ import com.paypal.base.rest.PayPalRESTException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service responsible for executing PayPal payments.
+ * This service uses the payment ID and payer ID to confirm and complete the transaction via PayPal API.
+ */
 @Service
 public class PayPalCaptureServiceImpl implements PayPalCaptureService {
 
@@ -15,15 +19,15 @@ public class PayPalCaptureServiceImpl implements PayPalCaptureService {
     private APIContext apiContext;
 
     /**
-     * Captures a PayPal payment using the provided payment ID and payer ID.
+     * Executes the PayPal payment using the provided payment ID and payer ID.
      *
-     * @param paymentId The ID of the payment to capture.
-     * @param payerId   The ID of the payer confirming the payment.
-     * @return The captured Payment object from PayPal.
-     * @throws PayPalRESTException if execution fails.
+     * @param paymentId The unique identifier of the PayPal payment to execute.
+     * @param payerId   The PayPal-assigned ID of the user authorizing the payment.
+     * @return The resulting Payment object returned by the PayPal API.
+     * @throws PayPalRESTException If an error occurs during execution.
      */
     @Override
-    public Payment ejecutarPago(String paymentId, String payerId) throws PayPalRESTException {
+    public Payment executePayment(String paymentId, String payerId) throws PayPalRESTException {
         Payment payment = new Payment();
         payment.setId(paymentId);
 
