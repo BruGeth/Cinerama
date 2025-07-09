@@ -13,5 +13,5 @@ public interface PayPalCaptureService {
      * @return The resulting PayPal Payment object.
      * @throws PayPalRESTException If an error occurs during execution.
      */
-    Payment ejecutarPago(String paymentId, String payerId) throws PayPalRESTException;
+    Payment executePayment(String paymentId, String payerId) throws PayPalRESTException;
 }
