@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Import React and useState hook
+import React, { useState , useEffect } from "react"; // Import React and useState hook
 import "../styles/SeatSelection.css"; // Import CSS for styling
 
 const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
@@ -7,9 +7,16 @@ const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
   const columns = Array.from({ length: 20 }, (_, i) => i + 1); 
 
   const [selectedSeats, setSelectedSeats] = useState([]); // State to store selected seats
-
+  
+  useEffect(() => {
+  const grid = document.querySelector(".seat-grid");
+  if (grid) {
+    grid.scrollLeft = 0;
+  }
+}, []);
   // Calculate the total number of tickets
-  const totalTickets = parseInt(ticketCount.general || 0) + parseInt(ticketCount.niño || 0);
+  const totalTickets =
+  (parseInt(ticketCount.general) || 0) + (parseInt(ticketCount.niño) || 0);
 
   // Set of predefined empty seats that are unavailable for selection
   const emptySeats = new Set([
