@@ -1,8 +1,8 @@
 package com.cinerama.backend.controller;
 
-import com.cinerama.backend.service.PayPalOrderService;
-import com.cinerama.backend.service.PayPalCaptureService;
-import com.cinerama.backend.service.PaymentService;
+import com.cinerama.backend.service.impl.PayPalOrderServiceImpl;
+import com.cinerama.backend.service.impl.PayPalCaptureServiceImpl;
+import com.cinerama.backend.service.impl.PaymentServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/payment")
 public class PaymentController {
 
-    private final PayPalOrderService orderService;
-    private final PayPalCaptureService captureService;
-    private final PaymentService paymentService;
+    private final PayPalOrderServiceImpl orderService;
+    private final PayPalCaptureServiceImpl captureService;
+    private final PaymentServiceImpl paymentServiceImpl;
 
 /**
      * Constructs the PaymentController with dependencies for order and capture services.
      *
-     * @param paymentService  service for handling payment operations
+     * @param paymentServiceImpl  service for handling payment operations
      * @param orderService    service for creating PayPal orders
      * @param captureService  service for capturing PayPal payments
      */
-    public PaymentController(PaymentService paymentService, PayPalOrderService orderService, PayPalCaptureService captureService) {
+    public PaymentController(PaymentServiceImpl paymentServiceImpl, PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService) {
         this.orderService = orderService;
         this.captureService = captureService;
-        this.paymentService = paymentService;
+        this.paymentServiceImpl = paymentServiceImpl;
     }
 
     /**
@@ -47,7 +47,7 @@ public class PaymentController {
             @RequestParam String returnUrl,
             @RequestParam String cancelUrl
     ) {
-        return paymentService.createPayment(amount, currency, returnUrl, cancelUrl);
+        return paymentServiceImpl.createPayment(amount, currency, returnUrl, cancelUrl);
     }
     /**
      * New endpoint to capture a PayPal order using PaymentService, which may include order updates.
@@ -61,6 +61,6 @@ public class PaymentController {
             @RequestParam String paymentId,
             @RequestParam String payerId
     ) {
-        return paymentService.capturePayment(paymentId, payerId);
+        return paymentServiceImpl.capturePayment(paymentId, payerId);
     }
 }
