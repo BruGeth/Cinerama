@@ -2,6 +2,7 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.entity.Order;
 import com.cinerama.backend.repository.OrderRepository;
+import com.cinerama.backend.service.PaymentService;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 import org.slf4j.Logger;
@@ -19,12 +20,12 @@ import java.util.Map;
  * It delegates order creation and capture logic to the appropriate PayPal services.
  */
 @Service
-public class PaymentService {
+public class PaymentServiceImpl implements PaymentService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PaymentService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
-    private final PayPalOrderService orderService;
-    private final PayPalCaptureService captureService;
+    private final PayPalOrderServiceImpl orderService;
+    private final PayPalCaptureServiceImpl captureService;
     private final OrderRepository orderRepository; // Added for updating and saving orders after capture
 
     private Double convertirSolesADolares(Double montoEnSoles) {
@@ -35,7 +36,7 @@ public class PaymentService {
     /**
      * Constructs the PaymentService with dependencies for order and capture operations.
      */
-    public PaymentService(PayPalOrderService orderService, PayPalCaptureService captureService, OrderRepository orderRepository) {
+    public PaymentServiceImpl(PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService, OrderRepository orderRepository) {
         this.orderService = orderService;
         this.captureService = captureService;
         this.orderRepository = orderRepository;
