@@ -106,6 +106,7 @@ public class WebSecurityConfig {
                                               "/api/movies/**","/api/showtimes/**",
                                                 "/api/confectionery-categories/**",
                                  "/api/confectionery-products/**","/api/orders/**").permitAll()
+                        .requestMatchers("/api/payment/**").permitAll()
                         // Public access to user profile endpoint
                         .requestMatchers("/api/user/", "/api/tickets/**", "/api/seats/**").authenticated()
                         // All other endpoints require authentication

@@ -20,5 +20,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @param paypalOrderId the PayPal-generated order ID
      * @return an Optional containing the matched Order if found, or empty otherwise
      */
-    Optional<Order> findByPaypalOrderId(String paypalOrderId);
+    boolean existsByPaypalOrderId(String paypalOrderId);
 }

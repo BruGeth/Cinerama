@@ -1,15 +1,23 @@
-import React, { useState } from "react"; // Import React and useState hook
+import React, { useState, useEffect } from "react"; // Import React and useState hook
 import "../styles/SeatSelection.css"; // Import CSS for styling
 
 const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
   // Define rows using uppercase letters and columns numbered from 1 to 20
-  const rows = "ABCDEFGHIJKLMNOPQ".split(""); 
-  const columns = Array.from({ length: 20 }, (_, i) => i + 1); 
+  const rows = "ABCDEFGHIJKLMNOPQ".split("");
+  const columns = Array.from({ length: 20 }, (_, i) => i + 1);
 
   const [selectedSeats, setSelectedSeats] = useState([]); // State to store selected seats
 
+  useEffect(() => {
+    const grid = document.querySelector(".seat-grid");
+    if (grid) {
+      grid.scrollLeft = 0;
+    }
+  }, []);
   // Calculate the total number of tickets
-  const totalTickets = parseInt(ticketCount.general || 0) + parseInt(ticketCount.niño || 0);
+  const totalTickets =
+    (parseInt(ticketCount.general) || 0) + (parseInt(ticketCount.child) || 0);
+
 
   // Set of predefined empty seats that are unavailable for selection
   const emptySeats = new Set([
@@ -54,7 +62,7 @@ const SeatSelection = ({ onProceedToPayment, ticketCount, onGoBack }) => {
             <div key={row} className="seat-row"> {/* Render each row */}
               {columns.map((col) => {
                 const seat = `${row}${col}`; // Generate seat identifier
-                return emptySeats.has(seat) ? ( 
+                return emptySeats.has(seat) ? (
                   <div key={seat} className="empty-space"></div> // Render empty spaces for unavailable seats
                 ) : (
                   <button
