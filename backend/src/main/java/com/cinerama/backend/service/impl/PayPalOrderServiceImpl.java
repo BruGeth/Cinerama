@@ -4,6 +4,7 @@ import com.cinerama.backend.service.PayPalOrderService;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class PayPalOrderServiceImpl implements PayPalOrderService {
      * @return A map containing the PayPal payment ID and approval URL.
      * @throws PayPalRESTException If an error occurs during the PayPal order creation process.
      */
+    @Timed(value = "payment.ticket.order.creation.duration", description = "Duración al crear orden de boletos")
     @Override
     public Map<String, String> createOrder(Double total, String currency, String returnUrl, String cancelUrl) throws PayPalRESTException {
 

@@ -6,6 +6,10 @@ import com.cinerama.backend.service.PaymentService;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.Error;
 import com.paypal.base.rest.PayPalRESTException;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Service responsible for handling the PayPal payment process.
- * Delegates creation and capture logic to appropriate PayPal services.
+ * Service responsible for handling the PayPal payment process for tickets.
+ * Includes Micrometer metrics for monitoring.
  */
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -28,6 +32,24 @@ public class PaymentServiceImpl implements PaymentService {
     private final PayPalOrderServiceImpl orderService;
     private final PayPalCaptureServiceImpl captureService;
     private final OrderRepository orderRepository;
+    private final MeterRegistry meterRegistry;
+
+    private Counter successCounter;
+    private Counter errorCounter;
+
+    public PaymentServiceImpl(PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService,
+                              OrderRepository orderRepository, MeterRegistry meterRegistry) {
+        this.orderService = orderService;
+        this.captureService = captureService;
+        this.orderRepository = orderRepository;
+        this.meterRegistry = meterRegistry;
+    }
+
+    @PostConstruct
+    public void initCounters() {
+        successCounter = meterRegistry.counter("payment.ticket.success.total");
+        errorCounter = meterRegistry.counter("payment.ticket.error.total");
+    }
 
     private Double convertSolesToDollars(Double amountInSoles) {
         double exchangeRate = 0.2818;
@@ -35,49 +57,35 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Constructs the PaymentService with dependencies for order and capture.
+     * Creates a PayPal order for ticket payment.
      */
-    public PaymentServiceImpl(PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService, OrderRepository orderRepository) {
-        this.orderService = orderService;
-        this.captureService = captureService;
-        this.orderRepository = orderRepository;
-    }
-
-    /**
-     * Creates a PayPal order using the given amount and currency.
-     *
-     * @param amount     Payment amount
-     * @param currency   Currency code (e.g., "USD")
-     * @param returnUrl  Redirect URL after approval
-     * @param cancelUrl  Redirect URL on cancelation
-     * @return ResponseEntity containing the creation result
-     */
+    @Timed(value = "payment.ticket.order.creation.duration", description = "Duración al crear orden de boletos")
     @Override
     public ResponseEntity<?> createPayment(Double amount, String currency, String returnUrl, String cancelUrl) {
         try {
             logger.info("Creating payment order: {} {}", amount, currency);
 
-            Double amountUSD;
-            if ("USD".equalsIgnoreCase(currency)) {
-                amountUSD = amount;
-                logger.info("Amount in USD: {}", amountUSD);
-            } else {
-                amountUSD = convertSolesToDollars(amount);
-                logger.info("Converted to USD: {} (original: {} {})", amountUSD, amount, currency);
-            }
+            Double amountUSD = "USD".equalsIgnoreCase(currency)
+                    ? amount
+                    : convertSolesToDollars(amount);
+            logger.info("Amount in USD: {}", amountUSD);
 
             Map<String, String> result = orderService.createOrder(amountUSD, "USD", returnUrl, cancelUrl);
 
             if (result == null || !result.containsKey("approval_url") || !result.containsKey("payment_id")) {
                 logger.error("Missing approval_url or payment_id from PayPalOrderService");
+                errorCounter.increment();
                 return ResponseEntity.status(500).body(Map.of("error", "Failed to create PayPal approval link."));
             }
 
-            logger.info("✅ Order created successfully. paymentId={}, approvalUrl={}", result.get("payment_id"), result.get("approval_url"));
+            logger.info("✅ Order created successfully. paymentId={}, approvalUrl={}",
+                    result.get("payment_id"), result.get("approval_url"));
+            successCounter.increment();
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
             logger.error("❌ Error creating PayPal payment: {}", e.getMessage(), e);
+            errorCounter.increment();
             return ResponseEntity.status(500).body(Map.of(
                     "code", "PAYPAL_ERROR",
                     "message", e.getMessage()
@@ -86,12 +94,9 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Captures an approved PayPal payment and saves order details to the database.
-     *
-     * @param paymentId  PayPal payment ID
-     * @param payerId    PayPal payer ID
-     * @return ResponseEntity containing capture status or error info
+     * Captures an approved PayPal payment and persists the ticket order.
      */
+    @Timed(value = "payment.ticket.capture.duration", description = "Duración al capturar pago de boletos")
     @Override
     public ResponseEntity<?> capturePayment(String paymentId, String payerId) {
         try {
@@ -99,7 +104,6 @@ public class PaymentServiceImpl implements PaymentService {
 
             Payment payment = captureService.executePayment(paymentId, payerId);
 
-            // Prevent duplicate entries
             if (orderRepository.existsByPaypalOrderId(payment.getId())) {
                 logger.warn("⚠️ Duplicate order capture attempt detected: {}", payment.getId());
                 return ResponseEntity.status(409).body(Map.of(
@@ -120,6 +124,8 @@ public class PaymentServiceImpl implements PaymentService {
             orderRepository.save(order);
             logger.info("✅ Order saved successfully: {}", order.getId());
 
+            successCounter.increment();
+
             Map<String, String> response = new HashMap<>();
             response.put("status", payment.getState());
             response.put("paypalOrderId", payment.getId());
@@ -134,6 +140,7 @@ public class PaymentServiceImpl implements PaymentService {
             String info = paypalError != null ? paypalError.getInformationLink() : "https://developer.paypal.com/";
 
             logger.error("PayPal error - code: {}, message: {}", code, message, ex);
+            errorCounter.increment();
             return ResponseEntity.status(400).body(Map.of(
                     "code", code,
                     "message", message,
@@ -141,6 +148,7 @@ public class PaymentServiceImpl implements PaymentService {
             ));
         } catch (Exception e) {
             logger.error("Unexpected error during capture:", e);
+            errorCounter.increment();
             return ResponseEntity.status(500).body(Map.of(
                     "code", "CAPTURE_ERROR",
                     "message", e.getMessage()
