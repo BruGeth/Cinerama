@@ -99,7 +99,8 @@ public class WebSecurityConfig {
                 // Configure endpoint authorization rules
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints for user authentication (register, login, verify)
-                        .requestMatchers("/api/auth/**", "/api/seats/available**", "/api/user/register").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/seats/available**", "/api/user/register"
+                                         ,"/api/events","/api/festarama","/api/specialfunctions","/api/advertising" ).permitAll()
                         // Public access to genre, movie, showtime, and confectionery category endpoints
                         .requestMatchers(HttpMethod.GET, "/api/genres/**",
                                               "/api/movies/**","/api/showtimes/**",

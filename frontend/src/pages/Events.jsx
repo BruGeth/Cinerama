@@ -1,5 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import  { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../styles/Events.css';
 
 const Events = () => {
@@ -8,6 +10,8 @@ const Events = () => {
   const [selectedCinema, setSelectedCinema] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [ setError] = useState(null);
   const [formData, setFormData] = useState({
     eventType: '',
     cinema: '',
@@ -25,55 +29,55 @@ const Events = () => {
 
   const eventTypes = useMemo(() => [
     {
-      id: 'conferencia',
+      id: 'Conferencias',
       name: ' 🎤 Conferencias',
       description: 'Espacios ideales para presentaciones corporativas y académicas con tecnología de vanguardia',
-      image: '/images/conference.jpg', 
+      image: '/images/conference.jpg',
       backgroundClass: 'conference-bg',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)',
       accentColor: '#dc2626'
     },
     {
-      id: 'capacitacion',
+      id: 'Capacitación',
       name: ' 📚 Capacitación',
       description: 'Ambientes perfectos para sesiones de entrenamiento y formación profesional inmersiva',
-      image: '/images/training.jpg', 
+      image: '/images/training.jpg',
       backgroundClass: 'training-bg',
       gradient: 'linear-gradient(135deg, #ef4444 0%, #fcd34d 100%)',
       accentColor: '#ef4444'
     },
     {
-      id: 'lanzamiento',
+      id: 'Lanzamiento',
       name: ' 🚀 Lanzamiento',
       description: 'Eventos espectaculares para presentar productos y servicios con máximo impacto visual',
-      image: '/images/launch.jpg', 
+      image: '/images/launch.jpg',
       backgroundClass: 'launch-bg',
       gradient: 'linear-gradient(135deg, #b91c1c 0%, #f59e0b 100%)',
       accentColor: '#b91c1c'
     },
     {
-      id: 'presentaciones',
+      id: 'Presentaciones',
       name: ' 📊 Presentaciones',
       description: 'Salas equipadas para demostraciones y exhibiciones profesionales de alto nivel',
-      image: '/images/presentation.jpg', 
+      image: '/images/presentation.jpg',
       backgroundClass: 'presentation-bg',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #fbbf24 100%)',
       accentColor: '#dc2626'
     },
     {
-      id: 'club-fans',
+      id: 'Club de Fans',
       name: ' ⭐ Club de Fans',
       description: 'Experiencias exclusivas para comunidades y seguidores con contenido premium',
-      image: '/images/fanclub.jpg', 
+      image: '/images/fanclub.jpg',
       backgroundClass: 'fanclub-bg',
       gradient: 'linear-gradient(135deg, #991b1b 0%, #d97706 100%)',
       accentColor: '#991b1b'
     },
     {
-      id: 'zona-gamer',
+      id: 'Zona Gamer',
       name: ' 🎮 Zona Gamer',
       description: 'Experiencias gaming épicas con pantallas gigantes y torneos competitivos de última generación',
-      image: '/images/gaming.jpg', 
+      image: '/images/gaming.jpg',
       backgroundClass: 'gaming-bg',
       gradient: 'linear-gradient(135deg, #dc2626 0%, #fbbf24 50%, #ef4444 100%)',
       accentColor: '#dc2626',
@@ -84,7 +88,7 @@ const Events = () => {
   // Cinema options - Updated with specific images and locations
   const cinemaOptions = useMemo(() => [
     {
-      id: 'cinema-miraflores',
+      id: 'Cinerama Miraflores',
       name: 'Cinerama Miraflores',
       description: 'Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium',
       capacity: '180 personas',
@@ -94,7 +98,7 @@ const Events = () => {
       location: 'Miraflores'
     },
     {
-      id: 'cinema-minka',
+      id: 'Cinerama Minka',
       name: 'Cinerama Minka',
       description: 'Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada',
       capacity: '220 personas',
@@ -122,6 +126,29 @@ const Events = () => {
     if (navigator.vibrate) navigator.vibrate(50);
     setTimeout(() => setIsAnimating(false), 300);
   }, [isAnimating]);
+
+
+  // Email validation helper
+  const isValidEmail = useCallback((email) => {
+    try {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return emailRegex.test(email)
+    } catch (err) {
+      console.error("Error validating email:", err)
+      return false
+    }
+  }, [])
+
+  // Phone validation helper
+  const isValidPhone = useCallback((phone) => {
+    try {
+      const phoneRegex = /^[+]?[0-9\s\-()]{9,}$/
+      return phoneRegex.test(phone)
+    } catch (err) {
+      console.error("Error validating phone:", err)
+      return false
+    }
+  }, [])
 
   // Handle cinema selection
   const handleCinemaSelect = useCallback((cinemaId) => {
@@ -162,7 +189,7 @@ const Events = () => {
   const handleBack = useCallback(() => {
     if (isAnimating) return;
     setIsAnimating(true);
-    
+
     if (currentStep > 1) {
       setTimeout(() => {
         setCurrentStep(prev => prev - 1);
@@ -174,12 +201,92 @@ const Events = () => {
   }, [isAnimating, currentStep, navigate]);
 
   // Handle final submission
-  const handleSubmit = useCallback(() => {
-    // Here you would typically send the data to your backend
-    console.log('Submitting event data:', formData);
-    alert('¡Evento enviado correctamente! Te contactaremos pronto.');
-    navigate('/corporate');
-  }, [formData, navigate]);
+  const handleSubmit = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (!selectedEvent) {
+        throw new Error("Debe seleccionar un tipo de evento");
+      }
+      if (!selectedCinema) {
+        throw new Error("Debe seleccionar un cine");
+      }
+      if (!formData.date || !formData.time || !formData.attendees) {
+        throw new Error("Debe completar la fecha, hora y número de asistentes");
+      }
+      if (!formData.contactName || !formData.contactEmail || !formData.contactPhone) {
+        throw new Error("Debe completar la información de contacto");
+      }
+      if (!formData.eventType || !formData.attendees || !formData.date || !formData.time || !formData.contactName || !formData.contactEmail || !formData.contactPhone) {
+        throw new Error("Debe completar todos los campos requeridos");
+      }
+
+      const requiredFields = [
+        "eventType",
+        "attendees",
+        "date",
+        "time",
+        "contactName",
+        "contactEmail",
+        "contactPhone",
+      ];
+      const missingFields = requiredFields.filter((field) => !formData[field]);
+
+      if (missingFields.length > 0) {
+        throw new Error(`Campos requeridos faltantes: ${missingFields.join(", ")}`);
+      }
+
+      if (!isValidEmail(formData.contactEmail)) {
+        throw new Error("Email inválido");
+      }
+
+      if (!isValidPhone(formData.contactPhone)) {
+        throw new Error("Teléfono inválido");
+      }
+
+      if (!selectedCinema) {
+        throw new Error("Debe seleccionar un cine");
+      }
+
+      // Prepara el payload que coincide con el backend
+      const payload = {
+        cinema: selectedCinema,
+        eventType: formData.eventType,
+        attendees: formData.attendees,
+        date: formData.date,
+        time: formData.time,
+        requirements: formData.requirements || null,
+        contactName: formData.contactName,
+        contactEmail: formData.contactEmail,
+        contactPhone: formData.contactPhone,
+        company: formData.company || null,
+        message: formData.message || null
+      };
+
+      const response = await fetch("http://localhost:8080/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success(result.message || "🎉 ¡Solicitud de evento enviada correctamente!");
+        setTimeout(() => {
+          navigate("/corporate");
+        }, 3000); 
+      } else {
+        toast.error(result.message || "❌ Error al enviar solicitud.");
+      }
+    } catch (err) {
+      console.error("Error al enviar:", err);
+      toast.error(err.message || "❌ Error inesperado al enviar la solicitud.");
+    } finally {
+      setLoading(false);
+    }
+  }, [formData, selectedCinema, navigate, isValidEmail, isValidPhone]);
 
   // Image error handling
   const handleImageError = (e, backgroundClass) => {
@@ -235,18 +342,53 @@ const Events = () => {
           <div className="events-icon">🎬</div>
           <h1 className="events-title">Eventos</h1>
           <p className="events-subtitle">
-            Convierte tus ideas en experiencias cinematográficas únicas 
+            Convierte tus ideas en experiencias cinematográficas únicas
           </p>
         </div>
         <div className="events-header-overlay"></div>
       </div>
 
+      {/* Loading Overlay */}
+      {loading && (
+        <div
+          className="loading-overlay"
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 9999,
+            color: "white",
+          }}
+        >
+          <div
+            className="loading-spinner"
+            style={{
+              width: "40px",
+              height: "40px",
+              border: "4px solid #f3f3f3",
+              borderTop: "4px solid #dc2626",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+              marginBottom: "16px",
+            }}
+          ></div>
+          <p>Enviando solicitud...</p>
+        </div>
+      )}
+
       {/* Progress Steps */}
       <div className="events-progress">
         <div className="events-progress-container">
           {steps.map((step, index) => (
-            <div 
-              key={step.number} 
+            <div
+              key={step.number}
               className={`events-step ${step.active ? 'active' : ''} ${currentStep === step.number ? 'current' : ''}`}
             >
               <div className="events-step-number">{step.number}</div>
@@ -261,7 +403,7 @@ const Events = () => {
 
       {/* Main Content */}
       <div className="events-content">
-        
+
         {/* STEP 1: Event Selection */}
         {currentStep === 1 && (
           <div className="events-selection-section">
@@ -279,8 +421,8 @@ const Events = () => {
                   style={{ '--card-gradient': event.gradient, '--accent-color': event.accentColor }}
                 >
                   <div className={`events-card-image ${event.backgroundClass}`}>
-                    <img 
-                      src={event.image} 
+                    <img
+                      src={event.image}
                       alt={`${event.name} - Evento corporativo`}
                       className="events-card-img"
                       loading="lazy"
@@ -291,7 +433,7 @@ const Events = () => {
                       <h3>{event.name}</h3>
                     </div>
                   </div>
-                  
+
                   <div className="events-card-content">
                     <div className="events-card-header">
                       <div className="events-card-icon-small">{event.icon}</div>
@@ -308,7 +450,7 @@ const Events = () => {
 
             <div className="events-actions">
               <button className="events-btn-secondary" onClick={handleBack}>← Regresar</button>
-              <button 
+              <button
                 className={`events-btn-primary ${!selectedEvent ? 'disabled' : ''}`}
                 onClick={handleContinue}
                 disabled={!selectedEvent}
@@ -336,8 +478,8 @@ const Events = () => {
                   style={{ '--card-gradient': cinema.gradient }}
                 >
                   <div className="events-card-image cinema-bg">
-                    <img 
-                      src={cinema.image} 
+                    <img
+                      src={cinema.image}
                       alt={`${cinema.name} - Cinema`}
                       className="events-card-img"
                       loading="lazy"
@@ -348,7 +490,7 @@ const Events = () => {
                       <p className="cinema-location">{cinema.location}</p>
                     </div>
                   </div>
-                  
+
                   <div className="events-card-content">
                     <div className="events-card-header">
                       <div className="events-card-icon-small">{cinema.icon}</div>
@@ -378,7 +520,7 @@ const Events = () => {
 
             <div className="events-actions">
               <button className="events-btn-secondary" onClick={handleBack}>← Regresar</button>
-              <button 
+              <button
                 className={`events-btn-primary ${!selectedCinema ? 'disabled' : ''}`}
                 onClick={handleContinue}
                 disabled={!selectedCinema}
@@ -401,8 +543,8 @@ const Events = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>Fecha del Evento *</label>
-                  <input 
-                    type="date" 
+                  <input
+                    type="date"
                     value={formData.date}
                     onChange={(e) => handleInputChange('date', e.target.value)}
                     required
@@ -410,8 +552,8 @@ const Events = () => {
                 </div>
                 <div className="form-group">
                   <label>Hora de Inicio *</label>
-                  <input 
-                    type="time" 
+                  <input
+                    type="time"
                     value={formData.time}
                     onChange={(e) => handleInputChange('time', e.target.value)}
                     required
@@ -422,7 +564,7 @@ const Events = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>Duración (horas)</label>
-                  <select 
+                  <select
                     value={formData.duration}
                     onChange={(e) => handleInputChange('duration', e.target.value)}
                   >
@@ -436,8 +578,8 @@ const Events = () => {
                 </div>
                 <div className="form-group">
                   <label>Número de Asistentes *</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     placeholder="Ej: 50"
                     value={formData.attendees}
                     onChange={(e) => handleInputChange('attendees', e.target.value)}
@@ -448,7 +590,7 @@ const Events = () => {
 
               <div className="form-group">
                 <label>Requerimientos Especiales</label>
-                <textarea 
+                <textarea
                   placeholder="Describe cualquier requerimiento especial para tu evento..."
                   value={formData.requirements}
                   onChange={(e) => handleInputChange('requirements', e.target.value)}
@@ -459,7 +601,7 @@ const Events = () => {
 
             <div className="events-actions">
               <button className="events-btn-secondary" onClick={handleBack}>← Regresar</button>
-              <button 
+              <button
                 className={`events-btn-primary ${!formData.date || !formData.time || !formData.attendees ? 'disabled' : ''}`}
                 onClick={handleContinue}
                 disabled={!formData.date || !formData.time || !formData.attendees}
@@ -482,8 +624,8 @@ const Events = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>Nombre Completo *</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Tu nombre completo"
                     value={formData.contactName}
                     onChange={(e) => handleInputChange('contactName', e.target.value)}
@@ -492,8 +634,8 @@ const Events = () => {
                 </div>
                 <div className="form-group">
                   <label>Empresa/Organización</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Nombre de tu empresa"
                     value={formData.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
@@ -504,8 +646,8 @@ const Events = () => {
               <div className="form-row">
                 <div className="form-group">
                   <label>Correo Electrónico *</label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     placeholder="tu@email.com"
                     value={formData.contactEmail}
                     onChange={(e) => handleInputChange('contactEmail', e.target.value)}
@@ -514,8 +656,8 @@ const Events = () => {
                 </div>
                 <div className="form-group">
                   <label>Teléfono *</label>
-                  <input 
-                    type="tel" 
+                  <input
+                    type="tel"
                     placeholder="+51 999 999 999"
                     value={formData.contactPhone}
                     onChange={(e) => handleInputChange('contactPhone', e.target.value)}
@@ -526,7 +668,7 @@ const Events = () => {
 
               <div className="form-group">
                 <label>Mensaje Adicional</label>
-                <textarea 
+                <textarea
                   placeholder="Cuéntanos más sobre tu evento o cualquier pregunta específica..."
                   value={formData.message}
                   onChange={(e) => handleInputChange('message', e.target.value)}
@@ -537,7 +679,7 @@ const Events = () => {
 
             <div className="events-actions">
               <button className="events-btn-secondary" onClick={handleBack}>← Regresar</button>
-              <button 
+              <button
                 className={`events-btn-primary ${!formData.contactName || !formData.contactEmail || !formData.contactPhone ? 'disabled' : ''}`}
                 onClick={handleContinue}
                 disabled={!formData.contactName || !formData.contactEmail || !formData.contactPhone}
@@ -609,6 +751,15 @@ const Events = () => {
           </div>
         )}
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
     </div>
   );
 };

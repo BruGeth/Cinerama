@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMovies } from "../hooks/useMovies"; // Use custom hook to fetch movies from API
 import "../styles/FestaRamaPackages.css";
 import confetti from "canvas-confetti";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const FestaRamaPackages = () => {
   const navigate = useNavigate();
@@ -14,6 +16,8 @@ const FestaRamaPackages = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [movieList, setMovieList] = useState([]);
+
   const [formData, setFormData] = useState({
     package: "",
     cinema: "",
@@ -29,9 +33,6 @@ const FestaRamaPackages = () => {
     childAge: "",
     message: "",
   });
-
-  // Fetch movies from API using custom hook
-  const { movies, loading: moviesLoading } = useMovies();
 
   // Packages data
   const packages = [
@@ -89,7 +90,7 @@ const FestaRamaPackages = () => {
   const cinemaOptions = useMemo(
     () => [
       {
-        id: "cinema-miraflores",
+        id: "Cinema Miraflores",
         name: "Cinerama Miraflores",
         description:
           "Cinema de lujo en el corazón de Miraflores con tecnología de vanguardia y servicios premium",
@@ -101,7 +102,7 @@ const FestaRamaPackages = () => {
         location: "Miraflores",
       },
       {
-        id: "cinema-minka",
+        id: "Cinema Minka",
         name: "Cinerama Minka",
         description:
           "Moderno complejo cinematográfico en Minka con amplias instalaciones y tecnología avanzada",
@@ -135,47 +136,29 @@ const FestaRamaPackages = () => {
 
   // Filter and transform movies from API - Only the 3 specific movies
   const movieOptions = useMemo(() => {
-    try {
-      if (!movies || !Array.isArray(movies)) {
-        throw new Error("No se pudieron cargar los datos de películas");
-      }
-      // Filter only the 3 specific movies requested
-      const targetMovies = [
-        "Destino Final: Lazos de Sangre",
-        "Star Wars: Episodio III - La venganza de los Sith",
-        "Thunderbolts",
-      ];
-      const filteredMovies = movies
-        .filter((movie) => {
-          if (!movie || !movie.title) return false;
-          return targetMovies.includes(movie.title);
-        })
-        .map((movie) => ({
-          id: movie.id ? movie.id.toString() : Math.random().toString(),
-          title: movie.title || "Título no disponible",
-          description: movie.descriptionMovie || "Descripción no disponible",
-          image: movie.imageUrl || "/placeholder.svg?height=400&width=300",
-          genre: movie.genreName || "Sin género",
-          duration: `${movie.duration || 120} min`,
-          rating: movie.rating || "PG-13",
-          availableCinemas: ["cinema-miraflores", "cinema-minka"],
-          gradient: getMovieGradient(movie.genreName || "Drama"),
-          showtimes: movie.showtimes || [],
-          originalData: movie,
-        }))
-        .filter(Boolean);
+    if (!Array.isArray(movieList)) return [];
 
-      if (filteredMovies.length === 0) {
-        throw new Error(
-          "No se encontraron las películas especificadas en la cartelera"
-        );
-      }
-      return filteredMovies;
-    } catch (err) {
-      setError(`Error al cargar las películas: ${err.message}`);
-      return [];
-    }
-  }, [movies, getMovieGradient]);
+    return movieList
+      .filter((movie) =>
+        [
+          "Thunderbolts",
+          "Destino Final: Lazos de Sangre",
+          "Star Wars: Episodio III - La venganza de los Sith",
+        ].includes(movie.title)
+      )
+      .map((movie) => ({
+        id: movie.id.toString(),
+        title: movie.title,
+        description: movie.descriptionMovie,
+        image: movie.imageUrl,
+        duration: `${movie.duration} min`,
+        rating: movie.rating,
+        genre: movie.genre,
+        availableCinemas: movie.availableCinemas,
+        gradient: getMovieGradient(movie.genre),
+        originalData: movie,
+      }));
+  }, [movieList]);
 
   const steps = [
     { number: 1, title: "Paquete", active: currentStep >= 1 },
@@ -187,19 +170,9 @@ const FestaRamaPackages = () => {
 
   // Get available movies based on selected cinema
   const availableMovies = useMemo(() => {
-    try {
-      if (!selectedCinema) return movieOptions;
-      return movieOptions.filter((movie) => {
-        return (
-          movie.availableCinemas &&
-          movie.availableCinemas.includes(selectedCinema)
-        );
-      });
-    } catch (err) {
-      console.error("Error filtering movies:", err);
-      return movieOptions;
-    }
-  }, [selectedCinema, movieOptions]);
+    return movieOptions;
+  }, [movieOptions]);
+
 
   // Email validation helper
   const isValidEmail = useCallback((email) => {
@@ -227,6 +200,25 @@ const FestaRamaPackages = () => {
     setTimeout(() => setFadeIn(true), 100);
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => setFadeIn(true), 100);
+
+    // New logic for loading movies from your API
+    const fetchMovies = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/movies");
+        const data = await res.json();
+        setMovieList(data);
+        console.log("Películas desde el backend:", data);
+      } catch (error) {
+        setError("No se pudieron cargar las películas desde el servidor");
+        console.error(error);
+      }
+    };
+    fetchMovies();
+  }, []);
+
+  // Handle back navigation
   const handleBack = useCallback(() => {
     try {
       if (isAnimating) return;
@@ -248,6 +240,7 @@ const FestaRamaPackages = () => {
       setIsAnimating(false);
     }
   }, [isAnimating, currentStep, navigate]);
+
 
   const handlePackageSelect = useCallback(
     (packageData) => {
@@ -314,6 +307,7 @@ const FestaRamaPackages = () => {
     [isAnimating]
   );
 
+  // Handle cinema selection
   const handleCinemaSelect = useCallback(
     (cinemaId) => {
       try {
@@ -340,6 +334,7 @@ const FestaRamaPackages = () => {
     [isAnimating, cinemaOptions]
   );
 
+  // Handle movie selection
   const handleMovieSelect = useCallback(
     (movieId) => {
       try {
@@ -359,6 +354,7 @@ const FestaRamaPackages = () => {
     [movieOptions]
   );
 
+  // Handle input changes with validation
   const handleInputChange = useCallback(
     (field, value) => {
       try {
@@ -405,6 +401,7 @@ const FestaRamaPackages = () => {
     [isValidEmail, isValidPhone]
   );
 
+  // Handle continue to next step
   const handleContinue = useCallback(() => {
     try {
       if (isAnimating || loading) return;
@@ -482,96 +479,50 @@ const FestaRamaPackages = () => {
     isValidPhone,
   ]);
 
+  // Handle form submission
   const handleSubmit = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const requiredFields = [
-        "parentName",
-        "parentEmail",
-        "parentPhone",
-        "childName",
-      ];
-      const missingFields = requiredFields.filter((field) => !formData[field]);
-
-      if (missingFields.length > 0) {
-        throw new Error(
-          `Campos requeridos faltantes: ${missingFields.join(", ")}`
-        );
-      }
-
-      if (!isValidEmail(formData.parentEmail)) {
-        throw new Error("Email inválido");
-      }
-
-      if (!isValidPhone(formData.parentPhone)) {
-        throw new Error("Teléfono inválido");
-      }
-
-      if (!selectedMovie || !selectedCinema || !selectedPackage) {
-        throw new Error("Selección incompleta");
-      }
-
-      const selectedMovieData = movieOptions.find(
-        (m) => m.id === selectedMovie
-      );
-      const selectedCinemaData = cinemaOptions.find(
-        (c) => c.id === selectedCinema
-      );
-
-      if (!selectedMovieData || !selectedCinemaData) {
-        throw new Error("Error al obtener detalles de la selección");
-      }
-
-      const submissionData = {
-        ...formData,
-        packageDetails: selectedPackage,
-        movieDetails: selectedMovieData,
-        cinemaDetails: selectedCinemaData,
-        timestamp: new Date().toISOString(),
-        sessionId: Math.random().toString(36).substr(2, 9),
+      const payload = {
+        packageType: selectedPackage?.name,
+        cinema: selectedCinema,
+        movie: selectedMovie,
+        date: formData.eventDate,
+        time: formData.eventTime,
+        attendees: formData.numberOfKids,
+        birthdayChildName: formData.childName,
+        birthdayAge: formData.childAge,
+        contactName: formData.parentName,
+        contactEmail: formData.parentEmail,
+        contactPhone: formData.parentPhone,
+        message: formData.message || "", // optional
       };
 
-      console.log("Submitting FestaRama booking:", submissionData);
-
-      // Simulate API call
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (Math.random() > 0.05) {
-            resolve();
-          } else {
-            reject(
-              new Error("Error del servidor. Por favor intenta nuevamente.")
-            );
-          }
-        }, 1000);
+      const response = await fetch("http://localhost:8080/api/festarama", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      alert(
-        "¡Reserva de FestaRama enviada correctamente! Te contactaremos pronto para confirmar los detalles."
-      );
-      navigate("/festarama");
-    } catch (err) {
-      console.error("Error submitting form:", err);
-      setError(
-        err.message ||
-          "Error al enviar la reserva. Por favor intenta nuevamente."
-      );
+      const result = await response.json();
+
+      if (response.ok) {
+        toast.success(result.message || "🎉 ¡Solicitud enviada exitosamente!");
+        setTimeout(() => {
+          navigate("/corporate");
+        }, 3000);
+      } else {
+        toast.error(result.message || "❌ Ocurrió un error en el servidor.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("❌ No se pudo conectar con el servidor.");
     } finally {
       setLoading(false);
     }
-  }, [
-    formData,
-    selectedMovie,
-    selectedCinema,
-    selectedPackage,
-    movieOptions,
-    cinemaOptions,
-    navigate,
-    isValidEmail,
-    isValidPhone,
-  ]);
+  }, [formData, selectedPackage, selectedCinema, selectedMovie, navigate]);
 
   // Image error handling
   const handleImageError = useCallback((e, backgroundClass = "cinema-bg") => {
@@ -595,15 +546,6 @@ const FestaRamaPackages = () => {
       window.scrollTo(0, 0);
     }
   }, [currentStep]);
-
-  if (moviesLoading) {
-    return (
-      <div className="loading-overlay">
-        <div className="loading-spinner"></div>
-        <p>Loading movies...</p>
-      </div>
-    );
-  }
 
   return (
     <div className={`events-container ${fadeIn ? "fade-in" : ""}`}>
@@ -697,9 +639,8 @@ const FestaRamaPackages = () => {
           {steps.map((step, index) => (
             <div
               key={step.number}
-              className={`events-step ${step.active ? "active" : ""} ${
-                currentStep === step.number ? "current" : ""
-              }`}
+              className={`events-step ${step.active ? "active" : ""} ${currentStep === step.number ? "current" : ""
+                }`}
             >
               <div className="events-step-number">{step.number}</div>
               <span className="events-step-title">{step.title}</span>
@@ -730,9 +671,8 @@ const FestaRamaPackages = () => {
               {packages.map((pkg) => (
                 <div
                   key={pkg.id}
-                  className={`package-card ${pkg.id} ${
-                    selectedPackage?.id === pkg.id ? "selected" : ""
-                  }`}
+                  className={`package-card ${pkg.id} ${selectedPackage?.id === pkg.id ? "selected" : ""
+                    }`}
                   onClick={() => handlePackageSelect(pkg)}
                   style={{ "--card-gradient": pkg.gradient }}
                 >
@@ -774,9 +714,8 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !selectedPackage ? "disabled" : ""
-                }`}
+                className={`events-btn-primary ${!selectedPackage ? "disabled" : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={!selectedPackage}
               >
@@ -802,9 +741,8 @@ const FestaRamaPackages = () => {
               {cinemaOptions.map((cinema) => (
                 <div
                   key={cinema.id}
-                  className={`events-card cinema-card ${
-                    selectedCinema === cinema.id ? "selected" : ""
-                  }`}
+                  className={`events-card cinema-card ${selectedCinema === cinema.id ? "selected" : ""
+                    }`}
                   onClick={() => handleCinemaSelect(cinema.id)}
                   style={{ "--card-gradient": cinema.gradient }}
                 >
@@ -844,9 +782,8 @@ const FestaRamaPackages = () => {
                       </div>
                     </div>
                     <div
-                      className={`packages-radio ${
-                        selectedCinema === cinema.id ? "checked" : ""
-                      }`}
+                      className={`packages-radio ${selectedCinema === cinema.id ? "checked" : ""
+                        }`}
                     >
                       <div className="packages-radio-inner"></div>
                     </div>
@@ -860,9 +797,8 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !selectedCinema ? "disabled" : ""
-                }`}
+                className={`events-btn-primary ${!selectedCinema ? "disabled" : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={!selectedCinema}
               >
@@ -897,9 +833,8 @@ const FestaRamaPackages = () => {
                   availableMovies.map((movie) => (
                     <div
                       key={movie.id}
-                      className={`movie-card ${
-                        selectedMovie === movie.id ? "selected" : ""
-                      }`}
+                      className={`movie-card ${selectedMovie === movie.id ? "selected" : ""
+                        }`}
                       onClick={() => handleMovieSelect(movie.id)}
                       style={{ "--card-gradient": movie.gradient }}
                     >
@@ -942,9 +877,8 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !selectedMovie ? "disabled" : ""
-                }`}
+                className={`events-btn-primary ${!selectedMovie ? "disabled" : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={!selectedMovie}
               >
@@ -1105,14 +1039,13 @@ const FestaRamaPackages = () => {
                 ← Regresar
               </button>
               <button
-                className={`events-btn-primary ${
-                  !formData.parentName ||
+                className={`events-btn-primary ${!formData.parentName ||
                   !formData.parentEmail ||
                   !formData.parentPhone ||
                   !formData.childName
-                    ? "disabled"
-                    : ""
-                }`}
+                  ? "disabled"
+                  : ""
+                  }`}
                 onClick={handleContinue}
                 disabled={
                   !formData.parentName ||
@@ -1242,6 +1175,15 @@ const FestaRamaPackages = () => {
           </div>
         )}
       </div>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
 
       {/* Add CSS for loading animation */}
       <style jsx>{`
@@ -1255,6 +1197,7 @@ const FestaRamaPackages = () => {
         }
       `}</style>
     </div>
+
   );
 };
 

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen de Publicidad - Cinerama</title>
+    <style>
+    /* === General body styles for email layout === */
+    body { font-family: 'Arial', sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
+
+    /* === Container for centering and max width === */
+    .container { max-width: 600px; margin: 0 auto; background: #fff; }
+
+    /* === Header section with logo === */
+    .header { background: #000; padding: 20px; text-align: center; }
+
+    /* === CINER logo style === */
+    .logo-ciner { color: #f0b000; font-weight: bold; font-size: 28px; }
+
+    /* === AMA logo style === */
+    .logo-ama { color: #e30000; font-weight: bold; font-size: 28px; }
+
+    /* === Main content area === */
+    .content { padding: 30px 20px; color: #333; }
+
+    /* === Section spacing === */
+    .section { margin: 24px 0; }
+
+    /* === Footer styles === */
+    .footer { background: #e30000; color: #fff; text-align: center; padding: 20px; font-size: 14px; }
+
+    /* === Social media links in footer === */
+    .social-links a { color: #fff; margin: 0 8px; text-decoration: none; font-size: 14px; }
+
+    ul { padding-left: 20px; }
+
+    </style>
+   </head>
+<body>
+    <div class="container">
+    <!-- === Header with Cinerama Logo === -->
+    <div class="header">
+        <span class="logo-ciner">CINER</span><span class="logo-ama">AMA</span>
+    </div>
+        <!-- === Personalized greeting === -->
+        <div class="content">
+            <h2>Hola <span th:text="${advertising.contactName}">Cliente</span>,</h2>
+            <p>¡Gracias por solicitar un espacio de <strong>Publicidad</strong> en <strong>Cinerama</strong>! Aquí tienes un resumen de tu solicitud:</p>
+
+            <!-- === Cinema === -->
+            <div class="section">
+                <h3>CINE:</h3>
+                <p th:text="${#strings.toUpperCase(advertising.cinema)}">CINERAMA MIRAFLORES</p>
+            </div>
+
+            <!-- === Advertising Details === -->
+            <div class="section">
+                <h3>DETALLES DE LA PUBLICIDAD:</h3>
+                <ul>
+                    <li><strong>Tipo de Publicidad:</strong> <span th:text="${advertising.advertisingType}">Lobby</span></li>
+                    <li><strong>Categoría:</strong> <span th:text="${advertising.category}">Video</span></li>
+                    <li><strong>Duración:</strong> <span th:text="${advertising.duration}">2 semanas</span></li>
+                    <li><strong>Fecha de Inicio:</strong> <span th:text="${advertising.startDate}">01/07/2025</span></li>
+                    <li th:if="${advertising.endDate}"><strong>Fecha de Fin:</strong> <span th:text="${advertising.endDate}">15/07/2025</span></li>
+                    <li th:if="${advertising.budget}"><strong>Presupuesto:</strong> S/. <span th:text="${advertising.budget}">500</span></li>
+                    <li th:if="${advertising.requirements}"><strong>Requerimientos:</strong> <span th:text="${advertising.requirements}">Colocar banner en hall</span></li>
+                </ul>
+            </div>
+
+            <!-- === Contact Info === -->
+            <div class="section">
+                <h3>CONTACTO:</h3>
+                <ul>
+                    <li><strong>Teléfono:</strong> <span th:text="${advertising.contactPhone}">999 999 999</span></li>
+                    <li th:if="${advertising.company}"><strong>Empresa:</strong> <span th:text="${advertising.company}">Mi Empresa SAC</span></li>
+                    <li th:if="${advertising.message}"><strong>Mensaje adicional:</strong> <span th:text="${advertising.message}">Por favor confirmar disponibilidad ASAP</span></li>
+                </ul>
+            </div>
+
+            <!-- === Final Message === -->
+            <p> Nuestro equipo se pondrá en contacto contigo en breve para confirmar los detalles.</p>
+            <p>¡Esperamos trabajar contigo! </p>
+            <p>Atentamente,<br>El equipo de Cinerama</p>
+        </div>
+
+        <!-- === Footer === -->
+        <div class="footer">
+            © 2025 Cinerama · Todos los derechos reservados.
+            <div class="social-links">
+                <a href="#">Facebook</a> | <a href="#">Instagram</a> | <a href="#">Twitter</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -27,7 +27,7 @@ public class PasswordResetToken {
     /**
      * The user associated with this password reset token.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
     /**
