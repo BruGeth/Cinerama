@@ -98,6 +98,7 @@ public class WebSecurityConfig {
 
                 // Configure endpoint authorization rules
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/prometheus").permitAll()
                         // Public endpoints for user authentication (register, login, verify)
                         .requestMatchers("/api/auth/**", "/api/seats/available**", "/api/user/register"
                                          ,"/api/events","/api/festarama","/api/specialfunctions","/api/advertising" ).permitAll()
