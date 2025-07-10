@@ -1,0 +1,58 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "ticket_dashboard",
+    "title": "Monitoreo de Pagos de Boletos",
+    "timezone": "browser",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Duración de creación de orden",
+        "targets": [
+          {
+            "expr": "payment_ticket_order_creation_duration_seconds",
+            "legendFormat": "Creación",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Duración de captura de pago",
+        "targets": [
+          {
+            "expr": "payment_ticket_capture_duration_seconds",
+            "legendFormat": "Captura",
+            "refId": "B"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "stat",
+        "title": "Pagos exitosos",
+        "targets": [
+          {
+            "expr": "payment_ticket_success_total",
+            "refId": "C"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 6, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Pagos con error",
+        "targets": [
+          {
+            "expr": "payment_ticket_error_total",
+            "refId": "D"
+          }
+        ],
+        "gridPos": { "x": 6, "y": 8, "w": 6, "h": 4 }
+      }
+    ],
+    "schemaVersion": 30,
+    "version": 1
+  }
+}
