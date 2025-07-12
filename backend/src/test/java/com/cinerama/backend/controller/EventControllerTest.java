@@ -2,7 +2,7 @@ package com.cinerama.backend.controller;
 
 import com.cinerama.backend.dto.EventRequest;
 import com.cinerama.backend.entity.Event;
-import com.cinerama.backend.repository.EventRepository;
+import com.cinerama.backend.exception.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

@@ -1,7 +1,7 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.entity.Seat;
-import com.cinerama.backend.repository.SeatRepository;
+import com.cinerama.backend.exception.repository.SeatRepository;
 import com.cinerama.backend.service.SeatService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

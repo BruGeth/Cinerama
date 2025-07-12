@@ -1,4 +1,4 @@
-package com.cinerama.backend.repository;
+package com.cinerama.backend.exception.repository;
 
 import com.cinerama.backend.entity.VerificationToken;
 import org.springframework.data.jpa.repository.JpaRepository;

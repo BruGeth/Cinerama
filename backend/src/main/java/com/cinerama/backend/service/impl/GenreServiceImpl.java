@@ -1,7 +1,7 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.entity.Genre;
-import com.cinerama.backend.repository.GenreRepository;
+import com.cinerama.backend.exception.repository.GenreRepository;
 import com.cinerama.backend.service.GenreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

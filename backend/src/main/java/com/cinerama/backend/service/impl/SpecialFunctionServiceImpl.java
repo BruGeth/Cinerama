@@ -2,7 +2,7 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.SpecialFunctionRequest;
 import com.cinerama.backend.entity.SpecialFunction;
-import com.cinerama.backend.repository.SpecialFunctionRepository;
+import com.cinerama.backend.exception.repository.SpecialFunctionRepository;
 import com.cinerama.backend.service.SpecialFunctionService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -27,7 +27,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
  * <h2>Usage:</h2>
  * <p>This service is used in the application layer to handle SpecialFunction-related operations.</p>
  *
- * @see com.cinerama.backend.repository.SpecialFunctionRepository
+ * @see SpecialFunctionRepository
  * @see com.cinerama.backend.dto.SpecialFunctionRequest
  */
 

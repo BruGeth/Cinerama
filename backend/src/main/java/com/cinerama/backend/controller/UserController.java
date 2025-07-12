@@ -1,7 +1,7 @@
 package com.cinerama.backend.controller;
 
 import com.cinerama.backend.entity.User;
-import com.cinerama.backend.repository.UserRepository;
+import com.cinerama.backend.exception.repository.UserRepository;
 import com.cinerama.backend.service.UserService;
 import com.cinerama.backend.exception.user.UserNotFoundException;
 import lombok.RequiredArgsConstructor;

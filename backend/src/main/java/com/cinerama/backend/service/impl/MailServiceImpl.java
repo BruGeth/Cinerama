@@ -3,7 +3,7 @@ package com.cinerama.backend.service.impl;
 import com.cinerama.backend.service.MailService;
 import com.cinerama.backend.service.mail.MailContentBuilder;
 import com.cinerama.backend.entity.User;
-import com.cinerama.backend.repository.UserRepository;
+import com.cinerama.backend.exception.repository.UserRepository;
 import com.cinerama.backend.exception.user.UserNotFoundException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

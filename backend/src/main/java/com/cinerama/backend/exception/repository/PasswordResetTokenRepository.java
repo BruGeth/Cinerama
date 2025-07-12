@@ -1,4 +1,4 @@
-package com.cinerama.backend.repository;
+package com.cinerama.backend.exception.repository;
 
 import com.cinerama.backend.entity.PasswordResetToken;
 import com.cinerama.backend.entity.User;

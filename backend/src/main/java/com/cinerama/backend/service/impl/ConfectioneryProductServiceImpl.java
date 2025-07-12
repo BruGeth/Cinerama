@@ -5,8 +5,8 @@ import com.cinerama.backend.dto.ConfectioneryProductResponse;
 import com.cinerama.backend.dto.ConfectioneryCategoryResponse;
 import com.cinerama.backend.entity.ConfectioneryProduct;
 import com.cinerama.backend.entity.ConfectioneryCategory;
-import com.cinerama.backend.repository.ConfectioneryProductRepository;
-import com.cinerama.backend.repository.ConfectioneryCategoryRepository;
+import com.cinerama.backend.exception.repository.ConfectioneryProductRepository;
+import com.cinerama.backend.exception.repository.ConfectioneryCategoryRepository;
 import com.cinerama.backend.service.ConfectioneryProductService;
 import org.springframework.stereotype.Service;
 

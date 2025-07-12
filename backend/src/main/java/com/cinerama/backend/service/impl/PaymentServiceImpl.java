@@ -1,7 +1,7 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.entity.Order;
-import com.cinerama.backend.repository.OrderRepository;
+import com.cinerama.backend.exception.repository.OrderRepository;
 import com.cinerama.backend.service.PaymentService;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.Error;

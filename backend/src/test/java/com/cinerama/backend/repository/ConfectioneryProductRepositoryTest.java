@@ -2,6 +2,8 @@ package com.cinerama.backend.repository;
 
 import com.cinerama.backend.entity.ConfectioneryCategory;
 import com.cinerama.backend.entity.ConfectioneryProduct;
+import com.cinerama.backend.exception.repository.ConfectioneryCategoryRepository;
+import com.cinerama.backend.exception.repository.ConfectioneryProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

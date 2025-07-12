@@ -2,7 +2,7 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.EventRequest;
 import com.cinerama.backend.entity.Event;
-import com.cinerama.backend.repository.EventRepository;
+import com.cinerama.backend.exception.repository.EventRepository;
 import com.cinerama.backend.service.EventService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -27,7 +27,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
  * <h2>Usage:</h2>
  * <p>This service is used in the application layer to handle Event-related operations.</p>
  *
- * @see com.cinerama.backend.repository.EventRepository
+ * @see EventRepository
  * @see com.cinerama.backend.dto.EventRequest
  */
 

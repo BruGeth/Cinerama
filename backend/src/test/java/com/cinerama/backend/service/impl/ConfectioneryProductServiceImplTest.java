@@ -4,8 +4,8 @@ import com.cinerama.backend.dto.ConfectioneryProductRequest;
 import com.cinerama.backend.dto.ConfectioneryProductResponse;
 import com.cinerama.backend.entity.ConfectioneryProduct;
 import com.cinerama.backend.entity.ConfectioneryCategory;
-import com.cinerama.backend.repository.ConfectioneryCategoryRepository;
-import com.cinerama.backend.repository.ConfectioneryProductRepository;
+import com.cinerama.backend.exception.repository.ConfectioneryCategoryRepository;
+import com.cinerama.backend.exception.repository.ConfectioneryProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

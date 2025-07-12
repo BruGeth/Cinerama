@@ -3,7 +3,7 @@ package com.cinerama.backend.service.impl;
 import com.cinerama.backend.dto.ConfectioneryCategoryRequest;
 import com.cinerama.backend.dto.ConfectioneryCategoryResponse;
 import com.cinerama.backend.entity.ConfectioneryCategory;
-import com.cinerama.backend.repository.ConfectioneryCategoryRepository;
+import com.cinerama.backend.exception.repository.ConfectioneryCategoryRepository;
 import com.cinerama.backend.service.ConfectioneryCategoryService;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,7 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.FestaRamaRequest;
 import com.cinerama.backend.entity.FestaRama;
-import com.cinerama.backend.repository.FestaRamaRepository;
+import com.cinerama.backend.exception.repository.FestaRamaRepository;
 import com.cinerama.backend.service.FestaRamaService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -27,7 +27,7 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
  * <h2>Usage:</h2>
  * <p>This service is used in the application layer to handle FestaRama-related operations.</p>
  *
- * @see com.cinerama.backend.repository.FestaRamaRepository
+ * @see FestaRamaRepository
  * @see com.cinerama.backend.dto.FestaRamaRequest
  */
 

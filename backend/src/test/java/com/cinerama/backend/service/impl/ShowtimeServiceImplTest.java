@@ -2,8 +2,8 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.ShowtimeResponse;
 import com.cinerama.backend.entity.Showtime;
-import com.cinerama.backend.repository.ShowtimeRepository;
-import com.cinerama.backend.repository.MovieRepository;
+import com.cinerama.backend.exception.repository.ShowtimeRepository;
+import com.cinerama.backend.exception.repository.MovieRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

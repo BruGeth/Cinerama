@@ -2,8 +2,8 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.MovieResponse;
 import com.cinerama.backend.entity.Movie;
-import com.cinerama.backend.repository.MovieRepository;
-import com.cinerama.backend.repository.GenreRepository;
+import com.cinerama.backend.exception.repository.MovieRepository;
+import com.cinerama.backend.exception.repository.GenreRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

@@ -1,7 +1,7 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.entity.User;
-import com.cinerama.backend.repository.UserRepository;
+import com.cinerama.backend.exception.repository.UserRepository;
 import com.cinerama.backend.service.UserService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

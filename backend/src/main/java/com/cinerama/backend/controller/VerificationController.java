@@ -1,7 +1,7 @@
 package com.cinerama.backend.controller;
 
 import com.cinerama.backend.entity.User;
-import com.cinerama.backend.repository.UserRepository;
+import com.cinerama.backend.exception.repository.UserRepository;
 import com.cinerama.backend.service.VerificationTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
