@@ -57,6 +57,16 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
 }
 
+/* Horizontal layout used when a category is selected */
+.confectionery-container .product-grid.horizontal {
+  display: flex; /* Flex layout instead of grid */
+  flex-wrap: nowrap; /* No wrapping, horizontal scrolling */
+  overflow-x: auto; /* Enable horizontal scroll */
+  gap: 16px; /* Space between items */
+  padding-bottom: 1rem; /* Bottom padding for scroll space */
+  scroll-snap-type: x mandatory; /* Snap to item horizontally */
+}
+
 /* Individual card settings in horizontal mode */
 .confectionery-container .product-grid.horizontal .product-card {
   min-width: 280px; /* Minimum width of card */
@@ -301,6 +311,57 @@
   100% {
     transform: translate(-50%, -50%) rotate(360deg);
   }
+}
+
+/* Quantity controls styling */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+.quantity-btn {
+  background: #ffd600;
+  color: #7a5a00;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.quantity-btn:disabled {
+  background: #eee;
+  color: #bbb;
+  cursor: not-allowed;
+}
+.quantity-count {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+.finalize-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: linear-gradient(90deg, #ffe08a, #ffd600);
+  color: #7a5a00;
+  border: none;
+  border-radius: 999px;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  cursor: pointer;
+  z-index: 2100;
+  transition: background 0.2s;
+}
+.finalize-btn:hover {
+  background: #ffd600;
 }
 
 /* Quantity controls styling */
