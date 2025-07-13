@@ -4,9 +4,9 @@
   margin: 0 auto; /* Centers the container horizontally */
   padding: 40px 20px; /* Adds padding inside the container */
   font-family: 'Segoe UI', sans-serif; /* Font style */
-  color: #000; /* Aplica color negro a todo el texto por defecto dentro del contenedor */
-
+  color: #333; /* Default text color */
 }
+
 /* Title of the section */
 .confectionery-container .confectionery-title {
   text-align: center; /* Center the text */
@@ -15,6 +15,7 @@
   font-weight: 800; /* Very bold text */
   margin-bottom: 10px; /* Space below the title */
 }
+
 /* Subtitle or description text */
 .confectionery-container .confectionery-description {
   text-align: center; /* Center the text */
@@ -22,6 +23,7 @@
   font-size: 1.1rem; /* Slightly larger font */
   margin-bottom: 30px; /* Space below the description */
 }
+
 /* Container for all category buttons */
 .confectionery-container .category-buttons {
   display: flex; /* Arrange buttons in a row */
@@ -30,6 +32,7 @@
   flex-wrap: wrap; /* Allow wrapping to the next line on small screens */
   margin-bottom: 30px; /* Space below the button group */
 }
+
 /* Style for each category button */
 .confectionery-container .category-button {
   padding: 10px 20px; /* Padding inside the button */
@@ -41,15 +44,18 @@
   background-color: #eee; /* Light gray background */
   color: #333; /* Dark gray text */
 }
+
 /* Style for the active (selected) category button */
 .confectionery-container .category-button.active {
   background-color: #d70000; /* Red background */
   color: white; /* White text */
 }
+
 /* Hover effect for category buttons */
 .confectionery-container .category-button:hover {
   background-color: #f6cccc; /* Light red background on hover */
 }
+
 /* Grid layout for displaying products */
 .confectionery-container .product-grid {
   display: grid; /* CSS grid layout */
@@ -57,22 +63,13 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
 }
 
-/* Horizontal layout used when a category is selected */
-.confectionery-container .product-grid.horizontal {
-  display: flex; /* Flex layout instead of grid */
-  flex-wrap: nowrap; /* No wrapping, horizontal scrolling */
-  overflow-x: auto; /* Enable horizontal scroll */
-  gap: 16px; /* Space between items */
-  padding-bottom: 1rem; /* Bottom padding for scroll space */
-  scroll-snap-type: x mandatory; /* Snap to item horizontally */
-}
-
-/* Individual card settings in horizontal mode */
+/* Settings for horizontal scrolling product layout */
 .confectionery-container .product-grid.horizontal .product-card {
   min-width: 280px; /* Minimum width of card */
   flex-shrink: 0; /* Prevent shrinking */
   scroll-snap-align: start; /* Align card to start when snapped */
 }
+
 /* General card styling for each product */
 .confectionery-container .product-card {
   background-color: white; /* White background */
@@ -83,10 +80,12 @@
   padding: 20px; /* Inner padding */
   transition: transform 0.3s; /* Smooth scaling on hover */
 }
+
 /* Hover effect for product card */
 .confectionery-container .product-card:hover {
   transform: scale(1.02); /* Slightly enlarge on hover */
 }
+
 /* Product image style */
 .confectionery-container .product-card img {
   width: 100%; /* Full width */
@@ -94,39 +93,44 @@
   object-fit: contain; /* Keep aspect ratio */
   margin-bottom: 15px; /* Space below image */
 }
+
 /* Product name */
 .confectionery-container .product-card h3 {
   font-size: 1.1rem; /* Medium-large text */
   font-weight: 700; /* Bold text */
   margin-bottom: 6px; /* Space below title */
 }
+
 /* Product description */
 .confectionery-container .product-card p {
   font-size: 0.95rem; /* Slightly smaller text */
   color: #555; /* Gray text */
 }
+
 /* Product price style */
 .confectionery-container .product-price {
   color: #d70000; /* Red color for price */
   font-weight: bold; /* Bold price */
   margin: 10px 0; /* Vertical spacing */
 }
-/* Button for each product (e.g., "Add" button) */
+
+/* Button for each product */
 .confectionery-container .product-button {
-  position: relative; /* Allows positioning pseudo-elements */
-  padding: 10px 24px; /* Button padding */
-  border: none; /* No border */
-  border-radius: 50px; /* Rounded button */
-  font-weight: 600; /* Semi-bold text */
-  font-size: 0.95rem; /* Medium size text */
-  color: white; /* White text */
-  background: linear-gradient(135deg, #ff4e4e, #cc0000); /* Red gradient */
-  cursor: pointer; /* Pointer on hover */
-  overflow: hidden; /* Hide animated glow overflow */
-  z-index: 0; /* Base layer */
-  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth effects */
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3); /* Subtle red shadow */
+  position: relative; /* Enables pseudo-elements */
+  padding: 10px 24px;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: white;
+  background: linear-gradient(135deg, #ff4e4e, #cc0000);
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
 }
+
 /* Glowing shimmer background effect */
 .confectionery-container .product-button::before {
   content: "";
@@ -140,22 +144,26 @@
   transition: opacity 0.5s ease;
   z-index: 1;
 }
+
 /* Activate shimmer effect on hover */
 .confectionery-container .product-button:hover::before {
   opacity: 1;
-  animation: shimmer 1s infinite linear; /* Infinite rotating animation */
+  animation: shimmer 1s infinite linear;
 }
+
 /* Button hover effect */
 .confectionery-container .product-button:hover {
-  transform: translateY(-2px); /* Move button slightly up */
-  box-shadow: 0 8px 18px rgba(255, 0, 0, 0.5); /* Stronger shadow */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(255, 0, 0, 0.5);
 }
-/* Click effect */
+
+/* Click effect for product button */
 .confectionery-container .product-button:active {
-  transform: scale(0.95); /* Slight shrink on click */
-  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.3); /* Lighter shadow */
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(255, 0, 0, 0.3);
 }
-/* Panel lateral derecho para el ticket */
+
+/* Fixed side panel for displaying ticket/cart */
 .side-panel {
   position: fixed;
   top: 100px;
@@ -172,81 +180,90 @@
   animation: ticketFadeIn 0.5s;
   transition: box-shadow 0.3s;
 }
+
+/* Responsive adjustment: side panel becomes static on small screens */
 @media (max-width: 900px) {
-  .side-panel { position: static; width: 100%; border-radius: 0; box-shadow: none; border-left: none; }
+  .side-panel {
+    position: static;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    border-left: none;
+  }
 }
 
-/* Each item row inside the side panel */
+/* Row for each product inside side panel */
 .panel-item {
-  display: flex; /* Horizontal layout */
-  justify-content: space-between; /* Space between name and controls */
-  align-items: center; /* Vertically centered */
-  margin: 0.7rem 0; /* More vertical spacing */
-  padding: 0.5rem 0.2rem; /* Padding for touch area */
-  border-radius: 6px; /* Slightly rounded corners */
-  background: rgba(255, 246, 246, 0.7); /* Subtle background on item */
-  transition: background 0.3s; /* Smooth background on hover */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.7rem 0;
+  padding: 0.5rem 0.2rem;
+  border-radius: 6px;
+  background: rgba(255, 246, 246, 0.7);
+  transition: background 0.3s;
 }
 
+/* Hover highlight on side panel item */
 .panel-item:hover {
-  background: #ffeaea; /* Highlight on hover */
+  background: #ffeaea;
 }
 
-/* Notice for ticket information in the side panel */
-/* Notice for ticket information in the side panel */
+/* Informative notice for the ticket in the side panel */
 .ticket-notice {
-  font-size: 1rem; /* Slightly larger text */
-  color: #d70000; /* Main red color for text */
-  background: linear-gradient(90deg, #fffbe6 0%, #fff6b3 100%); /* Soft yellow gradient background */
-  padding: 1rem 1.2rem; /* More spacious padding */
-  margin-bottom: 1.5rem; /* More space below the notice */
-  border-radius: 10px; /* More rounded corners */
-  border-left: 5px solid #d70000; /* Thicker red accent border */
-  box-shadow: 0 4px 16px rgba(215, 0, 0, 0.09); /* Slightly stronger shadow */
-  transition: background 0.4s, color 0.4s, box-shadow 0.4s; /* Smooth transitions */
-  font-weight: 700; /* Bolder text */
-  letter-spacing: 0.03em; /* Slightly more letter spacing */
+  font-size: 1rem;
+  color: #d70000;
+  background: linear-gradient(90deg, #fffbe6 0%, #fff6b3 100%);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  border-radius: 10px;
+  border-left: 5px solid #d70000;
+  box-shadow: 0 4px 16px rgba(215, 0, 0, 0.09);
+  transition: background 0.4s, color 0.4s, box-shadow 0.4s;
+  font-weight: 700;
+  letter-spacing: 0.03em;
 }
 
 /* Hover effect for ticket notice */
 .ticket-notice:hover {
-  background: linear-gradient(90deg, #fff6b3 0%, #fffbe6 100%); /* Invert yellow gradient on hover */
-  color: #b30000; /* Slightly darker red */
-  box-shadow: 0 8px 24px rgba(215, 0, 0, 0.13); /* Stronger shadow */
+  background: linear-gradient(90deg, #fff6b3 0%, #fffbe6 100%);
+  color: #b30000;
+  box-shadow: 0 8px 24px rgba(215, 0, 0, 0.13);
 }
 
-/* Total price styling at the bottom of the side panel */
+/* Total price displayed in side panel */
 .total {
-  font-weight: bold; /* Bold text */
-  font-size: 1.2rem; /* Larger font size */
-  margin-top: 2rem; /* More space above */
-  color: #d70000; /* Red color for emphasis */
-  text-align: right; /* Align to the right */
-  letter-spacing: 0.02em; /* Slight letter spacing */
-  transition: color 0.3s; /* Smooth color transition */
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  color: #d70000;
+  text-align: right;
+  letter-spacing: 0.02em;
+  transition: color 0.3s;
 }
-/* Modal for login warning: centered popup with dark background overlay */
+
+/* Login warning modal: full screen dark overlay with centered box */
 .login-warning-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.45); /* Semi-transparent black overlay */
+  background: rgba(0,0,0,0.45);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000; /* Above all content */
+  z-index: 2000;
 }
 
-/* Content box for the login modal */
+/* Modal content box styling */
 .modal-content {
-  background: #fff; /* White background */
-  border-radius: 12px; /* Rounded corners */
-  padding: 2rem 2.5rem; /* Spacious padding */
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18); /* Strong shadow */
-  text-align: center; /* Centered text */
-  min-width: 320px; /* Minimum width for modal */
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  text-align: center;
+  min-width: 320px;
 }
 
-/* General button style inside modal */
+/* Buttons inside modal */
 .modal-content button {
   margin: 0 0.5rem;
   padding: 0.7rem 1.5rem;
@@ -258,29 +275,29 @@
   transition: background 0.2s;
 }
 
-/* Register button: yellow gradient and brown text */
+/* Register button: yellow gradient */
 .modal-content .register-btn {
   background: linear-gradient(90deg, #ffe08a, #ffd600);
   color: #7a5a00;
 }
 
-/* Register button hover effect: solid yellow */
+/* Register button hover effect */
 .modal-content .register-btn:hover {
   background: #ffd600;
 }
 
-/* Cancel button: red gradient and white text */
+/* Cancel button: red gradient */
 .modal-content .cancel-btn {
   background: linear-gradient(90deg, #ff4e4e, #cc0000);
   color: #fff;
 }
 
-/* Cancel button hover effect: solid red */
+/* Cancel button hover effect */
 .modal-content .cancel-btn:hover {
   background: #cc0000;
 }
 
-/* Ticket chat panel (legacy, now replaced by side-panel) */
+/* Legacy ticket chat panel (replaced by side-panel) */
 .ticket-chat-panel {
   position: fixed;
   bottom: 32px;
@@ -297,13 +314,13 @@
   transition: box-shadow 0.3s;
 }
 
-/* Animation for ticket panel appearance */
+/* Animation for fading in the ticket panel */
 @keyframes ticketFadeIn {
   from { opacity: 0; transform: translateY(40px);}
   to { opacity: 1; transform: translateY(0);}
 }
 
-/* Shimmer keyframe animation */
+/* Keyframe animation for shimmer effect */
 @keyframes shimmer {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
@@ -313,7 +330,7 @@
   }
 }
 
-/* Quantity controls styling */
+/* Quantity selector controls */
 .quantity-controls {
   display: flex;
   align-items: center;
@@ -321,6 +338,8 @@
   gap: 10px;
   margin-top: 10px;
 }
+
+/* Quantity increment/decrement buttons */
 .quantity-btn {
   background: #ffd600;
   color: #7a5a00;
@@ -333,17 +352,23 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
+/* Disabled quantity button style */
 .quantity-btn:disabled {
   background: #eee;
   color: #bbb;
   cursor: not-allowed;
 }
+
+/* Quantity count display */
 .quantity-count {
   min-width: 24px;
   text-align: center;
   font-weight: 700;
   font-size: 1.1rem;
 }
+
+/* Finalize purchase floating button */
 .finalize-btn {
   position: fixed;
   bottom: 32px;
@@ -360,57 +385,34 @@
   z-index: 2100;
   transition: background 0.2s;
 }
+
+/* Hover effect for finalize button */
 .finalize-btn:hover {
   background: #ffd600;
 }
 
-/* Quantity controls styling */
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-}
-.quantity-btn {
-  background: #ffd600;
-  color: #7a5a00;
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.quantity-btn:disabled {
-  background: #eee;
-  color: #bbb;
-  cursor: not-allowed;
-}
-.quantity-count {
-  min-width: 24px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-.finalize-btn {
+/* Success popup message (centered) */
+.success-ticket {
   position: fixed;
-  bottom: 32px;
-  right: 32px;
-  background: linear-gradient(90deg, #ffe08a, #ffd600);
-  color: #7a5a00;
-  border: none;
-  border-radius: 999px;
-  padding: 1rem 2.5rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-  cursor: pointer;
-  z-index: 2100;
-  transition: background 0.2s;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #e0ffe8;
+  color: #207c3d;
+  border: 2px solid #b0e5b8;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 3000;
+  animation: fadeIn 0.4s ease;
+  min-width: 300px;
+  max-width: 90vw;
 }
-.finalize-btn:hover {
-  background: #ffd600;
+
+/* Animation for fade-in popup */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
