@@ -2,16 +2,16 @@
   "dashboard": {
     "id": null,
     "uid": "ticket_dashboard",
-    "title": "Monitoreo de Pagos de Boletos",
+    "title": "Ticket Payment Monitoring",
     "timezone": "browser",
     "panels": [
       {
         "type": "graph",
-        "title": "Duración de creación de orden",
+        "title": "Order Creation Duration",
         "targets": [
           {
             "expr": "payment_ticket_order_creation_duration_seconds",
-            "legendFormat": "Creación",
+            "legendFormat": "Creation",
             "refId": "A"
           }
         ],
@@ -19,11 +19,11 @@
       },
       {
         "type": "graph",
-        "title": "Duración de captura de pago",
+        "title": "Payment Capture Duration",
         "targets": [
           {
             "expr": "payment_ticket_capture_duration_seconds",
-            "legendFormat": "Captura",
+            "legendFormat": "Capture",
             "refId": "B"
           }
         ],
@@ -31,7 +31,7 @@
       },
       {
         "type": "stat",
-        "title": "Pagos exitosos",
+        "title": "Successful Payments",
         "targets": [
           {
             "expr": "payment_ticket_success_total",
@@ -42,7 +42,7 @@
       },
       {
         "type": "stat",
-        "title": "Pagos con error",
+        "title": "Failed Payments",
         "targets": [
           {
             "expr": "payment_ticket_error_total",
