@@ -57,7 +57,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Creates a PayPal order for ticket payment.
+     * Initiates a PayPal order for ticket purchases.
+     * Converts local currency to USD if needed, calls PayPal's order service,
+     * and returns an approval link for the client to confirm the payment.
+     *
+     * Logs key events and increments monitoring counters for success and failure,
+     * supporting metrics collection via Prometheus.
+     *
+     * @param amount     Total amount to be charged
+     * @param currency   Currency code (e.g., "USD", "PEN")
+     * @param returnUrl  Redirect URL after successful approval
+     * @param cancelUrl  Redirect URL if payment is canceled
+     * @return HTTP response with payment approval details or error information
      */
     @Timed(value = "payment.ticket.order.creation.duration", description = "Duración al crear orden de boletos")
     @Override
@@ -94,7 +105,16 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Captures an approved PayPal payment and persists the ticket order.
+     * Captures a previously approved PayPal payment and saves the corresponding ticket order.
+     * Validates duplicate capture attempts to ensure data integrity.
+     * Extracts key payment info such as amount, currency, status, and payer email.
+     *
+     * Success and error counters are incremented for Prometheus metrics tracking,
+     * supporting Grafana dashboards and alerting.
+     *
+     * @param paymentId PayPal payment ID to be captured
+     * @param payerId   PayPal payer ID associated with the transaction
+     * @return HTTP response with capture confirmation or detailed error message
      */
     @Timed(value = "payment.ticket.capture.duration", description = "Duración al capturar pago de boletos")
     @Override
