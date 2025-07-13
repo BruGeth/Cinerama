@@ -2,6 +2,7 @@ package com.cinerama.backend.service;
 
 import com.cinerama.backend.dto.ConfectioneryProductRequest;
 import com.cinerama.backend.dto.ConfectioneryProductResponse;
+import com.cinerama.backend.dto.ConfectioneryPurchaseItemDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,7 @@ public interface ConfectioneryProductService {
     ConfectioneryProductResponse createProduct(ConfectioneryProductRequest request);
     ConfectioneryProductResponse updateProduct(Long id, ConfectioneryProductRequest request);
     void deleteProduct(Long id);
+
+    void registerPurchase(List<ConfectioneryPurchaseItemDTO> items);
+
 }

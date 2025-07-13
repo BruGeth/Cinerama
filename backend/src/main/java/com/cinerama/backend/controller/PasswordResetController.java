@@ -4,7 +4,7 @@ import com.cinerama.backend.dto.ChangePasswordRequest;
 import com.cinerama.backend.dto.ForgotPasswordRequest;
 import com.cinerama.backend.dto.ValidateResetTokenRequest;
 import com.cinerama.backend.entity.User;
-import com.cinerama.backend.repository.UserRepository;
+import com.cinerama.backend.exception.repository.UserRepository;
 import com.cinerama.backend.service.PasswordResetService;
 import com.cinerama.backend.exception.user.UserNotFoundException;
 import jakarta.validation.Valid;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class PasswordResetController {
 
     private final PasswordResetService passwordResetService;
-    private final com.cinerama.backend.controller.UserRepository userRepository;
+    private final com.cinerama.backend.exception.repository.UserRepository userRepository;
 
     /**
      * Endpoint to initiate a password reset by sending a recovery email.

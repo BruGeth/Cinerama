@@ -3,6 +3,7 @@ package com.cinerama.backend.service.impl;
 import com.cinerama.backend.dto.ConfectioneryProductRequest;
 import com.cinerama.backend.dto.ConfectioneryProductResponse;
 import com.cinerama.backend.dto.ConfectioneryCategoryResponse;
+import com.cinerama.backend.dto.ConfectioneryPurchaseItemDTO;
 import com.cinerama.backend.entity.ConfectioneryProduct;
 import com.cinerama.backend.entity.ConfectioneryCategory;
 import com.cinerama.backend.exception.repository.ConfectioneryProductRepository;
@@ -73,6 +74,11 @@ public class ConfectioneryProductServiceImpl implements ConfectioneryProductServ
     @Override
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+
+    @Override
+    public void registerPurchase(List<ConfectioneryPurchaseItemDTO> items) {
+
     }
 
     private ConfectioneryProductResponse toResponse(ConfectioneryProduct product) {
