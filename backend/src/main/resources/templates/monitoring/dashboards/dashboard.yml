@@ -1,10 +1,10 @@
 apiVersion: 1
 providers:
-  - name: 'Boletos'
-    orgId: 1
-    folder: 'Monitoreo'
-    type: file
-    disableDeletion: false
-    editable: true
+  - name: 'Tickets'                # Provider name (can be any descriptive label)
+    orgId: 1                       # Organization ID (default is 1 if not using multi-tenancy)
+    folder: 'Monitoring'           # Folder name where dashboards will be stored in Grafana
+    type: file                     # Indicates that dashboards are loaded from files
+    disableDeletion: false         # Allows dashboards to be deleted from the Grafana UI (true blocks deletion)
+    editable: true                 # Allows dashboards to be edited via the Grafana UI
     options:
-      path: /etc/grafana/dashboards
+      path: /etc/grafana/dashboards  # Path inside the container where .json dashboards are stored
