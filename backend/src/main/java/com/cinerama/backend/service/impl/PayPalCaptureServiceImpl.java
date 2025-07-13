@@ -26,6 +26,7 @@ public class PayPalCaptureServiceImpl implements PayPalCaptureService {
      * @param payerId   The PayPal-assigned ID of the user authorizing the payment.
      * @return The resulting Payment object returned by the PayPal API.
      * @throws PayPalRESTException If an error occurs during execution.
+     * This method is timed to monitor the duration of payment capture operations.
      */
     @Timed(value = "payment.ticket.capture.duration", description = "Duración al capturar pago de boletos")
     @Override
