@@ -4,6 +4,7 @@
   margin: 0 auto; /* Centers the container horizontally */
   padding: 40px 20px; /* Adds padding inside the container */
   font-family: 'Segoe UI', sans-serif; /* Font style */
+  color:#333
 }
 /* Title of the section */
 .confectionery-container .confectionery-title {
