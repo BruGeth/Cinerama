@@ -1,5 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 import '../styles/Confectionery.css';
+import { useNavigate } from "react-router-dom";
 
 // Main component for the confectionery page
 const Confectionery = () => {
@@ -16,6 +17,7 @@ const Confectionery = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Should come from auth context or similar
   const [showLoginWarning, setShowLoginWarning] = useState(false); // Show login warning modal
   const [showSummary, setShowSummary] = useState(false); // Show summary panel
+  const [showSuccess, setShowSuccess] = useState(false); // Modal de éxito
 
   // Navigation hook
   const navigate = useNavigate();
@@ -44,10 +46,10 @@ const Confectionery = () => {
 
   // --- Check login status on mount ---
   useEffect(() => {
-        // Example: check if user is logged in via localStorage (adjust as needed)
-        const logged = localStorage.getItem("isLoggedIn") === "true" || !!localStorage.getItem("token");
-        setIsLoggedIn(logged);
-      }, []);
+    // Example: check if user is logged in via localStorage (adjust as needed)
+    const logged = localStorage.getItem("isLoggedIn") === "true" || !!localStorage.getItem("token");
+    setIsLoggedIn(logged);
+  }, []);
 
   // --- Filter products by selected category and stock ---
   const filteredProducts = selectedCategory === "Todos"
@@ -105,8 +107,6 @@ const Confectionery = () => {
   // --- Calculate total price in real time ---
   const total = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // --- Filter out items linked to movies for the ticket ---
-
   // --- Handle purchase action ---
   const handleBuy = async () => {
     try {
@@ -116,11 +116,13 @@ const Confectionery = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: selectedItems })
       });
-      // Opcional: refresca productos para ver el nuevo stock
+      // Refresca productos para ver el nuevo stock
       const res = await fetch("/api/confectionery-products");
       const data = await res.json();
       setProducts(data);
       setSelectedItems([]); // Limpia el carrito
+      setShowSummary(false); // Cierra el resumen
+      setShowSuccess(true);  // Muestra el modal de éxito
     } catch (error) {
       alert("Error al procesar la compra. Intenta nuevamente.");
     }
@@ -153,6 +155,19 @@ const Confectionery = () => {
         <div className={`product-grid ${selectedCategory !== "Todos" ? "horizontal" : ""}`}>
           {filteredProducts.map((prod) => (
             <div key={prod.id} className="product-card">
+              {/* Imagen del producto */}
+              <img src={prod.image} alt={prod.name} />
+
+              {/* Nombre del producto */}
+              <h3>{prod.name}</h3>
+
+              {/* Descripción */}
+              <p>{prod.description}</p>
+
+              {/* Precio */}
+              <div className="product-price">S/ {prod.price}</div>
+
+              {/* Controles de cantidad */}
               <div className="quantity-controls">
                 <button
                   className="quantity-btn"
@@ -219,8 +234,7 @@ const Confectionery = () => {
                   style={{ marginRight: '0.5rem' }}
                   onClick={async () => {
                     await handleBuy(); // lógica para actualizar stock
-                    setShowSummary(false);
-                    navigate("/resumen-pago");
+                    // No redirige, solo muestra el modal de éxito
                   }}
                 >
                   Comprar
@@ -233,6 +247,25 @@ const Confectionery = () => {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de éxito */}
+      {showSuccess && (
+        <div className="login-warning-modal">
+          <div className="modal-content">
+            <h2 style={{ marginBottom: '1rem', color: '#28a745' }}>¡Compra exitosa!</h2>
+            <p style={{ marginBottom: '1.5rem' }}>Tu compra fue realizada con éxito. ¡Gracias por tu preferencia!</p>
+            <button
+              className="register-btn"
+              onClick={() => {
+                setShowSuccess(false);
+                navigate("/"); // Redirige a la página de inicio
+              }}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
