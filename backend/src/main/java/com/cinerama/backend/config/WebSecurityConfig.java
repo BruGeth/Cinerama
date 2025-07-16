@@ -99,17 +99,19 @@ public class WebSecurityConfig {
 
                 // Configure endpoint authorization rules
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints for user authentication (register, login, verify)
+                        // Public endpoints for authentication, registration, and some resources
                         .requestMatchers("/api/auth/**", "/api/seats/available**", "/api/user/register"
                                          ,"/api/events","/api/festarama","/api/specialfunctions","/api/advertising" ).permitAll()
-                        // Public access to genre, movie, showtime, and confectionery category endpoints
+                        // Public GET endpoints for genres, movies, showtimes, confectionery, and orders
                         .requestMatchers(HttpMethod.GET, "/api/genres/**",
                                               "/api/movies/**","/api/showtimes/**",
                                                 "/api/confectionery-categories/**",
                                  "/api/confectionery-products/**","/api/orders/**").permitAll()
+                        // Public endpoints for payment and confectionery purchase (including PayPal integration)
+                        // Added to allow PayPal payment flow and confectionery purchases without authentication
                         .requestMatchers("/api/payment/**").permitAll()
-                        .requestMatchers("/api/confectionery-purchase").permitAll()
-                        // Public access to user profile endpoint
+                        .requestMatchers("/api/confectionery-purchase", "/api/confectionery-purchase/**").permitAll()
+                        // User profile, tickets, and seats require authentication
                         .requestMatchers("/api/user/", "/api/tickets/**", "/api/seats/**").authenticated()
                         // All other endpoints require authentication
                         .anyRequest().authenticated()
