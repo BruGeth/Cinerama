@@ -7,16 +7,18 @@ function RoomForm({ room, cinemas, onSave, onClose }) {
     cinemaId: "",
     capacity: "",
     type: "STANDARD",
-    format: "TWO_D",
+    technology: [],
+    audioSystem: "",
     status: "ACTIVE",
   });
 
   const [errors, setErrors] = useState({});
 
-  const formatOptions = [
+  const technologyOptions = [
     { value: "TWO_D", label: "2D" },
     { value: "THREE_D", label: "3D" },
-    { value: "FOUR_D_X", label: "4DX" }
+    { value: "IMAX", label: "IMAX" },
+    { value: "FOUR_DX", label: "4DX" }
   ];
 
   const roomTypeOptions = [
@@ -38,18 +40,33 @@ function RoomForm({ room, cinemas, onSave, onClose }) {
         cinemaId: room.cinema?.id?.toString() || room.cinemaId?.toString() || "",
         capacity: room.capacity?.toString() || "",
         type: room.type || "STANDARD",
-        format: room.format || "TWO_D",
+        technology: room.technology || [],
+        audioSystem: room.audioSystem || "",
         status: room.status || "ACTIVE",
       });
     }
   }, [room]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    const { name, value, checked } = e.target;
+    
+    if (name === 'technology') {
+      // Manejar checkboxes para technology
+      setFormData(prev => {
+        const newTechnology = checked
+          ? [...prev.technology, value]
+          : prev.technology.filter(tech => tech !== value);
+        return {
+          ...prev,
+          technology: newTechnology
+        };
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
 
     // Clear error when user types
     if (errors[name]) {
@@ -63,6 +80,7 @@ function RoomForm({ room, cinemas, onSave, onClose }) {
   const validate = () => {
     const newErrors = {};
 
+    // CAMPOS REQUERIDOS
     if (!formData.name.trim()) {
       newErrors.name = "El nombre es requerido";
     }
@@ -73,6 +91,24 @@ function RoomForm({ room, cinemas, onSave, onClose }) {
 
     if (!formData.capacity || Number.parseInt(formData.capacity) <= 0) {
       newErrors.capacity = "La capacidad debe ser mayor a 0";
+    }
+
+    if (!formData.type) {
+      newErrors.type = "Debe seleccionar un tipo de sala";
+    }
+
+    if (!formData.status) {
+      newErrors.status = "Debe seleccionar un estado";
+    }
+
+    // Validar que type esté en los valores permitidos
+    if (formData.type && !["STANDARD", "VIP", "IMAX"].includes(formData.type)) {
+      newErrors.type = "Tipo de sala inválido";
+    }
+
+    // Validar que status esté en los valores permitidos
+    if (formData.status && !["ACTIVE", "INACTIVE", "MAINTENANCE"].includes(formData.status)) {
+      newErrors.status = "Estado inválido";
     }
 
     return newErrors;
@@ -91,7 +127,8 @@ function RoomForm({ room, cinemas, onSave, onClose }) {
       name: formData.name.trim(),
       capacity: Number.parseInt(formData.capacity),
       type: formData.type,
-      format: formData.format,
+      technology: formData.technology,
+      audioSystem: formData.audioSystem.trim() || null,
       status: formData.status,
       cinemaId: Number.parseInt(formData.cinemaId),
       // Datos calculados automáticamente:
@@ -171,12 +208,13 @@ function RoomForm({ room, cinemas, onSave, onClose }) {
             </div>
 
             <div className="form-group">
-              <label htmlFor="type">Tipo de Sala</label>
+              <label htmlFor="type">Tipo de Sala *</label>
               <select
                 id="type"
                 name="type"
                 value={formData.type}
                 onChange={handleChange}
+                className={errors.type ? "error" : ""}
               >
                 {roomTypeOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -184,41 +222,60 @@ function RoomForm({ room, cinemas, onSave, onClose }) {
                   </option>
                 ))}
               </select>
+              {errors.type && (
+                <span className="error-message">{errors.type}</span>
+              )}
             </div>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="format">Formato</label>
-              <select
-                id="format"
-                name="format"
-                value={formData.format}
-                onChange={handleChange}
-              >
-                {formatOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="form-group">
+            <label htmlFor="audioSystem">Sistema de Audio</label>
+            <input
+              type="text"
+              id="audioSystem"
+              name="audioSystem"
+              value={formData.audioSystem}
+              onChange={handleChange}
+              placeholder="Ej: Dolby Atmos, DTS:X"
+            />
+          </div>
 
-            <div className="form-group">
-              <label htmlFor="status">Estado</label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
-              >
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+          <div className="form-group">
+            <label>Tecnologías Disponibles</label>
+            <div className="checkbox-group">
+              {technologyOptions.map((option) => (
+                <label key={option.value} className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="technology"
+                    value={option.value}
+                    checked={formData.technology.includes(option.value)}
+                    onChange={handleChange}
+                  />
+                  <span className="checkbox-text">{option.label}</span>
+                </label>
+              ))}
             </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="status">Estado *</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className={errors.status ? "error" : ""}
+            >
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {errors.status && (
+              <span className="error-message">{errors.status}</span>
+            )}
           </div>
 
           <div className="form-actions">
