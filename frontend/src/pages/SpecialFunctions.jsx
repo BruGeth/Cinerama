@@ -110,7 +110,7 @@ const SpecialFunctions = () => {
         gradient: getMovieGradient(movie.genre),
         originalData: movie,
       }));
-  }, [movieList]);
+  }, [getMovieGradient, movieList]);
 
   // Institution types for the details form
   const institutionTypes = [

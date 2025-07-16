@@ -158,7 +158,7 @@ const FestaRamaPackages = () => {
         gradient: getMovieGradient(movie.genre),
         originalData: movie,
       }));
-  }, [movieList]);
+  }, [getMovieGradient, movieList]);
 
   const steps = [
     { number: 1, title: "Paquete", active: currentStep >= 1 },
