@@ -12,6 +12,7 @@ const errorMessages = {
   UNAUTHORIZED: "No autorizado para realizar esta acción",
   UNKNOWN_ERROR: "Ha ocurrido un error inesperado. Intenta nuevamente.",
   INVALID_ARGUMENT: "Parámetro inválido",
+  USER_ALREADY_EXISTS: "El email ya está registrado. Utilice otro email. ",
 };
 
 export default errorMessages;
