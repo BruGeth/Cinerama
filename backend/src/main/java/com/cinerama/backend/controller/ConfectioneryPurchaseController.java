@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * Controller for handling confectionery purchases, including direct and PayPal flows.
@@ -61,16 +62,22 @@ public class ConfectioneryPurchaseController {
                 productRepository.save(product);
             }
 
-            // Convert total to USD (PayPal only accepts USD)
-            double exchangeRate = 0.2818; // 1 sol ≈ 0.2818 USD
-            double totalAmountUSD = Math.round(totalAmountPEN * exchangeRate * 100.0) / 100.0;
+            // Convert total to USD using shared service method
+            double totalAmountUSD = paymentService.convertSolesToDollars(totalAmountPEN);
+
+            // Get buyer's email from security context (JWT principal)
+            String payerEmail = null;
+            if (SecurityContextHolder.getContext().getAuthentication() != null) {
+                payerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            }
 
             // Create a paid order in USD
             Order order = new Order();
-            order.setStatus("PAGADA");
+            order.setStatus("pagada");
             order.setTimestamp(LocalDateTime.now());
             order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
+            order.setPayerEmail(payerEmail); // Register buyer's email for tracking and auditability
             orderRepository.save(order);
 
             return ResponseEntity.ok(Map.of(
@@ -113,13 +120,12 @@ public class ConfectioneryPurchaseController {
                 cartItems.add(cartItem);
             }
 
-            // Convert total to USD for PayPal
-            double exchangeRate = 0.2818; // 1 sol ≈ 0.2818 USD
-            double totalAmountUSD = Math.round(totalAmountPEN * exchangeRate * 100.0) / 100.0;
+            // Convert total to USD for PayPal using shared service method
+            double totalAmountUSD = paymentService.convertSolesToDollars(totalAmountPEN);
 
             // Create a local pending order in USD
             Order order = new Order();
-            order.setStatus("PENDIENTE");
+            order.setStatus("pendiente");
             order.setTimestamp(LocalDateTime.now());
             order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
@@ -169,7 +175,7 @@ public class ConfectioneryPurchaseController {
             Order order = orderRepository.findByPaypalOrderId(paymentId)
                 .orElseThrow(() -> new RuntimeException("Order not found for paymentId: " + paymentId));
             
-            if ("PAGADA".equals(order.getStatus())) {
+            if ("pagada".equals(order.getStatus())) {
                 // If already paid, return success (idempotent)
                 return ResponseEntity.ok(Map.of(
                     "message", "Purchase was already processed",
@@ -182,7 +188,17 @@ public class ConfectioneryPurchaseController {
             ResponseEntity<?> captureResponse = paymentService.capturePayment(paymentId, payerId);
             if (captureResponse.getStatusCode().is2xxSuccessful()) {
                 // Update local order status to paid
-                order.setStatus("PAGADA");
+                order.setStatus("pagada");
+                // Get PayPal payer email from capture response
+                String payerEmail = null;
+                Object body = captureResponse.getBody();
+                if (body instanceof Map) {
+                    Object emailObj = ((Map<?, ?>) body).get("payer");
+                    if (emailObj != null) {
+                        payerEmail = emailObj.toString();
+                    }
+                }
+                order.setPayerEmail(payerEmail); // Save the PayPal payer's email
                 orderRepository.save(order);
                 // Deduct stock for each product in the order
                 for (CartItem item : order.getCart()) {
