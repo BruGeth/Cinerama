@@ -7,6 +7,7 @@ import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.Role;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.exception.user.PasswordsNotMatchException;
+import com.cinerama.backend.exception.user.UserAlreadyExistsException;
 import com.cinerama.backend.exception.user.UserNotFoundException;
 import com.cinerama.backend.repository.RoleRepository;
 import com.cinerama.backend.repository.UserRepository;
@@ -52,29 +53,32 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public User register(RegisterRequest request) {
-        // Check if the provided passwords match
+        //  Verificar coincidencia de contraseñas
         if (!request.getPassword().equals(request.getConfirmPassword())) {
             throw new PasswordsNotMatchException("Passwords do not match");
         }
-
-        // Check if the role "ROLE_USER" exists in the database
+        //  Verificar si el correo ya está registrado
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException(" El email ya está registrado. Utilice otro email. ");
+        }
+        //  Asignar rol por defecto
         Role defaultRole = roleRepository.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("Default role not found"));
 
-        // Create a new user entity with the provided details
+        //  Construir entidad User
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword())) // Encrypt the password
-                .enabled(false) // Set the account as disabled until verification
+                .password(passwordEncoder.encode(request.getPassword()))
+                .enabled(false)
                 .role(defaultRole)
                 .build();
 
-        // Save the user to the database
         User savedUser = userRepository.save(user);
 
-        // Generate a verification code for the user and send a verification email
+        //  Generar y enviar token de verificación
         verificationTokenService.createVerificationToken(savedUser);
+
         return savedUser;
     }
 

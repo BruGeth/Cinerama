@@ -6,6 +6,7 @@ import com.cinerama.backend.exception.auth.TokenNotBelongUserException;
 import com.cinerama.backend.exception.model.ErrorCode;
 import com.cinerama.backend.exception.model.ErrorResponse;
 import com.cinerama.backend.exception.user.PasswordsNotMatchException;
+import com.cinerama.backend.exception.user.UserAlreadyExistsException;
 import com.cinerama.backend.exception.user.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -406,4 +407,11 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExists(UserAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ErrorCode.USER_ALREADY_EXISTS, ex.getMessage()));
+    }
+
 }
