@@ -1,5 +1,6 @@
 package com.cinerama.backend.controller;
 
+import com.cinerama.backend.dto.UserProfileResponse;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.UserService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -91,20 +93,23 @@ public class UserController {
      * @see SecurityContextHolder for Spring Security context management
      */
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser() {
-        // Extract authenticated user's email from Spring Security context
-        // This email was set during JWT token validation in JwtAuthenticationFilter
-        String email = (String) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal();
+    public ResponseEntity<UserProfileResponse> getCurrentUser(Authentication authentication) {
+        //  Extrae el email desde el JWT ya validado
+        String email = (String) authentication.getPrincipal();
 
-        // Fetch user details from database using the authenticated email
+        //  Busca el usuario en la base de datos
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        // Return complete user profile
-        // TODO: Create UserProfileResponse DTO to exclude password and other sensitive fields
-        return ResponseEntity.ok(user);
+        //  Crea el objeto DTO para devolver solo los datos necesarios
+        UserProfileResponse response = new UserProfileResponse(
+                user.getName(),
+                user.getEmail(),
+                user.getRole().getName()
+        );
+
+        //  Devuelve el DTO con código 200
+        return ResponseEntity.ok(response);
     }
 
     /**
