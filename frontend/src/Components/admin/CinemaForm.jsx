@@ -5,6 +5,7 @@ function CinemaForm({ cinema, onSave, onClose }) {
   const [formData, setFormData] = useState({
     name: "",
     address: "",
+    city: "",
     phone: "",
     email: "",
     status: "ACTIVE",
@@ -18,6 +19,7 @@ function CinemaForm({ cinema, onSave, onClose }) {
       setFormData({
         name: cinema.name || "",
         address: cinema.address || "",
+        city: cinema.city || "",
         phone: cinema.phone || "",
         email: cinema.email || "",
         status: cinema.status || "ACTIVE",
@@ -53,6 +55,10 @@ function CinemaForm({ cinema, onSave, onClose }) {
       newErrors.address = "La dirección es requerida";
     }
 
+    if (!formData.city.trim()) {
+      newErrors.city = "La ciudad es requerida";
+    }
+
     if (!formData.phone.trim()) {
       newErrors.phone = "El teléfono es requerido";
     }
@@ -82,6 +88,7 @@ function CinemaForm({ cinema, onSave, onClose }) {
     const cinemaData = {
       name: formData.name.trim(),
       address: formData.address.trim(),
+      city: formData.city.trim(),
       phone: formData.phone.trim(),
       email: formData.email.trim(),
       status: formData.status,
@@ -150,6 +157,22 @@ function CinemaForm({ cinema, onSave, onClose }) {
             />
             {errors.address && (
               <span className="error-message">{errors.address}</span>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="city">Ciudad *</label>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              className={errors.city ? "error" : ""}
+              placeholder="Ej: Lima"
+            />
+            {errors.city && (
+              <span className="error-message">{errors.city}</span>
             )}
           </div>
 

@@ -4,12 +4,6 @@ const API_ROOMS = "/api/rooms";
 // Configuración para determinar si usar mocks o API real
 const USE_MOCK_DATA = process.env.REACT_APP_USE_MOCKS === 'true';
 
-// Log temporal para debugging
-console.log('🔧 Configuración del servicio:');
-console.log('- NODE_ENV:', process.env.NODE_ENV);
-console.log('- REACT_APP_USE_MOCKS:', process.env.REACT_APP_USE_MOCKS);
-console.log('- USE_MOCK_DATA:', USE_MOCK_DATA);
-
 // Helper for auth headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
@@ -31,28 +25,19 @@ export const fetchCinemas = async () => {
 };
 
 export const createCinema = async (cinemaData) => {
-  console.log('🎬 createCinema llamado. USE_MOCK_DATA:', USE_MOCK_DATA);
-  
   if (USE_MOCK_DATA) {
-    console.log('📝 Usando MOCK DATA - no se enviará a la BD');
     return Promise.resolve({
       ...cinemaData,
       id: Date.now(), // Simular ID generado por el backend
     });
   }
   
-  console.log('🌐 Usando API REAL - enviando a la BD');
   try {
-    console.log('Enviando datos a:', API_CINEMAS);
-    console.log('Datos del cine:', cinemaData);
-    
     const res = await fetch(API_CINEMAS, {
       method: "POST",
       headers: getAuthHeaders(),
       body: JSON.stringify(cinemaData),
     });
-    
-    console.log('Respuesta del servidor:', res.status, res.statusText);
     
     if (!res.ok) {
       let errorMessage = `Error creating cinema: ${res.status} ${res.statusText}`;
@@ -83,7 +68,6 @@ export const createCinema = async (cinemaData) => {
     }
     
     const result = await res.json();
-    console.log('Cine creado exitosamente:', result);
     return result;
   } catch (error) {
     console.error('Error en createCinema:', error);
@@ -188,6 +172,7 @@ export const getMockCinemas = () => {
       id: 1,
       name: "Cinerama Miraflores",
       address: "Av. José Larco 1232, Miraflores",
+      city: "Lima",
       phone: "+51 1 234-5678",
       email: "miraflores@cinerama.pe",
       capacity: 1200,
@@ -197,6 +182,7 @@ export const getMockCinemas = () => {
       id: 2,
       name: "Cinerama San Miguel",
       address: "Av. La Marina 2355, San Miguel",
+      city: "Lima",
       phone: "+51 1 234-5679",
       email: "sanmiguel@cinerama.pe",
       capacity: 900,
@@ -206,6 +192,7 @@ export const getMockCinemas = () => {
       id: 3,
       name: "Cinerama Plaza Norte",
       address: "Av. Túpac Amaru 899, Independencia",
+      city: "Lima",
       phone: "+51 1 234-5680",
       email: "plazanorte@cinerama.pe",
       capacity: 1500,

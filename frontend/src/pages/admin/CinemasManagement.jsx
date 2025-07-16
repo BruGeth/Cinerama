@@ -74,10 +74,8 @@ function CinemasManagement() {
   };
 
   const handleSaveCinema = async (cinemaData) => {
-    console.log('🚀 handleSaveCinema llamado con:', cinemaData);
     try {
       if (editingCinema) {
-        console.log('📝 Editando cine existente:', editingCinema.id);
         // Editar cine existente
         const updatedCinema = await updateCinema(editingCinema.id, cinemaData);
         setCinemas(
@@ -88,16 +86,13 @@ function CinemasManagement() {
           )
         );
       } else {
-        console.log('✨ Creando nuevo cine');
         // Crear nuevo cine
         const newCinema = await createCinema(cinemaData);
-        console.log('✅ Cine creado exitosamente:', newCinema);
         setCinemas([...cinemas, newCinema]);
       }
       setShowCinemaForm(false);
       setEditingCinema(null);
     } catch (error) {
-      console.error('❌ Error en handleSaveCinema:', error);
       alert("Error al guardar el cine: " + error.message);
     }
   };
