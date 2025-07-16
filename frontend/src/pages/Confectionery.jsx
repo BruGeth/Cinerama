@@ -7,7 +7,7 @@ Cinerama Confectionery Page - React Component
 - Shows modals for login, summary, and purchase success
 - All logic and UI changes are clearly commented
 ===========================*/
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/Confectionery.css';
 import { useNavigate } from "react-router-dom";
 
@@ -234,27 +234,6 @@ const Confectionery = () => {
     }
   };
 
-  // --- Handle old direct purchase (for compatibility, not used with PayPal) ---
-  const handleBuy = async () => {
-    try {
-      // Send selected products to backend to update stock
-      await fetch('/api/confectionery-purchase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: selectedItems })
-      });
-      // Refresh products to update stock
-      const res = await fetch("/api/confectionery-products");
-      const data = await res.json();
-      setProducts(data);
-      setSelectedItems([]); // Clear cart
-      setShowSummary(false); // Close summary modal
-      setShowSuccess(true);  // Show success modal
-    } catch (error) {
-      alert("Error processing purchase. Please try again.");
-    }
-  };
-
   // --- Render UI ---
   return (
     <div className="confectionery-container">
@@ -326,7 +305,7 @@ const Confectionery = () => {
           className="finalize-btn"
           onClick={() => setShowSummary(true)}
         >
-          Finalize
+          Finalizar
         </button>
       )}
 
