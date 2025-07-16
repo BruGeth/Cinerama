@@ -42,7 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @param amountInSoles the amount in Peruvian Soles
      * @return the equivalent amount in US Dollars, rounded to two decimals
      */
-    private Double convertSolesToDollars(Double amountInSoles) {
+    public Double convertSolesToDollars(Double amountInSoles) {
         double exchangeRate = 0.2818;
         return Math.round(amountInSoles * exchangeRate * 100.0) / 100.0;
     }
@@ -129,22 +129,29 @@ public class PaymentServiceImpl implements PaymentService {
 
             Payment payment = captureService.executePayment(paymentId, payerId);
 
-            // Prevent duplicate entries by checking for existing PayPal order ID
-            if (orderRepository.existsByPaypalOrderId(payment.getId())) {
-                logger.warn("⚠️ Duplicate order capture attempt detected: {}", payment.getId());
+            // Check if the order already exists by PayPal order ID
+            Order order = orderRepository.findByPaypalOrderId(payment.getId()).orElse(null);
+            if (order != null) {
+                // Update existing order with PayPal payer email and status
+                order.setPayerEmail(payment.getPayer().getPayerInfo().getEmail());
+                order.setStatus(payment.getState());
+                orderRepository.save(order);
+                logger.info("✅ Updated existing order with PayPal payer email: {}", order.getPayerEmail());
                 return ResponseEntity.ok(Map.of(
                         "code", "DUPLICATE_ORDER",
                         "message", "This PayPal order has already been captured.",
-                        "status", "already_completed"
+                        "status", "already_completed",
+                        "payer", payment.getPayer().getPayerInfo().getEmail()
                 ));
             }
 
-            // Save order details to the database
-            Order order = Order.builder()
+            // Save new order details to the database
+            order = Order.builder()
                     .paypalOrderId(payment.getId())
                     .amount(new BigDecimal(payment.getTransactions().get(0).getAmount().getTotal()))
                     .currency(payment.getTransactions().get(0).getAmount().getCurrency())
                     .status(payment.getState())
+                    // Include buyer's email for better tracking and auditability
                     .payerEmail(payment.getPayer().getPayerInfo().getEmail())
                     .timestamp(LocalDateTime.now())
                     .build();
