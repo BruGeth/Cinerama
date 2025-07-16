@@ -1,15 +1,20 @@
+/* ===========================
+Cinerama Confectionery Section Styles
+=========================== */
+
 /* Main container for the confectionery section */
 .confectionery-container {
   max-width: 1200px; /* Limits the width of the container */
   margin: 0 auto; /* Centers the container horizontally */
   padding: 40px 20px; /* Adds padding inside the container */
-  font-family: 'Segoe UI', sans-serif; /* Font style */
-  color:#333
+  font-family: 'Segoe UI', sans-serif; /* Font style for the section */
+  color: #333; /* Main text color */
 }
+
 /* Title of the section */
 .confectionery-container .confectionery-title {
   text-align: center; /* Center the text */
-  color: #d70000; /* Red color */
+  color: #d70000; /* Red color for the title */
   font-size: 2.5rem; /* Large font size */
   font-weight: 800; /* Very bold text */
   margin-bottom: 10px; /* Space below the title */
@@ -130,7 +135,7 @@
   box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3); /* Subtle red shadow */
 }
 
-/* Glowing shimmer background effect */
+/* Glowing shimmer background effect for product button */
 .confectionery-container .product-button::before {
   content: "";
   position: absolute;
@@ -156,31 +161,39 @@
   box-shadow: 0 8px 18px rgba(255, 0, 0, 0.5); /* Stronger shadow */
 }
 
-/* Click effect */
+/* Click effect for product button */
 .confectionery-container .product-button:active {
   transform: scale(0.95); /* Slight shrink on click */
   box-shadow: 0 2px 6px rgba(255, 0, 0, 0.3); /* Lighter shadow */
 }
 
-/* Panel lateral derecho para el ticket */
+/* Right side panel for the ticket/summary */
 .side-panel {
-  position: fixed;
+  position: fixed; /* Fixed to the right */
   top: 100px;
   right: 0;
   width: 340px;
   max-width: 95vw;
-  background: #fffbe6;
-  border-left: 2px solid #ffe08a;
+  background: #fffbe6; /* Light yellow background */
+  border-left: 2px solid #ffe08a; /* Yellow border */
   border-top-left-radius: 18px;
   border-bottom-left-radius: 18px;
-  box-shadow: -4px 0 16px rgba(215, 0, 0, 0.08);
+  box-shadow: -4px 0 16px rgba(215, 0, 0, 0.08); /* Subtle shadow */
   z-index: 200;
   padding: 1.5rem 1.2rem;
-  animation: ticketFadeIn 0.5s;
+  animation: ticketFadeIn 0.5s; /* Fade in animation */
   transition: box-shadow 0.3s;
 }
+
+/* Responsive: side panel becomes static and full width on small screens */
 @media (max-width: 900px) {
-  .side-panel { position: static; width: 100%; border-radius: 0; box-shadow: none; border-left: none; }
+  .side-panel {
+    position: static;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    border-left: none;
+  }
 }
 
 /* Each item row inside the side panel */
@@ -195,11 +208,11 @@
   transition: background 0.3s; /* Smooth background on hover */
 }
 
+/* Highlight item row on hover */
 .panel-item:hover {
   background: #ffeaea; /* Highlight on hover */
 }
 
-/* Notice for ticket information in the side panel */
 /* Notice for ticket information in the side panel */
 .ticket-notice {
   font-size: 1rem; /* Slightly larger text */
@@ -232,6 +245,7 @@
   letter-spacing: 0.02em; /* Slight letter spacing */
   transition: color 0.3s; /* Smooth color transition */
 }
+
 /* Modal for login warning: centered popup with dark background overlay */
 .login-warning-modal {
   position: fixed;
@@ -267,24 +281,24 @@
 
 /* Register button: yellow gradient and brown text */
 .modal-content .register-btn {
-  background: linear-gradient(90deg, #ffe08a, #ffd600);
-  color: #7a5a00;
+  background: linear-gradient(90deg, #ffe08a, #ffd600); /* Yellow gradient */
+  color: #7a5a00; /* Brown text */
 }
 
 /* Register button hover effect: solid yellow */
 .modal-content .register-btn:hover {
-  background: #ffd600;
+  background: #ffd600; /* Solid yellow */
 }
 
 /* Cancel button: red gradient and white text */
 .modal-content .cancel-btn {
-  background: linear-gradient(90deg, #ff4e4e, #cc0000);
-  color: #fff;
+  background: linear-gradient(90deg, #ff4e4e, #cc0000); /* Red gradient */
+  color: #fff; /* White text */
 }
 
 /* Cancel button hover effect: solid red */
 .modal-content .cancel-btn:hover {
-  background: #cc0000;
+  background: #cc0000; /* Solid red */
 }
 
 /* Ticket chat panel (legacy, now replaced by side-panel) */
@@ -306,10 +320,11 @@
 
 /* Animation for ticket panel appearance */
 @keyframes ticketFadeIn {
-  from { opacity: 0; transform: translateY(40px);}
+  from { opacity: 0; transform: translateY(40px);} 
   to { opacity: 1; transform: translateY(0);}
 }
-/* Quantity controls styling */
+
+/* Quantity controls styling for product selection */
 .quantity-controls {
   display: flex;
   align-items: center;
@@ -317,6 +332,8 @@
   gap: 10px;
   margin-top: 10px;
 }
+
+/* Button for increasing/decreasing quantity */
 .quantity-btn {
   background: #ffd600;
   color: #7a5a00;
@@ -329,17 +346,23 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
+/* Disabled state for quantity button */
 .quantity-btn:disabled {
   background: #eee;
   color: #bbb;
   cursor: not-allowed;
 }
+
+/* Display for the quantity count */
 .quantity-count {
   min-width: 24px;
   text-align: center;
   font-weight: 700;
   font-size: 1.1rem;
 }
+
+/* Button to finalize the purchase */
 .finalize-btn {
   position: fixed;
   bottom: 32px;
@@ -356,11 +379,45 @@
   z-index: 2100;
   transition: background 0.2s;
 }
+
+/* Hover effect for finalize button */
 .finalize-btn:hover {
   background: #ffd600;
 }
 
-/* Shimmer keyframe animation */
+/* Row for displaying both PEN and USD totals in a single line */
+.total-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between amounts and separator */
+  justify-content: flex-end; /* Align to the right (optional) */
+  margin-top: 2rem;
+  margin-bottom: 10px;
+}
+
+/* Style for the PEN total */
+.total-row .total {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #d70000;
+  margin: 0;
+}
+
+/* Separator between totals */
+.total-row .total-separator {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* Style for the USD total */
+.total-row .total-usd {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: blue; /* You can change this to #666 for gray if you prefer */
+  margin: 0;
+}
+
+/* Shimmer keyframe animation for glowing button effect */
 @keyframes shimmer {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
