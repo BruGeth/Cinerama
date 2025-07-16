@@ -1,3 +1,12 @@
+/* ===========================
+Cinerama Confectionery Page - React Component
+===========================
+- Handles category/product fetching, selection, and order summary
+- Integrates PayPal payment flow with currency conversion (PEN to USD)
+- Prevents duplicate payment processing on reload
+- Shows modals for login, summary, and purchase success
+- All logic and UI changes are clearly commented
+===========================*/
 import React, { useState, useEffect } from 'react';
 import '../styles/Confectionery.css';
 import { useNavigate } from "react-router-dom";
@@ -6,20 +15,41 @@ import { useNavigate } from "react-router-dom";
 const Confectionery = () => {
 
   // --- State management ---
-  const [selectedCategory, setSelectedCategory] = useState("Todos"); // Currently selected category
-  const [categories, setCategories] = useState([{ id: 0, name: "Todos" }]); // List of categories
-  const [products, setProducts] = useState([]); // List of products
-  const [loading, setLoading] = useState(true); // Loading state
 
-  // Side panel state
-  const [selectedItems, setSelectedItems] = useState([]); // Items added to the order
-  // Auth state (simulate user login)
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Should come from auth context or similar
-  const [showLoginWarning, setShowLoginWarning] = useState(false); // Show login warning modal
-  const [showSummary, setShowSummary] = useState(false); // Show summary panel
-  const [showSuccess, setShowSuccess] = useState(false); // Modal de éxito
+  // Currently selected category (default: "Todos" = All)
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
 
-  // Navigation hook
+  // List of categories (fetched from backend)
+  const [categories, setCategories] = useState([{ id: 0, name: "Todos" }]);
+
+  // List of products (fetched from backend)
+  const [products, setProducts] = useState([]);
+
+  // Loading state for product fetching
+  const [loading, setLoading] = useState(true);
+
+  // Items added to the order (side panel/cart)
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  // Simulated user login state (should be replaced by real auth context)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Show login warning modal if user tries to add without logging in
+  const [showLoginWarning, setShowLoginWarning] = useState(false);
+
+  // Show summary modal (order review and payment)
+  const [showSummary, setShowSummary] = useState(false);
+
+  // Show success modal after successful purchase
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  // Show loading indicator for PayPal processing
+  const [showPayPalLoading, setShowPayPalLoading] = useState(false);
+
+  // Prevents duplicate payment processing on reload/redirect
+  const [hasProcessedPayment, setHasProcessedPayment] = useState(false);
+
+  // React Router navigation hook
   const navigate = useNavigate();
 
   // --- Fetch categories from API on mount ---
@@ -27,6 +57,7 @@ const Confectionery = () => {
     fetch("/api/confectionery-categories")
       .then(res => res.json())
       .then(data => {
+        // Add "Todos" (All) as the first category
         setCategories([{ id: 0, name: "Todos" }, ...data]);
       })
       .catch(() => setCategories([{ id: 0, name: "Todos" }]));
@@ -51,7 +82,31 @@ const Confectionery = () => {
     setIsLoggedIn(logged);
   }, []);
 
+  // --- Handle PayPal return (prevents duplicate processing) ---
+  useEffect(() => {
+    // Read PayPal return params from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentId = urlParams.get('paymentId');
+    const payerId = urlParams.get('PayerID');
+    const success = urlParams.get('success');
+    const canceled = urlParams.get('canceled');
+
+    // Immediately clean the URL to avoid reprocessing on reload
+    if (paymentId || payerId || success || canceled) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // If payment was successful and not already processed, complete the purchase
+    if (success === 'true' && paymentId && payerId && !hasProcessedPayment) {
+      setHasProcessedPayment(true);
+      completePayPalPurchase(paymentId, payerId);
+    } else if (canceled === 'true') {
+      alert('Payment canceled');
+    }
+  }, [hasProcessedPayment]);
+
   // --- Filter products by selected category and stock ---
+  // Only show products in stock and matching the selected category
   const filteredProducts = selectedCategory === "Todos"
     ? products.filter(p => p.stock > 0)
     : products.filter(p =>
@@ -60,7 +115,7 @@ const Confectionery = () => {
       p.stock > 0
     );
 
-  // --- Add product to side panel (order) ---
+  // --- Add product to side panel (order/cart) ---
   const handleAddItem = (product) => {
     if (!isLoggedIn) {
       setShowLoginWarning(true);
@@ -71,7 +126,7 @@ const Confectionery = () => {
     setSelectedItems(prevItems => {
       const existing = prevItems.find(item => item.id === product.id);
       if (existing) {
-        // Permite agregar hasta el máximo stock
+        // Allow adding up to the maximum stock
         if (existing.quantity < product.stock) {
           return prevItems.map(item =>
             item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
@@ -79,11 +134,12 @@ const Confectionery = () => {
         }
         return prevItems;
       }
+      // Add new product to the cart
       return [...prevItems, { ...product, quantity: 1 }];
     });
   };
 
-  // --- Remove product from side panel (order) ---
+  // --- Remove product from side panel (order/cart) ---
   const handleRemoveItem = (productId) => {
     const item = selectedItems.find(i => i.id === productId);
     if (!item) return;
@@ -96,7 +152,7 @@ const Confectionery = () => {
         .filter(item => item.quantity > 0)
     );
 
-    // Restore local stock
+    // Restore local stock (optional, for UI feedback)
     setProducts(prev =>
       prev.map(p =>
         p.id === productId ? { ...p, stock: p.stock + 1 } : p
@@ -104,27 +160,98 @@ const Confectionery = () => {
     );
   };
 
-  // --- Calculate total price in real time ---
+  // --- Calculate total price in real time (PEN) ---
   const total = selectedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // --- Handle purchase action ---
+  // --- Convert total to USD for PayPal (using fixed exchange rate) ---
+  const exchangeRate = 0.2818; // 1 sol ≈ 0.2818 USD
+  const totalUSD = Math.round(total * exchangeRate * 100) / 100;
+
+  // --- Handle PayPal purchase (create order and redirect) ---
+  const handlePayPalPurchase = async () => {
+    try {
+      setShowPayPalLoading(true);
+
+      // Prepare PayPal return/cancel URLs
+      const returnUrl = `${window.location.origin}/confectionery?success=true`;
+      const cancelUrl = `${window.location.origin}/confectionery?canceled=true`;
+
+      // Create PayPal order via backend
+      const response = await fetch('/api/confectionery-purchase/paypal/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: selectedItems.map(item => ({
+            productId: item.id, // or "id" depending on backend
+            quantity: item.quantity
+          })),
+          returnUrl,
+          cancelUrl
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error creating PayPal order');
+      }
+
+      const data = await response.json();
+
+      if (data.approval_url) {
+        // Redirect to PayPal approval page
+        window.location.href = data.approval_url;
+      } else {
+        throw new Error('No PayPal URL received');
+      }
+
+    } catch (error) {
+      alert("Error processing PayPal payment: " + error.message);
+      setShowPayPalLoading(false);
+    }
+  };
+
+  // --- Complete PayPal purchase (after redirect) ---
+  const completePayPalPurchase = async (paymentId, payerId) => {
+    try {
+      const response = await fetch('/api/confectionery-purchase/paypal/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentId, payerId })
+      });
+
+      if (response.ok) {
+        // Refresh products to update stock
+        const res = await fetch("/api/confectionery-products");
+        const data = await res.json();
+        setProducts(data);
+        setSelectedItems([]); // Clear cart
+        setShowSummary(false); // Close summary modal
+        setShowSuccess(true);  // Show success modal
+      } else {
+        throw new Error('Error completing purchase');
+      }
+    } catch (error) {
+      alert("Error completing purchase: " + error.message);
+    }
+  };
+
+  // --- Handle old direct purchase (for compatibility, not used with PayPal) ---
   const handleBuy = async () => {
     try {
-      // Envía los productos seleccionados al backend para actualizar el stock
+      // Send selected products to backend to update stock
       await fetch('/api/confectionery-purchase', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: selectedItems })
       });
-      // Refresca productos para ver el nuevo stock
+      // Refresh products to update stock
       const res = await fetch("/api/confectionery-products");
       const data = await res.json();
       setProducts(data);
-      setSelectedItems([]); // Limpia el carrito
-      setShowSummary(false); // Cierra el resumen
-      setShowSuccess(true);  // Muestra el modal de éxito
+      setSelectedItems([]); // Clear cart
+      setShowSummary(false); // Close summary modal
+      setShowSuccess(true);  // Show success modal
     } catch (error) {
-      alert("Error al procesar la compra. Intenta nuevamente.");
+      alert("Error processing purchase. Please try again.");
     }
   };
 
@@ -135,7 +262,7 @@ const Confectionery = () => {
       <h1 className="confectionery-title">Confitería</h1>
       <p className="confectionery-description">Disfruta de nuestros deliciosos snacks...</p>
 
-      {/* Category buttons */}
+      {/* Category buttons (dynamic, with active state) */}
       <div className="category-buttons">
         {categories.map(cat => (
           <button
@@ -150,24 +277,24 @@ const Confectionery = () => {
 
       {/* Product grid or loading message */}
       {loading ? (
-        <p>Cargando productos...</p>
+        <p>Loading products...</p>
       ) : (
         <div className={`product-grid ${selectedCategory !== "Todos" ? "horizontal" : ""}`}>
           {filteredProducts.map((prod) => (
             <div key={prod.id} className="product-card">
-              {/* Imagen del producto */}
+              {/* Product image */}
               <img src={prod.image} alt={prod.name} />
 
-              {/* Nombre del producto */}
+              {/* Product name */}
               <h3>{prod.name}</h3>
 
-              {/* Descripción */}
+              {/* Product description */}
               <p>{prod.description}</p>
 
-              {/* Precio */}
+              {/* Product price */}
               <div className="product-price">S/ {prod.price}</div>
 
-              {/* Controles de cantidad */}
+              {/* Quantity controls (add/remove) */}
               <div className="quantity-controls">
                 <button
                   className="quantity-btn"
@@ -193,32 +320,34 @@ const Confectionery = () => {
         </div>
       )}
 
-      {/* Finalize button */}
+      {/* Finalize button (shows summary modal) */}
       {selectedItems.length > 0 && !showSummary && (
         <button
           className="finalize-btn"
           onClick={() => setShowSummary(true)}
         >
-          Finalizar
+          Finalize
         </button>
       )}
 
-      {/* Login warning modal */}
+      {/* Login warning modal (shown if user tries to add without logging in) */}
       {showLoginWarning && (
         <div className="login-warning-modal">
           <div className="modal-content">
-            <p style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '1.5rem' }}>Debes iniciar sesión para agregar productos.</p>
-            <button className="register-btn" onClick={() => navigate("/login")}>Ir al Inicio de Sesión</button>
-            <button className="cancel-btn" onClick={() => setShowLoginWarning(false)}>Cancelar</button>
+            <p style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '1.5rem' }}>
+              You must be logged in to add products.
+            </p>
+            <button className="register-btn" onClick={() => navigate("/login")}>Go to Login</button>
+            <button className="cancel-btn" onClick={() => setShowLoginWarning(false)}>Cancel</button>
           </div>
         </div>
       )}
 
-      {/* Summary modal */}
+      {/* Summary modal (shows order details and PayPal button) */}
       {showSummary && (
         <div className="login-warning-modal">
           <div className="modal-content">
-            <h2 style={{ marginBottom: '1rem' }}>Resumen de tu compra</h2>
+            <h2 style={{ marginBottom: '1rem' }}>Order Summary</h2>
             <ul style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
               {selectedItems.map(item => (
                 <li key={item.id}>
@@ -226,24 +355,30 @@ const Confectionery = () => {
                 </li>
               ))}
             </ul>
+            {/* Unified total row: shows both PEN and USD in a single line */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-              <p className="total" style={{ marginBottom: '1.5rem', fontWeight: 700, fontSize: '1.2rem' }}>Total: S/. {total.toFixed(2)}</p>
+              <div className="total-row">
+                <span className="total">Total: S/. {total.toFixed(2)}</span>
+                <span className="total-separator">|</span>
+                <span className="total-usd">≈ USD {totalUSD.toFixed(2)}</span>
+              </div>
               <div>
+                {/* PayPal button */}
                 <button
                   className="register-btn"
-                  style={{ marginRight: '0.5rem' }}
-                  onClick={async () => {
-                    await handleBuy(); // lógica para actualizar stock
-                    // No redirige, solo muestra el modal de éxito
-                  }}
+                  style={{ marginRight: '0.5rem', backgroundColor: '#0070ba', borderColor: '#0070ba' }}
+                  onClick={handlePayPalPurchase}
+                  disabled={showPayPalLoading}
                 >
-                  Comprar
+                  {showPayPalLoading ? 'Processing...' : 'Pay with PayPal'}
                 </button>
+                {/* Cancel button */}
                 <button
                   className="cancel-btn"
                   onClick={() => setShowSummary(false)}
+                  disabled={showPayPalLoading}
                 >
-                  Cancelar
+                  Cancel
                 </button>
               </div>
             </div>
@@ -251,20 +386,22 @@ const Confectionery = () => {
         </div>
       )}
 
-      {/* Modal de éxito */}
+      {/* Success modal (shown after successful purchase) */}
       {showSuccess && (
         <div className="login-warning-modal">
           <div className="modal-content">
-            <h2 style={{ marginBottom: '1rem', color: '#28a745' }}>¡Compra exitosa!</h2>
-            <p style={{ marginBottom: '1.5rem' }}>Tu compra fue realizada con éxito. ¡Gracias por tu preferencia!</p>
+            <h2 style={{ marginBottom: '1rem', color: '#28a745' }}>Purchase Successful!</h2>
+            <p style={{ marginBottom: '1.5rem' }}>
+              Your purchase was completed successfully. Thank you for your preference!
+            </p>
             <button
               className="register-btn"
               onClick={() => {
                 setShowSuccess(false);
-                navigate("/"); // Redirige a la página de inicio
+                navigate("/"); // Redirect to home page
               }}
             >
-              Cerrar
+              Close
             </button>
           </div>
         </div>
