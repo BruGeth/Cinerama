@@ -50,7 +50,7 @@ public class MovieServiceImpl implements MovieService {
         movie.setDescriptionMovie(movieRequest.getDescriptionMovie());
         movie.setRating(movieRequest.getRating());
         movie.setGenre(genreRepository.findById(movieRequest.getGenreId()).orElse(null));
-        movie.setImageUrl(movieRequest.getImageUrl());
+        movie.setPosterUrl(movieRequest.getImageUrl());
         movie.setDuration(movieRequest.getDuration());
         movie.setTrailerUrl(movieRequest.getTrailerUrl());
 
@@ -71,7 +71,7 @@ public class MovieServiceImpl implements MovieService {
         dto.setDescriptionMovie(movie.getDescriptionMovie());
         dto.setRating(movie.getRating());
         dto.setGenreName(movie.getGenre() != null ? movie.getGenre().getName() : null);
-        dto.setImageUrl(movie.getImageUrl());
+        dto.setImageUrl(movie.getPosterUrl());
         dto.setDuration(movie.getDuration());
         dto.setTrailerUrl(movie.getTrailerUrl());
         return dto;
@@ -85,7 +85,7 @@ public class MovieServiceImpl implements MovieService {
         movie.setRating(dto.getRating());
         // Debes buscar el Genre por id o nombre según lo que recibas en MovieRequest
         movie.setGenre(genreRepository.findById(dto.getGenreId()).orElse(null));
-        movie.setImageUrl(dto.getImageUrl());
+        movie.setPosterUrl(dto.getImageUrl());
         movie.setDuration(dto.getDuration());
         movie.setTrailerUrl(dto.getTrailerUrl());
         return movie;
