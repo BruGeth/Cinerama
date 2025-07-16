@@ -286,7 +286,8 @@ function CinemasManagement() {
                     <th>Cine</th>
                     <th>Capacidad</th>
                     <th>Tipo</th>
-                    <th>Formato</th>
+                    <th>Tecnologías</th>
+                    <th>Sistema de Audio</th>
                     <th>Asientos Disponibles</th>
                     <th>Estado</th>
                     <th>Acciones</th>
@@ -309,9 +310,16 @@ function CinemasManagement() {
                         </span>
                       </td>
                       <td className={styles.format}>
-                        {room.format === 'TWO_D' ? '2D' : 
-                         room.format === 'THREE_D' ? '3D' : 
-                         room.format === 'FOUR_D_X' ? '4DX' : room.format}
+                        {room.technology && room.technology.length > 0 
+                          ? room.technology.map(tech => 
+                              tech === 'TWO_D' ? '2D' : 
+                              tech === 'THREE_D' ? '3D' : 
+                              tech === 'FOUR_DX' ? '4DX' : tech
+                            ).join(', ')
+                          : 'N/A'}
+                      </td>
+                      <td className={styles.audioSystem}>
+                        {room.audioSystem || 'N/A'}
                       </td>
                       <td className={styles.availableSeats}>
                         {room.availableSeats || room.capacity}

@@ -303,6 +303,12 @@
     font-weight: 500;
 }
 
+.audioSystem {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
 .availableSeats {
     font-size: 0.9rem;
     color: #28a745;
