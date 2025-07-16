@@ -175,7 +175,6 @@ export const getMockCinemas = () => {
       city: "Lima",
       phone: "+51 1 234-5678",
       email: "miraflores@cinerama.pe",
-      capacity: 1200,
       status: "ACTIVE",
     },
     {
@@ -185,7 +184,6 @@ export const getMockCinemas = () => {
       city: "Lima",
       phone: "+51 1 234-5679",
       email: "sanmiguel@cinerama.pe",
-      capacity: 900,
       status: "ACTIVE",
     },
     {
@@ -195,7 +193,6 @@ export const getMockCinemas = () => {
       city: "Lima",
       phone: "+51 1 234-5680",
       email: "plazanorte@cinerama.pe",
-      capacity: 1500,
       status: "ACTIVE",
     },
   ]);
