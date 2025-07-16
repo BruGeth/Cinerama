@@ -219,7 +219,6 @@ function CinemasManagement() {
                       <p className={styles.cinemaAddress}>📍 {cinema.address}</p>
                       <p className={styles.cinemaPhone}>📞 {cinema.phone}</p>
                       <p className={styles.cinemaEmail}>✉️ {cinema.email}</p>
-                      <p className={styles.cinemaCapacity}>🏢 Capacidad: {cinema.capacity} personas</p>
                     </div>
 
                     <div className={styles.cinemaStats}>
