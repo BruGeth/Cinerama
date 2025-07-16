@@ -9,7 +9,6 @@ function CinemaForm({ cinema, onSave, onClose }) {
     phone: "",
     email: "",
     status: "ACTIVE",
-    capacity: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -23,7 +22,6 @@ function CinemaForm({ cinema, onSave, onClose }) {
         phone: cinema.phone || "",
         email: cinema.email || "",
         status: cinema.status || "ACTIVE",
-        capacity: cinema.capacity?.toString() || "",
       });
     }
   }, [cinema]);
@@ -69,10 +67,6 @@ function CinemaForm({ cinema, onSave, onClose }) {
       newErrors.email = "El email no es válido";
     }
 
-    if (!formData.capacity || Number.parseInt(formData.capacity) <= 0) {
-      newErrors.capacity = "La capacidad debe ser mayor a 0";
-    }
-
     return newErrors;
   };
 
@@ -92,7 +86,6 @@ function CinemaForm({ cinema, onSave, onClose }) {
       phone: formData.phone.trim(),
       email: formData.email.trim(),
       status: formData.status,
-      capacity: Number.parseInt(formData.capacity),
     };
 
     onSave(cinemaData);
@@ -109,39 +102,20 @@ function CinemaForm({ cinema, onSave, onClose }) {
         </div>
 
         <form onSubmit={handleSubmit} className="cinema-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="name">Nombre del Cine *</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={errors.name ? "error" : ""}
-                placeholder="Ej: Cinerama Miraflores"
-              />
-              {errors.name && (
-                <span className="error-message">{errors.name}</span>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="capacity">Capacidad Total *</label>
-              <input
-                type="number"
-                id="capacity"
-                name="capacity"
-                value={formData.capacity}
-                onChange={handleChange}
-                className={errors.capacity ? "error" : ""}
-                placeholder="Ej: 250"
-                min="1"
-              />
-              {errors.capacity && (
-                <span className="error-message">{errors.capacity}</span>
-              )}
-            </div>
+          <div className="form-group">
+            <label htmlFor="name">Nombre del Cine *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className={errors.name ? "error" : ""}
+              placeholder="Ej: Cinerama Miraflores"
+            />
+            {errors.name && (
+              <span className="error-message">{errors.name}</span>
+            )}
           </div>
 
           <div className="form-group">
