@@ -1,0 +1,388 @@
+.cinemasManagement {
+    max-width: 1400px;
+}
+
+.pageHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.pageHeader h2 {
+    font-size: 2rem;
+    color: #333;
+    margin: 0;
+}
+
+.headerActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.tabBtn {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #e0e0e0;
+    background: white;
+    color: #666;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.tabBtn.active {
+    background-color: #e30000;
+    color: white;
+    border-color: #e30000;
+}
+
+.tabBtn:hover:not(.active) {
+    border-color: #e30000;
+    color: #e30000;
+}
+
+.sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sectionHeader h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.addBtn {
+    background-color: #e30000;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.addBtn:hover {
+    background-color: #c50000;
+}
+
+/* Cinemas Grid */
+.cinemasGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.cinemaCard {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.cinemaCard:hover {
+    transform: translateY(-2px);
+}
+
+.cinemaHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.cinemaHeader h3 {
+    margin: 0;
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.statusBadge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.statusBadge.active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.statusBadge.inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.statusBadge.maintenance {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.cinemaInfo {
+    margin-bottom: 1.5rem;
+}
+
+.cinemaInfo p {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.cinemaAddress {
+    font-weight: 500;
+}
+
+.cinemaCapacity {
+    font-weight: 500;
+}
+
+.cinemaStats {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.statNumber {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e30000;
+}
+
+.statLabel {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.cinemaActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.editBtn,
+.deleteBtn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.editBtn {
+    background-color: #f0b000;
+    color: #000;
+}
+
+.editBtn:hover {
+    background-color: #d9a000;
+}
+
+.deleteBtn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.deleteBtn:hover:not(:disabled) {
+    background-color: #c82333;
+}
+
+.deleteBtn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Rooms Section */
+.filters {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.cinemaFilter {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+}
+
+.cinemaFilter:focus {
+    outline: none;
+    border-color: #e30000;
+}
+
+.roomsTable {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.roomsTable table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.roomsTable th {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.roomsTable td {
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.roomsTable tr:hover {
+    background-color: #f8f9fa;
+}
+
+.roomName {
+    font-weight: 600;
+    color: #333;
+}
+
+.cinemaName {
+    color: #666;
+}
+
+.roomCapacity {
+    font-weight: 500;
+}
+
+.typeBadge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.typeBadge.standard {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.typeBadge.vip {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.typeBadge.imax {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.format {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.availableSeats {
+    font-size: 0.9rem;
+    color: #28a745;
+    font-weight: 600;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.editBtnSmall,
+.deleteBtnSmall {
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.editBtnSmall {
+    background-color: #f0b000;
+    color: #000;
+}
+
+.editBtnSmall:hover {
+    background-color: #d9a000;
+}
+
+.deleteBtnSmall {
+    background-color: #dc3545;
+    color: white;
+}
+
+.deleteBtnSmall:hover {
+    background-color: #c82333;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    font-style: italic;
+}
+
+.loading {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .pageHeader {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .sectionHeader {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .cinemasGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .cinemaActions {
+        flex-direction: column;
+    }
+
+    .roomsTable {
+        overflow-x: auto;
+    }
+
+    .roomsTable table {
+        min-width: 800px;
+    }
+}
