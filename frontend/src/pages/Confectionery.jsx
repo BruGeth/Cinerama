@@ -277,7 +277,7 @@ const Confectionery = () => {
 
       {/* Product grid or loading message */}
       {loading ? (
-        <p>Loading products...</p>
+        <p>Cargando productos...</p>
       ) : (
         <div className={`product-grid ${selectedCategory !== "Todos" ? "horizontal" : ""}`}>
           {filteredProducts.map((prod) => (
@@ -335,10 +335,10 @@ const Confectionery = () => {
         <div className="login-warning-modal">
           <div className="modal-content">
             <p style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: '1.5rem' }}>
-              You must be logged in to add products.
+              Debes iniciar sesión para agregar productos.
             </p>
-            <button className="register-btn" onClick={() => navigate("/login")}>Go to Login</button>
-            <button className="cancel-btn" onClick={() => setShowLoginWarning(false)}>Cancel</button>
+            <button className="register-btn" onClick={() => navigate("/login")}>Ir al Inicio de Sesión</button>
+            <button className="cancel-btn" onClick={() => setShowLoginWarning(false)}>Cancelar</button>
           </div>
         </div>
       )}
@@ -347,7 +347,7 @@ const Confectionery = () => {
       {showSummary && (
         <div className="login-warning-modal">
           <div className="modal-content">
-            <h2 style={{ marginBottom: '1rem' }}>Order Summary</h2>
+            <h2 style={{ marginBottom: '1rem' }}>Resumen de tu compra</h2>
             <ul style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
               {selectedItems.map(item => (
                 <li key={item.id}>
@@ -370,7 +370,7 @@ const Confectionery = () => {
                   onClick={handlePayPalPurchase}
                   disabled={showPayPalLoading}
                 >
-                  {showPayPalLoading ? 'Processing...' : 'Pay with PayPal'}
+                  {showPayPalLoading ? 'Procesando...' : 'Pagar con PayPal'}
                 </button>
                 {/* Cancel button */}
                 <button
@@ -378,7 +378,7 @@ const Confectionery = () => {
                   onClick={() => setShowSummary(false)}
                   disabled={showPayPalLoading}
                 >
-                  Cancel
+                  Cancelar
                 </button>
               </div>
             </div>
@@ -390,18 +390,18 @@ const Confectionery = () => {
       {showSuccess && (
         <div className="login-warning-modal">
           <div className="modal-content">
-            <h2 style={{ marginBottom: '1rem', color: '#28a745' }}>Purchase Successful!</h2>
+            <h2 style={{ marginBottom: '1rem', color: '#28a745' }}>¡Compra exitosa!</h2>
             <p style={{ marginBottom: '1.5rem' }}>
-              Your purchase was completed successfully. Thank you for your preference!
+              Tu compra fue realizada con éxito. ¡Gracias por tu preferencia!
             </p>
             <button
               className="register-btn"
               onClick={() => {
                 setShowSuccess(false);
-                navigate("/"); // Redirect to home page
+                navigate("/"); // Redirige a la página de inicio
               }}
             >
-              Close
+              Cerrar
             </button>
           </div>
         </div>
@@ -410,4 +410,4 @@ const Confectionery = () => {
   );
 };
 
-export default Confectionery;
+export default Confectionery; 
