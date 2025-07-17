@@ -4,9 +4,10 @@ import com.cinerama.backend.dto.ConfectioneryPurchaseRequest;
 import com.cinerama.backend.dto.ConfectioneryPurchaseItemRequest;
 import com.cinerama.backend.entity.ConfectioneryProduct;
 import com.cinerama.backend.entity.Order;
-import com.cinerama.backend.entity.CartItem;
+import com.cinerama.backend.entity.ConfectioneryOrderItem;
 import com.cinerama.backend.repository.ConfectioneryProductRepository;
 import com.cinerama.backend.repository.OrderRepository;
+import com.cinerama.backend.repository.ConfectioneryOrderItemRepository;
 import com.cinerama.backend.service.impl.PaymentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,8 @@ import java.util.Map;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
- * Controller for handling confectionery purchases, including direct and PayPal flows.
+ * Controller for handling confectionery purchases, including direct and PayPal
+ * flows.
  * 
  * Key improvements:
  * - Added PayPal integration for confectionery purchases.
@@ -38,6 +40,7 @@ public class ConfectioneryPurchaseController {
     private final ConfectioneryProductRepository productRepository;
     private final PaymentServiceImpl paymentService;
     private final OrderRepository orderRepository;
+    private final ConfectioneryOrderItemRepository confectioneryOrderItemRepository;
 
     /**
      * Handles direct confectionery purchases (non-PayPal).
@@ -51,6 +54,7 @@ public class ConfectioneryPurchaseController {
         try {
             // Validate stock and calculate total in PEN
             double totalAmountPEN = 0.0;
+            List<ConfectioneryOrderItem> orderItems = new ArrayList<>();
             for (ConfectioneryPurchaseItemRequest item : request.getItems()) {
                 ConfectioneryProduct product = productRepository.findById(item.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found: " + item.getProductId()));
@@ -60,6 +64,15 @@ public class ConfectioneryPurchaseController {
                 totalAmountPEN += product.getPrice() * item.getQuantity();
                 product.setStock(product.getStock() - item.getQuantity());
                 productRepository.save(product);
+            // Create the confectionery item for the order
+                ConfectioneryOrderItem orderItem = ConfectioneryOrderItem.builder()
+                    .product(product)
+                    .productName(product.getName())
+                    .quantity(item.getQuantity())
+                    .unitPrice(product.getPrice())
+                    .totalPrice(product.getPrice() * item.getQuantity())
+                    .build();
+                orderItems.add(orderItem);
             }
 
             // Convert total to USD using shared service method
@@ -71,14 +84,20 @@ public class ConfectioneryPurchaseController {
                 payerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
             }
 
-            // Create a paid order in USD
+           // Create a paid order in USD and associate the confectionery items
             Order order = new Order();
             order.setStatus("pagada");
             order.setTimestamp(LocalDateTime.now());
             order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
-            order.setPayerEmail(payerEmail); // Register buyer's email for tracking and auditability
+            order.setPayerEmail(payerEmail);
+            order.setConfectioneryItems(orderItems);
+            for (ConfectioneryOrderItem orderItem : orderItems) {
+                orderItem.setOrder(order);
+            }
             orderRepository.save(order);
+            // Save the confectionery items
+            confectioneryOrderItemRepository.saveAll(orderItems);
 
             return ResponseEntity.ok(Map.of(
                 "message", "Purchase completed successfully",
@@ -105,40 +124,46 @@ public class ConfectioneryPurchaseController {
         try {
             // Validate stock and calculate total in PEN
             double totalAmountPEN = 0.0;
-            List<CartItem> cartItems = new ArrayList<>();
+            List<ConfectioneryOrderItem> orderItems = new ArrayList<>();
             for (ConfectioneryPurchaseItemRequest item : request.getItems()) {
                 ConfectioneryProduct product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found: " + item.getProductId()));
+                        .orElseThrow(() -> new RuntimeException("Product not found: " + item.getProductId()));
                 if (product.getStock() < item.getQuantity()) {
                     return ResponseEntity.badRequest().body("Insufficient stock for: " + product.getName());
                 }
                 totalAmountPEN += product.getPrice() * item.getQuantity();
-                CartItem cartItem = new CartItem();
-                cartItem.setTitle(product.getName());
-                cartItem.setQuantity(item.getQuantity());
-                cartItem.setPrice(product.getPrice());
-                cartItems.add(cartItem);
+                // Create the confectionery item for the order
+                ConfectioneryOrderItem orderItem = ConfectioneryOrderItem.builder()
+                        .product(product)
+                        .productName(product.getName())
+                        .quantity(item.getQuantity())
+                        .unitPrice(product.getPrice())
+                        .totalPrice(product.getPrice() * item.getQuantity())
+                        .build();
+                orderItems.add(orderItem);
             }
 
             // Convert total to USD for PayPal using shared service method
             double totalAmountUSD = paymentService.convertSolesToDollars(totalAmountPEN);
 
-            // Create a local pending order in USD
+            // Create a local pending order in USD and associate the confectionery items
             Order order = new Order();
             order.setStatus("pendiente");
             order.setTimestamp(LocalDateTime.now());
             order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
-            order.setCart(cartItems);
-            for (CartItem cartItem : cartItems) {
-                cartItem.setOrder(order);
+            order.setConfectioneryItems(orderItems);
+            for (ConfectioneryOrderItem orderItem : orderItems) {
+                orderItem.setOrder(order);
             }
             orderRepository.save(order);
+            confectioneryOrderItemRepository.saveAll(orderItems);
 
             // Create PayPal order via payment service
             String returnUrl = request.getReturnUrl();
             String cancelUrl = request.getCancelUrl();
-            ResponseEntity<?> paymentResponse = paymentService.createPayment(totalAmountUSD, "USD", returnUrl, cancelUrl);
+            ResponseEntity<?> paymentResponse = paymentService.createPayment(totalAmountUSD, "USD", returnUrl,
+                    cancelUrl);
             Map<String, String> result = null;
             Object body = paymentResponse.getBody();
             if (body instanceof Map) {
@@ -159,31 +184,32 @@ public class ConfectioneryPurchaseController {
 
     /**
      * Completes the confectionery purchase after successful PayPal payment.
-     * - Checks if the order is already marked as paid to prevent duplicate processing.
+     * - Checks if the order is already marked as paid to prevent duplicate
+     * processing.
      * - If not paid, captures the PayPal payment via the payment service.
      * - Updates the local order status to "PAGADA" (paid).
      * - Deducts stock for each product in the order.
      * - Returns a success message or error as appropriate.
      */
     @PostMapping("/confectionery-purchase/paypal/complete")
-    public ResponseEntity<?> completePayPalPurchase(@RequestBody com.cinerama.backend.dto.PayPalCompleteRequest request) {
+    public ResponseEntity<?> completePayPalPurchase(
+            @RequestBody com.cinerama.backend.dto.PayPalCompleteRequest request) {
         try {
             String paymentId = request.getPaymentId();
             String payerId = request.getPayerId();
-            
+
             // First, check if the order is already paid (prevents duplicate processing)
             Order order = orderRepository.findByPaypalOrderId(paymentId)
-                .orElseThrow(() -> new RuntimeException("Order not found for paymentId: " + paymentId));
-            
+                    .orElseThrow(() -> new RuntimeException("Order not found for paymentId: " + paymentId));
+
             if ("pagada".equals(order.getStatus())) {
                 // If already paid, return success (idempotent)
                 return ResponseEntity.ok(Map.of(
-                    "message", "Purchase was already processed",
-                    "paymentId", paymentId,
-                    "status", "already_completed"
-                ));
+                        "message", "Purchase was already processed",
+                        "paymentId", paymentId,
+                        "status", "already_completed"));
             }
-            
+
             // If not paid, attempt to capture the payment
             ResponseEntity<?> captureResponse = paymentService.capturePayment(paymentId, payerId);
             if (captureResponse.getStatusCode().is2xxSuccessful()) {
@@ -200,20 +226,17 @@ public class ConfectioneryPurchaseController {
                 }
                 order.setPayerEmail(payerEmail); // Save the PayPal payer's email
                 orderRepository.save(order);
-                // Deduct stock for each product in the order
-                for (CartItem item : order.getCart()) {
-                    ConfectioneryProduct product = productRepository.findByName(item.getTitle());
-                    if (product == null) {
-                        throw new RuntimeException("Product not found: " + item.getTitle());
-                    }
+                // Deduct stock for each confectionery product in the order
+                for (ConfectioneryOrderItem item : order.getConfectioneryItems()) {
+                    ConfectioneryProduct product = productRepository.findById(item.getProduct().getId())
+                            .orElseThrow(() -> new RuntimeException("Product not found: " + item.getProduct().getId()));
                     product.setStock(product.getStock() - item.getQuantity());
                     productRepository.save(product);
                 }
                 return ResponseEntity.ok(Map.of(
-                    "message", "Purchase completed successfully",
-                    "paymentId", paymentId,
-                    "status", "completed"
-                ));
+                        "message", "Purchase completed successfully",
+                        "paymentId", paymentId,
+                        "status", "completed"));
             } else {
                 return ResponseEntity.badRequest().body(Map.of("error", "Error processing payment"));
             }
