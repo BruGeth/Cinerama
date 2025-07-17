@@ -278,82 +278,84 @@ function CinemasManagement() {
               </button>
             </div>
 
-            <div className={styles.roomsTable}>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Sala</th>
-                    <th>Cine</th>
-                    <th>Capacidad</th>
-                    <th>Tipo</th>
-                    <th>Tecnologías</th>
-                    <th>Sistema de Audio</th>
-                    <th>Asientos Disponibles</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredRooms.map((room) => (
-                    <tr key={room.id}>
-                      <td className={styles.roomName}>{room.name}</td>
-                      <td className={styles.cinemaName}>{room.cinema?.name || 
-                        cinemas.find(c => c.id === room.cinemaId)?.name || 'N/A'}</td>
-                      <td className={styles.roomCapacity}>
-                        {room.capacity} asientos
-                      </td>
-                      <td>
-                        <span
-                          className={`${styles.typeBadge} ${styles[room.type.toLowerCase()]}`}
-                        >
-                          {room.type}
-                        </span>
-                      </td>
-                      <td className={styles.format}>
-                        {room.technology && room.technology.length > 0 
-                          ? room.technology.map(tech => 
-                              tech === 'TWO_D' ? '2D' : 
-                              tech === 'THREE_D' ? '3D' : 
-                              tech === 'FOUR_DX' ? '4DX' : tech
-                            ).join(', ')
-                          : 'N/A'}
-                      </td>
-                      <td className={styles.audioSystem}>
-                        {room.audioSystem || 'N/A'}
-                      </td>
-                      <td className={styles.availableSeats}>
-                        {room.availableSeats || room.capacity}
-                      </td>
-                      <td>
-                        <span className={`${styles.statusBadge} ${styles[room.status.toLowerCase()]}`}>
-                          {room.status === "ACTIVE" ? "Activa" : 
-                           room.status === "INACTIVE" ? "Inactiva" : "Mantenimiento"}
-                        </span>
-                      </td>
-                      <td className={styles.actions}>
-                        <button
-                          className={styles.editBtnSmall}
-                          onClick={() => handleEditRoom(room)}
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className={styles.deleteBtnSmall}
-                          onClick={() => handleDeleteRoom(room.id)}
-                        >
-                          🗑️
-                        </button>
-                      </td>
+            <div className={styles.roomsTableWrapper}>
+              <div className={styles.roomsTable}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Sala</th>
+                      <th>Cine</th>
+                      <th>Capacidad</th>
+                      <th>Tipo</th>
+                      <th>Tecnologías</th>
+                      <th>Sistema de Audio</th>
+                      <th>Asientos Disponibles</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {filteredRooms.map((room) => (
+                      <tr key={room.id}>
+                        <td className={styles.roomName}>{room.name}</td>
+                        <td className={styles.cinemaName}>{room.cinema?.name || 
+                          cinemas.find(c => c.id === room.cinemaId)?.name || 'N/A'}</td>
+                        <td className={styles.roomCapacity}>
+                          {room.capacity} asientos
+                        </td>
+                        <td>
+                          <span
+                            className={`${styles.typeBadge} ${styles[room.type.toLowerCase()]}`}
+                          >
+                            {room.type}
+                          </span>
+                        </td>
+                        <td className={styles.format}>
+                          {room.technology && room.technology.length > 0 
+                            ? room.technology.map(tech => 
+                                tech === 'TWO_D' ? '2D' : 
+                                tech === 'THREE_D' ? '3D' : 
+                                tech === 'FOUR_DX' ? '4DX' : tech
+                              ).join(', ')
+                            : 'N/A'}
+                        </td>
+                        <td className={styles.audioSystem}>
+                          {room.audioSystem || 'N/A'}
+                        </td>
+                        <td className={styles.availableSeats}>
+                          {room.availableSeats || room.capacity}
+                        </td>
+                        <td>
+                          <span className={`${styles.statusBadge} ${styles[room.status.toLowerCase()]}`}>
+                            {room.status === "ACTIVE" ? "Activa" : 
+                             room.status === "INACTIVE" ? "Inactiva" : "Mantenimiento"}
+                          </span>
+                        </td>
+                        <td className={styles.actions}>
+                          <button
+                            className={styles.editBtnSmall}
+                            onClick={() => handleEditRoom(room)}
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            className={styles.deleteBtnSmall}
+                            onClick={() => handleDeleteRoom(room.id)}
+                          >
+                            🗑️
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
 
-              {filteredRooms.length === 0 && (
-                <div className={styles.emptyState}>
-                  <p>No hay salas en este cine</p>
-                </div>
-              )}
+                {filteredRooms.length === 0 && (
+                  <div className={styles.emptyState}>
+                    <p>No hay salas en este cine</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
