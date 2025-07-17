@@ -509,6 +509,7 @@
     .showtimesTable,
     .pricesTable {
         overflow-x: auto;
+        border-radius: 8px;
     }
 
     .showtimesTable table,
@@ -523,63 +524,137 @@
     .priceRange {
         font-size: 0.9rem;
     }
+
+    /* Ajustes específicos para tabla de precios en móvil */
+    .pricesTable th,
+    .pricesTable td {
+        padding: 8px 6px;
+        font-size: 12px;
+    }
 }
 
-/* Prices Table Specific Styles */
+/* Mejoras adicionales para tablets */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .pricesTable th,
+    .pricesTable td {
+        padding: 10px 6px;
+        font-size: 13px;
+    }
+}
+
+/* Prices Table - CSS simple y funcional */
 .pricesTable {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+    margin-top: 1rem;
+    border: 1px solid #e0e0e0;
 }
 
 .pricesTable table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 900px;
 }
 
 .pricesTable th {
-    background: linear-gradient(135deg, #e30000, #c50000);
-    color: white;
+    background-color: #f5f5f5;
+    padding: 12px;
+    text-align: center;
     font-weight: 600;
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 2px solid #a50000;
+    color: #333;
+    border-bottom: 2px solid #ddd;
+    font-size: 0.9rem;
 }
 
 .pricesTable td {
-    padding: 1rem;
+    padding: 12px;
+    text-align: center;
     border-bottom: 1px solid #eee;
     vertical-align: middle;
 }
 
 .pricesTable tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: #f9f9f9;
 }
 
-.pricesTable tbody tr:last-child td {
-    border-bottom: none;
+/* Estilos básicos para la tabla de precios */
+.pricesTable .movieTitle,
+.pricesTable .cinemaName {
+    text-align: left;
+    font-weight: 500;
 }
 
-.ticketType {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.pricesTable .showtimeTime {
+    color: #dc3545;
     font-weight: 600;
-    color: #1a1a1a;
 }
 
-.typeIcon {
-    font-size: 1.2rem;
+.pricesTable .priceValue {
+    color: #28a745;
+    font-weight: 600;
 }
 
-.priceValue {
-    font-weight: 700;
-    color: #155724;
-    font-size: 1.1rem;
-    background: #d4edda;
-    padding: 4px 8px;
+.pricesTable .actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.pricesTable .actions button {
+    padding: 6px 8px;
+    border: none;
     border-radius: 4px;
-    display: inline-block;
-    border: 1px solid #c3e6cb;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.pricesTable .editBtnSmall {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.pricesTable .deleteBtnSmall {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Estados vacíos para tabla de precios */
+.pricesTable .emptyState {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6c757d;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.pricesTable .emptyState::before {
+    content: "💰";
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* Estados vacíos para tabla de precios */
+.pricesTable .emptyState {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #6c757d;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 8px;
+    margin: 2rem;
+}
+
+.pricesTable .emptyState::before {
+    content: "💰";
+    display: block;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
 }
