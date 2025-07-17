@@ -31,6 +31,7 @@ import MoviesManagement from "../pages/admin/MoviesManagement";
 import Users from "../pages/admin/Users";
 import ConfectioneryManagement from "../pages/admin/ConfectioneryManagement";
 import Success from "../pages/Success"
+import BackupManagement from "../pages/admin/BackupManagement";
 
 const AppRouter = () => {
   return (
@@ -120,6 +121,14 @@ const AppRouter = () => {
           element={
             <AdminRoute>
               <Users />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/backup"
+          element={
+            <AdminRoute>
+              <BackupManagement />
             </AdminRoute>
           }
         />
