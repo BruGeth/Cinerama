@@ -1,8 +1,6 @@
-const API_CINEMAS = "/api/cinemas";
-const API_ROOMS = "/api/rooms";
-
-// Configuración para determinar si usar mocks o API real
-const USE_MOCK_DATA = process.env.REACT_APP_USE_MOCKS === 'true';
+const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
+const API_CINEMAS = `${API_BASE_URL}/api/cinemas`;
+const API_ROOMS = `${API_BASE_URL}/api/rooms`;
 
 // Helper for auth headers
 const getAuthHeaders = () => {
@@ -15,23 +13,17 @@ const getAuthHeaders = () => {
 
 // CINEMAS
 export const fetchCinemas = async () => {
-  if (USE_MOCK_DATA) {
-    return getMockCinemas();
+  try {
+    const res = await fetch(API_CINEMAS, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error("Error fetching cinemas");
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching cinemas:", error);
+    throw error;
   }
-  
-  const res = await fetch(API_CINEMAS, { headers: getAuthHeaders() });
-  if (!res.ok) throw new Error("Error fetching cinemas");
-  return await res.json();
 };
 
 export const createCinema = async (cinemaData) => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve({
-      ...cinemaData,
-      id: Date.now(), // Simular ID generado por el backend
-    });
-  }
-  
   try {
     const res = await fetch(API_CINEMAS, {
       method: "POST",
@@ -76,93 +68,89 @@ export const createCinema = async (cinemaData) => {
 };
 
 export const updateCinema = async (id, cinemaData) => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve({
-      ...cinemaData,
-      id: id,
+  try {
+    const res = await fetch(`${API_CINEMAS}/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(cinemaData),
     });
+    if (!res.ok) throw new Error("Error updating cinema");
+    return await res.json();
+  } catch (error) {
+    console.error("Error updating cinema:", error);
+    throw error;
   }
-  
-  const res = await fetch(`${API_CINEMAS}/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(cinemaData),
-  });
-  if (!res.ok) throw new Error("Error updating cinema");
-  return await res.json();
 };
 
 export const deleteCinema = async (id) => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve();
+  try {
+    const res = await fetch(`${API_CINEMAS}/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error("Error deleting cinema");
+    return { message: "Cinema deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting cinema:", error);
+    throw error;
   }
-  
-  const res = await fetch(`${API_CINEMAS}/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-  if (!res.ok) throw new Error("Error deleting cinema");
 };
 
 // ROOMS
 export const fetchRooms = async (cinemaId = null) => {
-  if (USE_MOCK_DATA) {
-    const rooms = await getMockRooms();
-    return cinemaId ? rooms.filter(room => room.cinemaId === cinemaId) : rooms;
+  try {
+    const url = cinemaId ? `${API_ROOMS}?cinemaId=${cinemaId}` : API_ROOMS;
+    const res = await fetch(url, { headers: getAuthHeaders() });
+    if (!res.ok) throw new Error("Error fetching rooms");
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching rooms:", error);
+    throw error;
   }
-  
-  const url = cinemaId ? `${API_ROOMS}?cinemaId=${cinemaId}` : API_ROOMS;
-  const res = await fetch(url, { headers: getAuthHeaders() });
-  if (!res.ok) throw new Error("Error fetching rooms");
-  return await res.json();
 };
 
 export const createRoom = async (roomData) => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve({
-      ...roomData,
-      id: Date.now(), // Simular ID generado por el backend
-      cinema: { id: roomData.cinemaId, name: "Cinema" }, // Simular objeto cinema
+  try {
+    const res = await fetch(API_ROOMS, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(roomData),
     });
+    if (!res.ok) throw new Error("Error creating room");
+    return await res.json();
+  } catch (error) {
+    console.error("Error creating room:", error);
+    throw error;
   }
-  
-  const res = await fetch(API_ROOMS, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(roomData),
-  });
-  if (!res.ok) throw new Error("Error creating room");
-  return await res.json();
 };
 
 export const updateRoom = async (id, roomData) => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve({
-      ...roomData,
-      id: id,
-      cinema: { id: roomData.cinemaId, name: "Cinema" }, // Simular objeto cinema
+  try {
+    const res = await fetch(`${API_ROOMS}/${id}`, {
+      method: "PUT",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(roomData),
     });
+    if (!res.ok) throw new Error("Error updating room");
+    return await res.json();
+  } catch (error) {
+    console.error("Error updating room:", error);
+    throw error;
   }
-  
-  const res = await fetch(`${API_ROOMS}/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(roomData),
-  });
-  if (!res.ok) throw new Error("Error updating room");
-  return await res.json();
 };
 
 export const deleteRoom = async (id) => {
-  if (USE_MOCK_DATA) {
-    return Promise.resolve();
+  try {
+    const res = await fetch(`${API_ROOMS}/${id}`, {
+      method: "DELETE",
+      headers: getAuthHeaders(),
+    });
+    if (!res.ok) throw new Error("Error deleting room");
+    return { message: "Room deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting room:", error);
+    throw error;
   }
-  
-  const res = await fetch(`${API_ROOMS}/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-  if (!res.ok) throw new Error("Error deleting room");
 };
 
 // Mock data for development
