@@ -483,53 +483,101 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .showtimesManagement {
+        max-width: 100vw;
+        padding: 0.5rem;
+    }
     .pageHeader {
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
+        padding: 0.5rem 0;
     }
-
     .tabNavigation {
         order: 1;
+        width: 100%;
+        justify-content: center;
     }
-
     .headerActions {
         order: 2;
         justify-content: center;
+        width: 100%;
     }
-
+    .filtersSection {
+        padding: 1rem 0.5rem;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+    }
     .filtersRow {
         flex-direction: column;
+        gap: 0.5rem;
     }
-
     .filterGroup {
         min-width: 100%;
+        font-size: 0.97rem;
     }
-
+    .filterGroup label {
+        font-size: 0.9rem;
+    }
+    .filterGroup select,
+    .filterGroup input {
+        font-size: 0.97rem;
+        padding: 0.5rem;
+    }
+    .clearFiltersBtn {
+        width: 100%;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        font-size: 0.97rem;
+    }
     .showtimesTable,
     .pricesTable {
         overflow-x: auto;
         border-radius: 8px;
+        margin: 0 -0.5rem;
     }
-
     .showtimesTable table,
     .pricesTable table {
-        min-width: 1000px;
+        min-width: 900px;
+        font-size: 12px;
     }
-
+    .showtimesTable th,
+    .showtimesTable td,
+    .pricesTable th,
+    .pricesTable td {
+        padding: 8px 4px;
+        font-size: 12px;
+    }
+    .movieTitle, .roomName, .cinemaName {
+        font-size: 0.97rem;
+    }
+    .roomTypeBadge, .formatBadge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.4rem;
+    }
+    .showtimeTime {
+        font-size: 0.97rem;
+    }
     .priceDetails {
         display: none;
     }
-
     .priceRange {
         font-size: 0.9rem;
     }
-
-    /* Ajustes específicos para tabla de precios en móvil */
-    .pricesTable th,
-    .pricesTable td {
-        padding: 8px 6px;
-        font-size: 12px;
+    .actions {
+        gap: 0.2rem;
+    }
+    .editBtnSmall, .deleteBtnSmall {
+        padding: 0.3rem 0.4rem;
+        font-size: 0.97rem;
+    }
+    .emptyState {
+        padding: 1.5rem 0.5rem;
+        font-size: 0.97rem;
+    }
+    .loading {
+        padding: 1.5rem 0.5rem;
+        font-size: 1rem;
     }
 }
 
