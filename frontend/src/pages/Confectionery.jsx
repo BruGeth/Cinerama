@@ -10,8 +10,6 @@ Cinerama Confectionery Page - React Component
 import { useState, useEffect } from 'react';
 import '../styles/Confectionery.css';
 import { useNavigate } from "react-router-dom";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 
 // Main component for the confectionery page
 const Confectionery = () => {
@@ -56,12 +54,9 @@ const Confectionery = () => {
 
   // React Router navigation hook
   const navigate = useNavigate();
-  
+
   // Retrieve user name from browser's local storage
   const userName = localStorage.getItem("userName");
-
-  // Retrieve user email from browser's local storage  
-  const userEmail = localStorage.getItem("userEmail");
 
   // --- Fetch categories from API on mount ---
   useEffect(() => {
@@ -249,7 +244,7 @@ const Confectionery = () => {
   };
 
 
-  // --- Generate PDF receipt (pending implementation) ---
+  // Function to download the PDF receipt from the backend
   const handleGeneratePDF = async () => {
     if (!lastOrderId) {
       alert("No se encontró la orden para generar el comprobante.");
@@ -257,49 +252,32 @@ const Confectionery = () => {
     }
 
     try {
-      // Get the actual order data from the backend
-      const response = await fetch(`/api/confectionery-order/${lastOrderId}`);
-      const data = await response.json();
-
+      // Call the backend endpoint that returns the PDF
+      const response = await fetch(`/api/confectionery-order/${lastOrderId}/pdf`, {
+        method: "GET",
+        headers: {
+          // If you use authentication, add the Authorization header here
+          // "Authorization": `Bearer ${token}`,
+        }
+      });
       if (!response.ok) {
-        alert("No se pudo obtener la información de la orden.");
+        alert("No se pudo descargar el PDF.");
         return;
       }
+      // Get the PDF as a blob
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
 
-      // Generate PDF with real data
-      const doc = new jsPDF();
-
-      // Title
-      doc.setFontSize(18);
-      doc.text("Comprobante de Compra - Cinerama", 14, 20);
-
-      // Order data with real information
-      doc.setFontSize(12);
-      doc.text(`Fecha: ${new Date(data.timestamp).toLocaleString()}`, 14, 30);
-      doc.text(`Usuario: ${data.payerName || userName || "N/A"}`, 14, 38);
-      doc.text(`Email: ${data.payerEmail || userEmail || "N/A"}`, 14, 46);
-
-      // Product table with real data
-      doc.autoTable({
-        startY: 54,
-        head: [["Producto", "Cantidad", "Precio"]],
-        body: data.items.map(item => [
-          item.productName,
-          item.quantity,
-          `S/. ${item.unitPrice.toFixed(2)}`
-        ])
-      });
-
-      // Totals with real data
-      const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 54;
-      doc.text(`Total: S/. ${data.totalPEN.toFixed(2)}   (≈ USD ${data.totalUSD.toFixed(2)})`, 14, finalY + 10);
-
-      // Final message
-      doc.text("¡Gracias por tu compra en Cinerama!", 14, finalY + 20);
-
-      doc.save("comprobante-cinerama.pdf");
+      // Create a temporary link to trigger the download
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `recibo-cinerama-${lastOrderId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      alert("Error generando el PDF: " + error.message);
+      alert("Error al descargar el PDF: " + error.message);
     }
   };
 
@@ -446,14 +424,17 @@ const Confectionery = () => {
               className="register-btn"
               onClick={() => {
                 setShowSuccess(false);
-                navigate("/"); // Redirige a la página de inicio
+                navigate("/"); // Redirects to the main page
               }}
             >
               Cerrar
             </button>
-            <button className="register-btn" onClick={handleGeneratePDF}>
-              Descargar comprobante PDF
-            </button>
+            {/* Only show the button if there is a valid order */}
+            {lastOrderId && (
+              <button className="register-btn" onClick={handleGeneratePDF}>
+                Descargar comprobante PDF
+              </button>
+            )}
           </div>
         </div>
       )}
