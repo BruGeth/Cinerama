@@ -37,28 +37,28 @@ public class PdfServiceImpl implements PdfService {
             PdfWriter.getInstance(document, baos);
             document.open();
 
-            // Título
+            // Title
             Font titleFont = new Font(Font.HELVETICA, 18, Font.BOLD);
             Paragraph title = new Paragraph("Comprobante de Compra - Cinerama", titleFont);
             title.setSpacingAfter(18);
             document.add(title);
 
-            // Fecha
+            // Date
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d/M/yyyy, H:mm:ss");
             String fecha = order.getTimestamp() != null ? order.getTimestamp().format(formatter) : "-";
             document.add(new Paragraph("Fecha: " + fecha));
 
-            // Usuario y email
+            // User and email
             document.add(new Paragraph("Usuario: " + (order.getPayerName() != null ? order.getPayerName() : "-")));
             document.add(new Paragraph("Email: " + (order.getPayerEmail() != null ? order.getPayerEmail() : "-")));
             document.add(Chunk.NEWLINE);
 
-            // Tabla de productos
+            // Table of products
             PdfPTable table = new PdfPTable(3);
             table.setWidthPercentage(100);
             table.setSpacingBefore(10f);
             table.setSpacingAfter(10f);
-            // Encabezados
+            // Header row
             Font headerFont = new Font(Font.HELVETICA, 12, Font.BOLD, Color.WHITE);
             PdfPCell cell;
             cell = new PdfPCell(new Phrase("Producto", headerFont));
@@ -70,7 +70,7 @@ public class PdfServiceImpl implements PdfService {
             cell = new PdfPCell(new Phrase("Precio", headerFont));
             cell.setBackgroundColor(new Color(33, 150, 243));
             table.addCell(cell);
-            // Filas de productos
+            // Data rows
             Font rowFont = new Font(Font.HELVETICA, 12);
             for (ConfectioneryOrderItem item : items) {
                 table.addCell(new Phrase(item.getProductName(), rowFont));
@@ -79,13 +79,13 @@ public class PdfServiceImpl implements PdfService {
             }
             document.add(table);
 
-            // Totales
+            // Total calculation
             double totalPEN = items.stream().mapToDouble(ConfectioneryOrderItem::getTotalPrice).sum();
             double totalUSD = paymentService.convertSolesToDollars(totalPEN);
             document.add(new Paragraph("Total: S/. " + String.format("%.2f", totalPEN) + "   (USD " + String.format("%.2f", totalUSD) + ")"));
             document.add(Chunk.NEWLINE);
 
-            // Mensaje de agradecimiento
+            // Thank you message
             Font thanksFont = new Font(Font.HELVETICA, 13, Font.BOLD);
             Paragraph thanks = new Paragraph("¡Gracias por tu compra en Cinerama!", thanksFont);
             thanks.setSpacingBefore(10);

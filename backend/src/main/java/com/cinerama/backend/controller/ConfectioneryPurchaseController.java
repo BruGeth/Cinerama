@@ -94,12 +94,9 @@ public class ConfectioneryPurchaseController {
             // Use the buyer name from the request, or default if not provided
             payerName = request.getBuyerName() != null ? request.getBuyerName() : "Usuario Cinerama";
 
-            // Create a paid order in USD and associate the confectionery items
-            // Suponiendo que tienes el objeto payment disponible aquí
+            // Create a paid order and associate the confectionery items
             Order order = new Order();
             order.setTimestamp(LocalDateTime.now());
-            order.setCurrency("USD");
-            order.setAmount(BigDecimal.valueOf(totalAmountUSD));
             order.setPayerEmail(payerEmail);
             order.setPayerName(payerName);
             order.setConfectioneryItems(orderItems);
@@ -159,9 +156,8 @@ public class ConfectioneryPurchaseController {
 
             // Create a local pending order in USD and associate the confectionery items
             Order order = new Order();
-            // NO asignar estado aquí, el estado se asigna en el servicio cuando se captura el pago
+            // NO asignar currency aquí, se asigna al capturar el pago con PayPal
             order.setTimestamp(LocalDateTime.now());
-            order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
             order.setConfectioneryItems(orderItems);
             for (ConfectioneryOrderItem orderItem : orderItems) {
@@ -224,8 +220,8 @@ public class ConfectioneryPurchaseController {
             // If not paid, attempt to capture the payment
             ResponseEntity<?> captureResponse = paymentService.capturePayment(paymentId, payerId);
             if (captureResponse.getStatusCode().is2xxSuccessful()) {
-                // NO actualizar el estado aquí; el servicio ya lo hizo
-                // Solo actualizar datos del comprador si es necesario
+                //Do NOT update status here; the service has already done so
+                //Only update buyer data if necessary
                 String payerEmail = null;
                 String payerName = null;
                 Object captureBody = captureResponse.getBody();

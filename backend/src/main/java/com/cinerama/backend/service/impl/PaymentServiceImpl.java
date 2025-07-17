@@ -148,6 +148,7 @@ public class PaymentServiceImpl implements PaymentService {
                 }
                 
                 order.setStatus(payment.getState());
+                order.setCurrency(payment.getTransactions().get(0).getAmount().getCurrency()); // <-- Actualiza la moneda
                 orderRepository.save(order);
                 logger.info("✅ Updated existing order with PayPal payer email: {}", order.getPayerEmail());
                 
