@@ -88,12 +88,6 @@ public class PaymentServiceImpl implements PaymentService {
         errorCounter = meterRegistry.counter("payment.ticket.error.total");
     }
 
-    // Converts Peruvian soles to US dollars using a fixed exchange rate
-    private Double convertSolesToDollars(Double amountInSoles) {
-        double exchangeRate = 0.2818;
-        return Math.round(amountInSoles * exchangeRate * 100.0) / 100.0;
-    }
-
     /**
      * Creates a PayPal payment order for the specified amount and currency.
      *
