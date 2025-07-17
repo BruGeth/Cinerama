@@ -73,8 +73,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     /**
      * Creates a payment order in PayPal.
-     * @param amount Amount to pay
-     * @param currency Currency
+     *
+     * @param amount    Amount to pay
+     * @param currency  Currency
      * @param returnUrl Return URL after payment
      * @param cancelUrl Cancel URL
      * @return ResponseEntity with the result
@@ -118,8 +119,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     /**
      * Captures the payment of a PayPal order.
+     *
      * @param paymentId Payment ID
-     * @param payerId Payer ID
+     * @param payerId   Payer ID
      * @return ResponseEntity with the result
      */
     @Timed(value = "payment.ticket.capture.duration", description = "Duration for capturing ticket payment")
@@ -194,3 +196,4 @@ public class PaymentServiceImpl implements PaymentService {
             ));
         }
     }
+}
