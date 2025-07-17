@@ -1,4 +1,4 @@
-// Servicio para gestión de precios de tickets - Actualizado para nueva API
+// Servicio para gestión de precios de tickets - Conectado con backend
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 const API_TICKET_PRICES = `${API_BASE_URL}/api/ticket-prices`;
 
@@ -11,106 +11,6 @@ const getAuthHeaders = () => {
   };
 };
 
-// Mock data actualizado con formato incluido
-const mockTicketPrices = [
-  {
-    id: 1,
-    showtimeId: 1,
-    type: "GENERAL",
-    format: "THREE_D",
-    price: 18.50
-  },
-  {
-    id: 2,
-    showtimeId: 1,
-    type: "CHILD",
-    format: "THREE_D",
-    price: 12.00
-  },
-  {
-    id: 3,
-    showtimeId: 1,
-    type: "STUDENT",
-    format: "THREE_D",
-    price: 15.00
-  },
-  {
-    id: 4,
-    showtimeId: 1,
-    type: "SENIOR",
-    format: "THREE_D",
-    price: 14.00
-  },
-  {
-    id: 5,
-    showtimeId: 2,
-    type: "GENERAL",
-    format: "IMAX",
-    price: 35.00
-  },
-  {
-    id: 6,
-    showtimeId: 2,
-    type: "CHILD",
-    format: "IMAX",
-    price: 28.00
-  },
-  {
-    id: 7,
-    showtimeId: 2,
-    type: "VIP",
-    format: "IMAX",
-    price: 45.00
-  },
-  {
-    id: 8,
-    showtimeId: 3,
-    type: "GENERAL",
-    format: "TWO_D",
-    price: 16.00
-  },
-  {
-    id: 9,
-    showtimeId: 3,
-    type: "CHILD",
-    format: "TWO_D",
-    price: 10.00
-  },
-  {
-    id: 10,
-    showtimeId: 3,
-    type: "STUDENT",
-    format: "TWO_D",
-    price: 13.00
-  },
-  {
-    id: 11,
-    showtimeId: 4,
-    type: "GENERAL",
-    format: "FOUR_D_X",
-    price: 42.00
-  },
-  {
-    id: 12,
-    showtimeId: 4,
-    type: "CHILD",
-    format: "FOUR_D_X",
-    price: 35.00
-  },
-  {
-    id: 13,
-    showtimeId: 4,
-    type: "VIP",
-    format: "FOUR_D_X",
-    price: 55.00
-  }
-];
-
-let nextId = 14;
-
-// Función para simular delay de red
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
 export const ticketPricesService = {
   // Obtener todos los precios de tickets
   async fetchTicketPrices() {
@@ -120,12 +20,6 @@ export const ticketPricesService = {
       return await res.json();
     } catch (error) {
       console.error("Error al obtener precios de tickets:", error);
-      
-      // En desarrollo, usar mock data
-      if (process.env.NODE_ENV === 'development') {
-        await delay(300);
-        return [...mockTicketPrices];
-      }
       throw error;
     }
   },
@@ -140,11 +34,6 @@ export const ticketPricesService = {
       return await res.json();
     } catch (error) {
       console.error("Error al obtener precios por showtime:", error);
-      
-      if (process.env.NODE_ENV === 'development') {
-        await delay(200);
-        return mockTicketPrices.filter(price => price.showtimeId === showtimeId);
-      }
       throw error;
     }
   },
@@ -159,11 +48,6 @@ export const ticketPricesService = {
       return await res.json();
     } catch (error) {
       console.error("Error al obtener precios por tipo:", error);
-      
-      if (process.env.NODE_ENV === 'development') {
-        await delay(200);
-        return mockTicketPrices.filter(price => price.type === type);
-      }
       throw error;
     }
   },
@@ -180,31 +64,6 @@ export const ticketPricesService = {
       return await res.json();
     } catch (error) {
       console.error("Error al crear precio de ticket:", error);
-      
-      if (process.env.NODE_ENV === 'development') {
-        await delay(500);
-        
-        // Mock: verificar duplicados
-        const exists = mockTicketPrices.find(
-          price => price.showtimeId === ticketPriceData.showtimeId && 
-                   price.type === ticketPriceData.type &&
-                   price.format === ticketPriceData.format
-        );
-
-        if (exists) {
-          throw new Error(`Ya existe un precio para el tipo ${ticketPriceData.type} y formato ${ticketPriceData.format} en este horario`);
-        }
-
-        // Crear nuevo precio
-        const newTicketPrice = {
-          id: nextId++,
-          ...ticketPriceData,
-          createdAt: new Date().toISOString()
-        };
-
-        mockTicketPrices.push(newTicketPrice);
-        return newTicketPrice;
-      }
       throw error;
     }
   },
@@ -221,22 +80,6 @@ export const ticketPricesService = {
       return await res.json();
     } catch (error) {
       console.error("Error al crear precios en lote:", error);
-      
-      if (process.env.NODE_ENV === 'development') {
-        await delay(700);
-        
-        const newPrices = [];
-        for (const priceData of ticketPricesData) {
-          const newPrice = {
-            id: nextId++,
-            ...priceData,
-            createdAt: new Date().toISOString()
-          };
-          mockTicketPrices.push(newPrice);
-          newPrices.push(newPrice);
-        }
-        return newPrices;
-      }
       throw error;
     }
   },
@@ -253,37 +96,6 @@ export const ticketPricesService = {
       return await res.json();
     } catch (error) {
       console.error("Error al actualizar precio de ticket:", error);
-      
-      if (process.env.NODE_ENV === 'development') {
-        await delay(500);
-        
-        // Mock: encontrar y actualizar
-        const index = mockTicketPrices.findIndex(price => price.id === id);
-        if (index === -1) {
-          throw new Error("Precio de ticket no encontrado");
-        }
-
-        // Verificar duplicados (excluyendo el actual)
-        const exists = mockTicketPrices.find(
-          price => price.id !== id &&
-                   price.showtimeId === ticketPriceData.showtimeId && 
-                   price.type === ticketPriceData.type &&
-                   price.format === ticketPriceData.format
-        );
-
-        if (exists) {
-          throw new Error(`Ya existe un precio para el tipo ${ticketPriceData.type} y formato ${ticketPriceData.format} en este horario`);
-        }
-
-        const updatedTicketPrice = {
-          ...mockTicketPrices[index],
-          ...ticketPriceData,
-          updatedAt: new Date().toISOString()
-        };
-
-        mockTicketPrices[index] = updatedTicketPrice;
-        return updatedTicketPrice;
-      }
       throw error;
     }
   },
@@ -299,19 +111,6 @@ export const ticketPricesService = {
       return { message: "Precio eliminado exitosamente" };
     } catch (error) {
       console.error("Error al eliminar precio de ticket:", error);
-      
-      if (process.env.NODE_ENV === 'development') {
-        await delay(300);
-        
-        // Mock: eliminar del array
-        const index = mockTicketPrices.findIndex(price => price.id === id);
-        if (index === -1) {
-          throw new Error("Precio de ticket no encontrado");
-        }
-
-        mockTicketPrices.splice(index, 1);
-        return { message: "Precio eliminado exitosamente" };
-      }
       throw error;
     }
   },
@@ -326,18 +125,6 @@ export const ticketPricesService = {
       return await res.json();
     } catch (error) {
       console.error("Error al obtener precio por ID:", error);
-      
-      if (process.env.NODE_ENV === 'development') {
-        await delay(200);
-        
-        // Mock: buscar por ID
-        const ticketPrice = mockTicketPrices.find(price => price.id === id);
-        if (!ticketPrice) {
-          throw new Error("Precio de ticket no encontrado");
-        }
-
-        return ticketPrice;
-      }
       throw error;
     }
   },
