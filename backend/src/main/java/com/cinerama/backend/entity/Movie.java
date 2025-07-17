@@ -55,6 +55,7 @@ public class Movie {
     @Column
     private String trailerUrl; // URL del tráiler
 
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private MovieStatus status; // COMING_SOON, NOW_PLAYING, ENDED
 
