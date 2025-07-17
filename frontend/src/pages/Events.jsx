@@ -286,7 +286,8 @@ const Events = () => {
     } finally {
       setLoading(false);
     }
-  }, [formData, selectedCinema, navigate, isValidEmail, isValidPhone]);
+  }, [formData, selectedCinema, navigate, isValidEmail, isValidPhone, selectedEvent, setError]);
+  
 
   // Image error handling
   const handleImageError = (e, backgroundClass) => {

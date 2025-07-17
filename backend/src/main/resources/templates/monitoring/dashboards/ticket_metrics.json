@@ -1,0 +1,58 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "ticket_dashboard",
+    "title": "Ticket Payment Monitoring",
+    "timezone": "browser",
+    "panels": [
+      {
+        "type": "graph",
+        "title": "Order Creation Duration",
+        "targets": [
+          {
+            "expr": "payment_ticket_order_creation_duration_seconds",
+            "legendFormat": "Creation",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Payment Capture Duration",
+        "targets": [
+          {
+            "expr": "payment_ticket_capture_duration_seconds",
+            "legendFormat": "Capture",
+            "refId": "B"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "stat",
+        "title": "Successful Payments",
+        "targets": [
+          {
+            "expr": "payment_ticket_success_total",
+            "refId": "C"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 6, "h": 4 }
+      },
+      {
+        "type": "stat",
+        "title": "Failed Payments",
+        "targets": [
+          {
+            "expr": "payment_ticket_error_total",
+            "refId": "D"
+          }
+        ],
+        "gridPos": { "x": 6, "y": 8, "w": 6, "h": 4 }
+      }
+    ],
+    "schemaVersion": 30,
+    "version": 1
+  }
+}

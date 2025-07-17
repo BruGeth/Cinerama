@@ -12,4 +12,5 @@ public interface MovieService {
     MovieResponse saveMovie(MovieRequest movieRequest);
     MovieResponse updateMovie(Long id, MovieRequest movieRequest);
     void deleteMovie(Long id);
+    void updateMovieStatuses();
 }

@@ -51,6 +51,7 @@ function AdminLayout({ children }) {
     { path: "/admin/confectionery", label: "Confitería", icon: "🍿" },
     { path: "/admin/reports", label: "Reportes", icon: "📈" },
     { path: "/admin/users", label: "Usuarios", icon: "👥" },
+    {path: "/admin/backup", label: "Respaldo", icon: "☁️" },
   ];
 
   return (

@@ -30,9 +30,10 @@ import { PaymentProvider } from "../context/PaymentContext";
 import MoviesManagement from "../pages/admin/MoviesManagement";
 import Users from "../pages/admin/Users";
 import ConfectioneryManagement from "../pages/admin/ConfectioneryManagement";
-import Success from "../pages/Success";
 import CinemasManagement from "../pages/admin/CinemasManagement";
 import ShowtimesManagement from "../pages/admin/ShowtimesManagement";
+import BackupManagement from "../pages/admin/BackupManagement";
+import Success from "../pages/Success";
 
 const AppRouter = () => {
   return (
@@ -141,6 +142,14 @@ const AppRouter = () => {
           element={
             <AdminRoute>
               <Users />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/backup"
+          element={
+            <AdminRoute>
+              <BackupManagement />
             </AdminRoute>
           }
         />
