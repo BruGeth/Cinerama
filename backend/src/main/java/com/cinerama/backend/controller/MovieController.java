@@ -46,4 +46,10 @@ public class MovieController {
         movieService.deleteMovie(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/update-status")
+    public ResponseEntity<String> updateMovieStatuses() {
+        movieService.updateMovieStatuses();
+        return ResponseEntity.ok("Estados de películas actualizados correctamente");
+    }
 }

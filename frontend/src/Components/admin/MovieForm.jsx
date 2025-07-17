@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import { fetchGenres } from "../../services/genreService"
 import "../../styles/MovieForm.css"
 
 function MovieForm({ movie, onSave, onClose }) {
@@ -6,29 +7,84 @@ function MovieForm({ movie, onSave, onClose }) {
     title: "",
     descriptionShowtimes: "",
     descriptionMovie: "",
-    rating: "PG",
+    duration: "",
+    rating: "PG-13",
     genreId: "",
     imageUrl: "",
-    duration: "",
     trailerUrl: "",
+    director: "",
+    cast: [],
+    releaseDate: "",
+    status: "NOW_PLAYING",
   })
 
   const [errors, setErrors] = useState({})
+  const [genres, setGenres] = useState([])
+  const [loadingGenres, setLoadingGenres] = useState(true)
+  const [castInput, setCastInput] = useState("")
+
+  const ratingOptions = [
+    { value: "G", label: "G - General Audiences" },
+    { value: "PG", label: "PG - Parental Guidance" },
+    { value: "PG-13", label: "PG-13 - Parents Strongly Cautioned" },
+    { value: "R", label: "R - Restricted" },
+    { value: "NC-17", label: "NC-17 - Adults Only" }
+  ]
+
+  const statusOptions = [
+    { value: "NOW_PLAYING", label: "En Cartelera" },
+    { value: "COMING_SOON", label: "Próximamente" },
+    { value: "ENDED", label: "Finalizada" }
+  ]
+
+  // Cargar géneros al montar el componente
+  useEffect(() => {
+    const loadGenres = async () => {
+      try {
+        const genreList = await fetchGenres()
+        setGenres(genreList)
+      } catch (error) {
+        console.error("Error loading genres:", error)
+        setErrors({ general: "Error cargando los géneros" })
+      } finally {
+        setLoadingGenres(false)
+      }
+    }
+    loadGenres()
+  }, [])
 
   useEffect(() => {
     if (movie) {
+      console.log("Película recibida para editar:", movie) // Para debug
+      
+      // Manejar diferentes formatos de genreId
+      let genreId = movie.genreId || movie.genre?.id || "";
+      
+      // Si no tenemos genreId pero tenemos genreName, buscar el ID
+      if (!genreId && movie.genreName && genres.length > 0) {
+        const foundGenre = genres.find(g => g.name.toLowerCase() === movie.genreName.toLowerCase());
+        if (foundGenre) {
+          genreId = foundGenre.id;
+        }
+      }
+      
       setFormData({
         title: movie.title || "",
         descriptionShowtimes: movie.descriptionShowtimes || "",
         descriptionMovie: movie.descriptionMovie || "",
-        rating: movie.rating || "PG",
-        genreId: movie.genreId ? String(movie.genreId) : "",
+        duration: movie.duration?.toString() || "",
+        rating: movie.rating || "PG-13",
+        genreId: genreId ? String(genreId) : "",
         imageUrl: movie.imageUrl || "",
-        duration: movie.duration || "",
         trailerUrl: movie.trailerUrl || "",
+        director: movie.director || "",
+        cast: movie.cast || [],
+        releaseDate: movie.releaseDate || "",
+        status: movie.status || "NOW_PLAYING",
       })
+      setCastInput(movie.cast ? movie.cast.join(", ") : "")
     }
-  }, [movie])
+  }, [movie, genres])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -46,9 +102,22 @@ function MovieForm({ movie, onSave, onClose }) {
     }
   }
 
+  const handleCastChange = (e) => {
+    const value = e.target.value
+    setCastInput(value)
+    
+    // Convertir string separado por comas a array
+    const castArray = value.split(",").map(actor => actor.trim()).filter(actor => actor.length > 0)
+    setFormData({
+      ...formData,
+      cast: castArray
+    })
+  }
+
   const validate = () => {
     const newErrors = {}
 
+    // CAMPOS REQUERIDOS
     if (!formData.title.trim()) {
       newErrors.title = "El título es requerido"
     }
@@ -58,19 +127,28 @@ function MovieForm({ movie, onSave, onClose }) {
     if (!formData.descriptionMovie.trim()) {
       newErrors.descriptionMovie = "La sinopsis es requerida"
     }
+    if (!formData.duration || Number.parseInt(formData.duration) <= 0) {
+      newErrors.duration = "La duración debe ser mayor a 0"
+    }
     if (!formData.rating.trim()) {
       newErrors.rating = "La clasificación es requerida"
     }
     if (!formData.genreId) {
       newErrors.genreId = "El género es requerido"
     }
-    if (!formData.duration || formData.duration <= 0) {
-      newErrors.duration = "La duración debe ser mayor a 0"
-    }
     if (!formData.imageUrl.trim()) {
       newErrors.imageUrl = "La URL de la imagen es requerida"
     }
-    // trailerUrl is optional
+
+    // Validar que rating esté en los valores permitidos
+    if (formData.rating && !["G", "PG", "PG-13", "R", "NC-17"].includes(formData.rating)) {
+      newErrors.rating = "Clasificación inválida"
+    }
+
+    // Validar que status esté en los valores permitidos
+    if (formData.status && !["NOW_PLAYING", "COMING_SOON", "ENDED"].includes(formData.status)) {
+      newErrors.status = "Estado inválido"
+    }
 
     return newErrors
   }
@@ -84,19 +162,51 @@ function MovieForm({ movie, onSave, onClose }) {
       return
     }
 
-    // genreId should be sent as a number
-    onSave({ ...formData, genreId: Number(formData.genreId) })
+    const movieData = {
+      title: formData.title.trim(),
+      descriptionShowtimes: formData.descriptionShowtimes.trim(),
+      descriptionMovie: formData.descriptionMovie.trim(),
+      duration: Number.parseInt(formData.duration),
+      rating: formData.rating,
+      genreId: Number.parseInt(formData.genreId),
+      imageUrl: formData.imageUrl.trim(),
+      status: formData.status,
+    }
+
+    // Solo agregar campos opcionales si tienen valor
+    if (formData.trailerUrl.trim()) {
+      movieData.trailerUrl = formData.trailerUrl.trim()
+    }
+    
+    if (formData.director.trim()) {
+      movieData.director = formData.director.trim()
+    }
+    
+    if (formData.releaseDate) {
+      movieData.releaseDate = formData.releaseDate
+    }
+    
+    if (formData.cast.length > 0) {
+      movieData.cast = formData.cast
+    }
+
+    console.log("Datos a enviar:", movieData) // Para debug
+    onSave(movieData)
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="modal-content movie-modal">
         <div className="modal-header">
           <h3>{movie ? "Editar Película" : "Agregar Nueva Película"}</h3>
           <button className="close-btn" onClick={onClose}>
             ×
           </button>
         </div>
+
+        {errors.general && (
+          <div className="error-banner">{errors.general}</div>
+        )}
 
         <form onSubmit={handleSubmit} className="movie-form">
           <div className="form-row">
@@ -109,22 +219,33 @@ function MovieForm({ movie, onSave, onClose }) {
                 value={formData.title}
                 onChange={handleChange}
                 className={errors.title ? "error" : ""}
+                placeholder="Ej: Avatar: El Camino del Agua"
               />
               {errors.title && <span className="error-message">{errors.title}</span>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="genreId">Género (ID) *</label>
-              <input
-                type="number"
-                id="genreId"
-                name="genreId"
-                value={formData.genreId}
-                onChange={handleChange}
-                className={errors.genreId ? "error" : ""}
-                min="1"
-                placeholder="ID del género"
-              />
+              <label htmlFor="genreId">Género *</label>
+              {loadingGenres ? (
+                <select disabled>
+                  <option>Cargando géneros...</option>
+                </select>
+              ) : (
+                <select
+                  id="genreId"
+                  name="genreId"
+                  value={formData.genreId}
+                  onChange={handleChange}
+                  className={errors.genreId ? "error" : ""}
+                >
+                  <option value="">Seleccionar género</option>
+                  {genres.map((genre) => (
+                    <option key={genre.id} value={genre.id}>
+                      {genre.name}
+                    </option>
+                  ))}
+                </select>
+              )}
               {errors.genreId && <span className="error-message">{errors.genreId}</span>}
             </div>
           </div>
@@ -140,34 +261,91 @@ function MovieForm({ movie, onSave, onClose }) {
                 onChange={handleChange}
                 min="1"
                 className={errors.duration ? "error" : ""}
+                placeholder="192"
               />
               {errors.duration && <span className="error-message">{errors.duration}</span>}
             </div>
 
             <div className="form-group">
               <label htmlFor="rating">Clasificación *</label>
-              <select id="rating" name="rating" value={formData.rating} onChange={handleChange}>
-                <option value="G">G - Apta para todo público</option>
-                <option value="PG">PG - Se sugiere compañía de adultos</option>
-                <option value="PG-13">PG-13 - Mayores de 13 años</option>
-                <option value="R">R - Mayores de 17 años</option>
+              <select 
+                id="rating" 
+                name="rating" 
+                value={formData.rating} 
+                onChange={handleChange}
+                className={errors.rating ? "error" : ""}
+              >
+                {ratingOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
               {errors.rating && <span className="error-message">{errors.rating}</span>}
             </div>
           </div>
 
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="director">Director</label>
+              <input
+                type="text"
+                id="director"
+                name="director"
+                value={formData.director}
+                onChange={handleChange}
+                placeholder="Ej: James Cameron"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="releaseDate">Fecha de Estreno</label>
+              <input
+                type="date"
+                id="releaseDate"
+                name="releaseDate"
+                value={formData.releaseDate}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="cast">Reparto (separado por comas)</label>
+            <input
+              type="text"
+              id="cast"
+              name="cast"
+              value={castInput}
+              onChange={handleCastChange}
+              placeholder="Ej: Sam Worthington, Zoe Saldana, Sigourney Weaver"
+            />
+          </div>
+
           <div className="form-group">
             <label htmlFor="imageUrl">URL de la Imagen *</label>
             <input
-              type="text"
+              type="url"
               id="imageUrl"
               name="imageUrl"
               value={formData.imageUrl}
               onChange={handleChange}
               className={errors.imageUrl ? "error" : ""}
-              placeholder="https://..."
+              placeholder="https://ejemplo.com/poster.jpg"
             />
             {errors.imageUrl && <span className="error-message">{errors.imageUrl}</span>}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="trailerUrl">URL del Trailer</label>
+            <input
+              type="url"
+              id="trailerUrl"
+              name="trailerUrl"
+              value={formData.trailerUrl}
+              onChange={handleChange}
+              placeholder="https://youtube.com/watch?v=..."
+            />
           </div>
 
           <div className="form-group">
@@ -178,7 +356,7 @@ function MovieForm({ movie, onSave, onClose }) {
               value={formData.descriptionShowtimes}
               onChange={handleChange}
               rows="2"
-              placeholder="Descripción corta para la cartelera..."
+              placeholder="Descripción corta para mostrar en la cartelera..."
               className={errors.descriptionShowtimes ? "error" : ""}
             />
             {errors.descriptionShowtimes && (
@@ -187,14 +365,14 @@ function MovieForm({ movie, onSave, onClose }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="descriptionMovie">Sinopsis *</label>
+            <label htmlFor="descriptionMovie">Sinopsis Completa *</label>
             <textarea
               id="descriptionMovie"
               name="descriptionMovie"
               value={formData.descriptionMovie}
               onChange={handleChange}
               rows="4"
-              placeholder="Describe brevemente la trama de la película..."
+              placeholder="Sinopsis completa de la película..."
               className={errors.descriptionMovie ? "error" : ""}
             />
             {errors.descriptionMovie && (
@@ -203,15 +381,21 @@ function MovieForm({ movie, onSave, onClose }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="trailerUrl">URL del Trailer</label>
-            <input
-              type="text"
-              id="trailerUrl"
-              name="trailerUrl"
-              value={formData.trailerUrl}
+            <label htmlFor="status">Estado *</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
               onChange={handleChange}
-              placeholder="https://..."
-            />
+              className={errors.status ? "error" : ""}
+            >
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+            {errors.status && <span className="error-message">{errors.status}</span>}
           </div>
 
           <div className="form-actions">

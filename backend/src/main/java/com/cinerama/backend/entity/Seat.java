@@ -4,15 +4,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-
 @Entity
-@Table(name = "seat")
+@Table(name = "seats")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,20 +19,22 @@ public class Seat {
     private String seatNumber;
 
     @Column(nullable = false)
-    private String type;
+    private String seatType; // STANDARD, VIP, PREMIUM
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private String rowNumber;
+
+    @Column(nullable = false)
+    private Integer columnNumber;
 
     @Column(nullable = false)
     private boolean available;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @ManyToOne
-    @JoinColumn(name = "show_id", nullable = false)
-    private Show show;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "showtime_id", nullable = false)
+    private Showtime showtime;
 }
