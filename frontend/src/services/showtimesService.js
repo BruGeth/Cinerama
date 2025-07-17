@@ -28,10 +28,6 @@ export const fetchShowtimes = async (filters = {}) => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching showtimes:", error);
-    // Fallback to mock data in development
-    if (process.env.NODE_ENV === 'development') {
-      return getMockShowtimes();
-    }
     throw error;
   }
 };
@@ -45,10 +41,6 @@ export const fetchShowtimesByMovie = async (movieId) => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching showtimes by movie:", error);
-    if (process.env.NODE_ENV === 'development') {
-      const mockData = await getMockShowtimes();
-      return mockData.filter(showtime => showtime.movie.id === movieId);
-    }
     throw error;
   }
 };
@@ -62,10 +54,6 @@ export const fetchShowtimesByCinema = async (cinemaId) => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching showtimes by cinema:", error);
-    if (process.env.NODE_ENV === 'development') {
-      const mockData = await getMockShowtimes();
-      return mockData.filter(showtime => showtime.cinema.id === cinemaId);
-    }
     throw error;
   }
 };
@@ -79,10 +67,6 @@ export const fetchShowtimesByDate = async (date) => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching showtimes by date:", error);
-    if (process.env.NODE_ENV === 'development') {
-      const mockData = await getMockShowtimes();
-      return mockData.filter(showtime => showtime.date === date);
-    }
     throw error;
   }
 };
@@ -96,10 +80,6 @@ export const fetchShowtimeById = async (id) => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching showtime by ID:", error);
-    if (process.env.NODE_ENV === 'development') {
-      const mockData = await getMockShowtimes();
-      return mockData.find(showtime => showtime.id === id);
-    }
     throw error;
   }
 };
@@ -115,16 +95,6 @@ export const createShowtime = async (showtimeData) => {
     return await res.json();
   } catch (error) {
     console.error("Error creating showtime:", error);
-    if (process.env.NODE_ENV === 'development') {
-      // Mock creation
-      const newShowtime = {
-        id: Date.now(),
-        ...showtimeData,
-        availableSeats: 150,
-        ticketPrices: []
-      };
-      return newShowtime;
-    }
     throw error;
   }
 };
@@ -140,10 +110,6 @@ export const updateShowtime = async (id, showtimeData) => {
     return await res.json();
   } catch (error) {
     console.error("Error updating showtime:", error);
-    if (process.env.NODE_ENV === 'development') {
-      // Mock update
-      return { id, ...showtimeData };
-    }
     throw error;
   }
 };
@@ -158,9 +124,6 @@ export const deleteShowtime = async (id) => {
     return { message: "Showtime deleted successfully" };
   } catch (error) {
     console.error("Error deleting showtime:", error);
-    if (process.env.NODE_ENV === 'development') {
-      return { message: "Showtime deleted successfully (mock)" };
-    }
     throw error;
   }
 };
