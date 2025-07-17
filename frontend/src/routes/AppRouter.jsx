@@ -30,7 +30,9 @@ import { PaymentProvider } from "../context/PaymentContext";
 import MoviesManagement from "../pages/admin/MoviesManagement";
 import Users from "../pages/admin/Users";
 import ConfectioneryManagement from "../pages/admin/ConfectioneryManagement";
-import Success from "../pages/Success"
+import Success from "../pages/Success";
+import CinemasManagement from "../pages/admin/CinemasManagement";
+import ShowtimesManagement from "../pages/admin/ShowtimesManagement";
 
 const AppRouter = () => {
   return (
@@ -48,7 +50,10 @@ const AppRouter = () => {
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/verify" element={<VerifyEmail />} />
-                  <Route path="/recover-password" element={<ForgotPassword />} />
+                  <Route
+                    path="/recover-password"
+                    element={<ForgotPassword />}
+                  />
                   <Route
                     path="/profile"
                     element={
@@ -104,6 +109,22 @@ const AppRouter = () => {
           element={
             <AdminRoute>
               <MoviesManagement />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/cinemas"
+          element={
+            <AdminRoute>
+              <CinemasManagement />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/showtimes"
+          element={
+            <AdminRoute>
+              <ShowtimesManagement />
             </AdminRoute>
           }
         />
