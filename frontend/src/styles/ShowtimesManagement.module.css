@@ -591,6 +591,11 @@
     font-weight: 600;
 }
 
+.pricesTable .ticketType {
+    color: #000;
+    font-weight: 500;
+}
+
 .pricesTable .priceValue {
     color: #28a745;
     font-weight: 600;
