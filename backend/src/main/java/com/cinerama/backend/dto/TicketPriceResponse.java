@@ -1,5 +1,6 @@
 package com.cinerama.backend.dto;
 
+import com.cinerama.backend.enums.ShowtimeFormat;
 import com.cinerama.backend.enums.TicketType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
  * 
  * @author Cinerama Development Team
  * @version 1.0
- * @since 2025-07-15
+ * @since 2025-07-17
  */
 @Data
 @NoArgsConstructor
@@ -41,7 +42,12 @@ public class TicketPriceResponse {
     private TicketType type;
     
     /**
-     * Price amount for this ticket type.
+     * Format/technology this price applies to.
+     */
+    private ShowtimeFormat format;
+    
+    /**
+     * Price amount for this ticket type and format combination.
      */
     private BigDecimal price;
     
