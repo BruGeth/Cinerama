@@ -2,10 +2,10 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.*;
 import com.cinerama.backend.entity.Showtime;
+import com.cinerama.backend.enums.ShowtimeFormat;
 import com.cinerama.backend.repository.CinemaRepository;
 import com.cinerama.backend.repository.RoomRepository;
 import com.cinerama.backend.repository.ShowtimeRepository;
-import com.cinerama.backend.repository.TicketPriceRepository;
 import com.cinerama.backend.service.ShowtimeService;
 import com.cinerama.backend.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,7 +38,6 @@ public class ShowtimeServiceImpl implements ShowtimeService {
     private final MovieRepository movieRepository;
     private final CinemaRepository cinemaRepository;
     private final RoomRepository roomRepository;
-    private final TicketPriceRepository ticketPriceRepository;
 
     @Override
     public List<ShowtimeResponse> getAllShowtimes() {
@@ -63,6 +63,24 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 .map(this::toShowtimeResponse)
                 .collect(Collectors.toList());
     }
+    
+    @Override
+    public List<ShowtimeResponse> getShowtimesByCinemaId(Long cinemaId) {
+        log.debug("Retrieving showtimes for cinema ID: {}", cinemaId);
+        return showtimeRepository.findByCinemaId(cinemaId)
+                .stream()
+                .map(this::toShowtimeResponse)
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<ShowtimeResponse> getShowtimesByDate(LocalDate date) {
+        log.debug("Retrieving showtimes for date: {}", date);
+        return showtimeRepository.findByShowDate(date)
+                .stream()
+                .map(this::toShowtimeResponse)
+                .collect(Collectors.toList());
+    }
 
     @Override
     @Transactional
@@ -72,6 +90,29 @@ public class ShowtimeServiceImpl implements ShowtimeService {
         Showtime saved = showtimeRepository.save(showtime);
         log.info("Showtime created successfully with ID: {}", saved.getId());
         return toShowtimeResponse(saved);
+    }
+    
+    @Override
+    @Transactional
+    public ShowtimeResponse updateShowtime(Long id, ShowtimeRequest showtimeRequest) {
+        log.debug("Updating showtime with ID: {}", id);
+        
+        Showtime existingShowtime = showtimeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Showtime not found with ID: " + id));
+        
+        // Update fields
+        existingShowtime.setMovie(movieRepository.findById(showtimeRequest.getMovieId()).orElse(null));
+        existingShowtime.setCinema(cinemaRepository.findById(showtimeRequest.getCinemaId()).orElse(null));
+        existingShowtime.setRoom(roomRepository.findById(showtimeRequest.getRoomId()).orElse(null));
+        existingShowtime.setShowDate(showtimeRequest.getShowDate());
+        existingShowtime.setShowTime(showtimeRequest.getShowTime());
+        existingShowtime.setFormat(showtimeRequest.getFormat());
+        existingShowtime.setLanguage(showtimeRequest.getLanguage());
+        existingShowtime.setStatus(showtimeRequest.getStatus());
+        
+        Showtime updated = showtimeRepository.save(existingShowtime);
+        log.info("Showtime updated successfully with ID: {}", updated.getId());
+        return toShowtimeResponse(updated);
     }
 
     @Override
@@ -125,6 +166,7 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                                 .id(tp.getId())
                                 .showtimeId(tp.getShowtime().getId())
                                 .type(tp.getType())
+                                .format(tp.getFormat())
                                 .price(tp.getPrice())
                                 .createdAt(tp.getCreatedAt())
                                 .updatedAt(tp.getUpdatedAt())

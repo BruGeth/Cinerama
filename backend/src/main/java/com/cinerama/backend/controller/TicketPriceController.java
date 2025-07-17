@@ -1,5 +1,6 @@
 package com.cinerama.backend.controller;
 
+import com.cinerama.backend.dto.TicketPriceBatchRequest;
 import com.cinerama.backend.dto.TicketPriceRequest;
 import com.cinerama.backend.dto.TicketPriceResponse;
 import com.cinerama.backend.enums.TicketType;
@@ -102,6 +103,20 @@ public class TicketPriceController {
     public ResponseEntity<List<TicketPriceResponse>> createTicketPricesForShowtime(
             @Valid @RequestBody List<TicketPriceRequest> ticketPriceRequests) {
         List<TicketPriceResponse> createdTicketPrices = ticketPriceService.createTicketPricesForShowtime(ticketPriceRequests);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTicketPrices);
+    }
+    
+    /**
+     * Creates multiple ticket prices using batch request.
+     * 
+     * @param batchRequest The batch request containing showtime ID and ticket prices
+     * @return List of created ticket price responses with 201 status
+     */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/batch-enhanced")
+    public ResponseEntity<List<TicketPriceResponse>> createBatchTicketPrices(
+            @Valid @RequestBody TicketPriceBatchRequest batchRequest) {
+        List<TicketPriceResponse> createdTicketPrices = ticketPriceService.createBatchTicketPrices(batchRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTicketPrices);
     }
     

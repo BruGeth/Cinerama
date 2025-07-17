@@ -77,7 +77,7 @@ const Login = () => {
         // Ya se envió el código desde el AuthContext
         navigate("/verify", { state: { email: credentials.email } });
       } else {
-        setError("Invalid credentials. Please try again.");
+        setError("Credenciales incorrectas. Por favor, inténtalo de nuevo.");
       }
     } finally {
       setIsLoading(false);

@@ -1,3 +1,37 @@
+@media (max-width: 768px) {
+  .users-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+  .users-table table,
+  .users-table thead,
+  .users-table tbody,
+  .users-table tr {
+    display: table;
+    width: 100%;
+    table-layout: auto;
+  }
+  .users-table th,
+  .users-table td {
+    padding: 8px 6px;
+    font-size: 13px;
+    min-width: 100px;
+    white-space: nowrap;
+  }
+  .export-btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px 0;
+    margin-top: 1rem;
+  }
+  .download-message {
+    font-size: 0.97rem;
+    text-align: center;
+  }
+}
 /* Users Table */
 .users-table {
   width: 100%;

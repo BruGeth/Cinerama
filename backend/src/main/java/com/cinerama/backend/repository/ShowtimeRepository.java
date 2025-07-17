@@ -1,6 +1,7 @@
 package com.cinerama.backend.repository;
 
 import com.cinerama.backend.entity.Showtime;
+import com.cinerama.backend.enums.ShowtimeFormat;
 import com.cinerama.backend.enums.ShowtimeStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -62,6 +63,14 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
      * @return List of showtimes with the specified status
      */
     List<Showtime> findByStatus(ShowtimeStatus status);
+    
+    /**
+     * Finds all showtimes by format.
+     * 
+     * @param format The showtime format
+     * @return List of showtimes with the specified format
+     */
+    List<Showtime> findByFormat(ShowtimeFormat format);
     
     /**
      * Finds active showtimes for a specific movie and date.

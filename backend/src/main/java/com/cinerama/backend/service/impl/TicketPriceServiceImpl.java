@@ -1,5 +1,6 @@
 package com.cinerama.backend.service.impl;
 
+import com.cinerama.backend.dto.TicketPriceBatchRequest;
 import com.cinerama.backend.dto.TicketPriceRequest;
 import com.cinerama.backend.dto.TicketPriceResponse;
 import com.cinerama.backend.entity.TicketPrice;
@@ -82,6 +83,7 @@ public class TicketPriceServiceImpl implements TicketPriceService {
         TicketPrice ticketPrice = TicketPrice.builder()
                 .showtime(showtime)
                 .type(ticketPriceRequest.getType())
+                .format(ticketPriceRequest.getFormat())
                 .price(ticketPriceRequest.getPrice())
                 .build();
         
@@ -104,6 +106,7 @@ public class TicketPriceServiceImpl implements TicketPriceService {
         
         existingTicketPrice.setShowtime(showtime);
         existingTicketPrice.setType(ticketPriceRequest.getType());
+        existingTicketPrice.setFormat(ticketPriceRequest.getFormat());
         existingTicketPrice.setPrice(ticketPriceRequest.getPrice());
         
         TicketPrice updatedTicketPrice = ticketPriceRepository.save(existingTicketPrice);
@@ -135,6 +138,32 @@ public class TicketPriceServiceImpl implements TicketPriceService {
                 .collect(Collectors.toList());
     }
     
+    @Override
+    @Transactional
+    public List<TicketPriceResponse> createBatchTicketPrices(TicketPriceBatchRequest batchRequest) {
+        log.debug("Creating batch ticket prices for showtime ID: {}, count: {}", 
+                batchRequest.getShowtimeId(), batchRequest.getPrices().size());
+        
+        Showtime showtime = showtimeRepository.findById(batchRequest.getShowtimeId())
+                .orElseThrow(() -> new IllegalArgumentException("Showtime not found with ID: " + batchRequest.getShowtimeId()));
+        
+        List<TicketPrice> ticketPrices = batchRequest.getPrices().stream()
+                .map(request -> TicketPrice.builder()
+                        .showtime(showtime)
+                        .type(request.getType())
+                        .format(request.getFormat())
+                        .price(request.getPrice())
+                        .build())
+                .collect(Collectors.toList());
+        
+        List<TicketPrice> savedTicketPrices = ticketPriceRepository.saveAll(ticketPrices);
+        log.info("Batch ticket prices created successfully, count: {}", savedTicketPrices.size());
+        
+        return savedTicketPrices.stream()
+                .map(this::toTicketPriceResponse)
+                .collect(Collectors.toList());
+    }
+    
     /**
      * Converts a TicketPrice entity to TicketPriceResponse DTO.
      * 
@@ -146,6 +175,7 @@ public class TicketPriceServiceImpl implements TicketPriceService {
                 .id(ticketPrice.getId())
                 .showtimeId(ticketPrice.getShowtime().getId())
                 .type(ticketPrice.getType())
+                .format(ticketPrice.getFormat())
                 .price(ticketPrice.getPrice())
                 .createdAt(ticketPrice.getCreatedAt())
                 .updatedAt(ticketPrice.getUpdatedAt())

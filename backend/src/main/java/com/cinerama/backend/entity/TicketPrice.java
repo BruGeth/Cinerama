@@ -1,5 +1,6 @@
 package com.cinerama.backend.entity;
 
+import com.cinerama.backend.enums.ShowtimeFormat;
 import com.cinerama.backend.enums.TicketType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +11,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "ticket_prices")
+@Table(name = "ticket_prices", 
+       uniqueConstraints = {
+           @UniqueConstraint(columnNames = {"showtime_id", "type", "format"})
+       })
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +29,12 @@ public class TicketPrice {
     private Showtime showtime;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TicketType type; // GENERAL, CHILD, STUDENT, SENIOR, VIP
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ShowtimeFormat format; // TWO_D, THREE_D, IMAX, FOUR_D_X
 
     @Column(nullable = false, precision = 8, scale = 2)
     private BigDecimal price;

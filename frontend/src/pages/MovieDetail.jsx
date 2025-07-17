@@ -50,21 +50,25 @@ const MovieDetail = () => {
     const grouped = { "2D": [], "3D": [], "XD": [] };
 
     showtimesList.forEach((st) => {
+      if (!st.format) return;
+      const formatValue = String(st.format).toUpperCase();
       let format = "";
-      if (st.auditorium.includes("2D")) format = "2D";
-      else if (st.auditorium.includes("3D")) format = "3D";
-      else if (st.auditorium.includes("XD")) format = "XD";
+      if (formatValue === "TWO_D" || formatValue === "2D") format = "2D";
+      else if (formatValue === "THREE_D" || formatValue === "3D") format = "3D";
+      else if (formatValue === "XD" || formatValue === "IMAX" || formatValue === "FOUR_D_X") format = "XD";
       else return;
 
-      const showDate = new Date(st.startTime);
+      // showDate: LocalDate (YYYY-MM-DD), showTime: LocalTime (HH:mm:ss)
+      if (!st.showDate || !st.showTime) return;
+      const showDate = new Date(st.showDate + 'T' + st.showTime);
       const showDateMidnight = new Date(showDate);
       showDateMidnight.setHours(0, 0, 0, 0);
 
       if (showDateMidnight.getTime() === selectedDay.getTime()) {
         grouped[format].push({
           id: st.id,
-          time: st.startTime.slice(11, 16),
-          full: st.startTime,
+          time: st.showTime.slice(0, 5),
+          full: st.showDate + 'T' + st.showTime,
         });
       }
     });
