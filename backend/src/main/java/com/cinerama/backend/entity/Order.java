@@ -59,6 +59,12 @@ public class Order {
     private String payerEmail;
 
     /**
+     * Name of the payer for order tracking and receipt generation.
+     */
+    @Column(nullable = true)
+    private String payerName;
+
+    /**
      * List of items included in the order. Each CartItem is linked back to this order.
      * Cascade operations and orphan removal are enabled to manage persistence automatically.
      */

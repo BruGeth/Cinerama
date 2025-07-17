@@ -134,35 +134,67 @@ public class PaymentServiceImpl implements PaymentService {
             if (order != null) {
                 // Update existing order with PayPal payer email and status
                 order.setPayerEmail(payment.getPayer().getPayerInfo().getEmail());
+                
+                // Try to get payer name from PayPal response
+                String payerName = null;
+                if (payment.getPayer() != null && payment.getPayer().getPayerInfo() != null) {
+                    String firstName = payment.getPayer().getPayerInfo().getFirstName();
+                    String lastName = payment.getPayer().getPayerInfo().getLastName();
+                    if (firstName != null || lastName != null) {
+                        payerName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+                        payerName = payerName.trim();
+                        order.setPayerName(payerName);
+                    }
+                }
+                
                 order.setStatus(payment.getState());
                 orderRepository.save(order);
                 logger.info("✅ Updated existing order with PayPal payer email: {}", order.getPayerEmail());
-                return ResponseEntity.ok(Map.of(
-                        "code", "DUPLICATE_ORDER",
-                        "message", "This PayPal order has already been captured.",
-                        "status", "already_completed",
-                        "payer", payment.getPayer().getPayerInfo().getEmail()
-                ));
+                
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", "DUPLICATE_ORDER");
+                response.put("message", "This PayPal order has already been captured.");
+                response.put("status", "already_completed");
+                response.put("payer", payment.getPayer().getPayerInfo().getEmail());
+                if (payerName != null) {
+                    response.put("payer_name", payerName);
+                }
+                
+                return ResponseEntity.ok(response);
             }
 
             // Save new order details to the database
+            String payerName = null;
+            if (payment.getPayer() != null && payment.getPayer().getPayerInfo() != null) {
+                String firstName = payment.getPayer().getPayerInfo().getFirstName();
+                String lastName = payment.getPayer().getPayerInfo().getLastName();
+                if (firstName != null || lastName != null) {
+                    payerName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+                    payerName = payerName.trim();
+                }
+            }
+            
             order = Order.builder()
                     .paypalOrderId(payment.getId())
                     .amount(new BigDecimal(payment.getTransactions().get(0).getAmount().getTotal()))
                     .currency(payment.getTransactions().get(0).getAmount().getCurrency())
                     .status(payment.getState())
-                    // Include buyer's email for better tracking and auditability
+                    // Include buyer's email and name for better tracking and auditability
                     .payerEmail(payment.getPayer().getPayerInfo().getEmail())
+                    .payerName(payerName)
                     .timestamp(LocalDateTime.now())
                     .build();
 
             orderRepository.save(order);
             logger.info("✅ Order saved successfully: {}", order.getId());
 
-            Map<String, String> response = new HashMap<>();
+            Map<String, Object> response = new HashMap<>();
             response.put("status", payment.getState());
             response.put("paypalOrderId", payment.getId());
             response.put("payer", payment.getPayer().getPayerInfo().getEmail());
+            if (payerName != null) {
+                response.put("payer_name", payerName);
+            }
 
             return ResponseEntity.ok(response);
 

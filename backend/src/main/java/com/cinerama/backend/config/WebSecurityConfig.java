@@ -110,7 +110,7 @@ public class WebSecurityConfig {
                         // Public endpoints for payment and confectionery purchase (including PayPal integration)
                         // Added to allow PayPal payment flow and confectionery purchases without authentication
                         .requestMatchers("/api/payment/**").permitAll()
-                        .requestMatchers("/api/confectionery-purchase", "/api/confectionery-purchase/**").permitAll()
+                        .requestMatchers("/api/confectionery-purchase", "/api/confectionery-purchase/**", "/api/confectionery-order/**").permitAll()
                         // User profile, tickets, and seats require authentication
                         .requestMatchers("/api/user/", "/api/tickets/**", "/api/seats/**").authenticated()
                         // All other endpoints require authentication

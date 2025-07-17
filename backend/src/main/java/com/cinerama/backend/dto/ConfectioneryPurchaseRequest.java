@@ -18,4 +18,6 @@ public class ConfectioneryPurchaseRequest {
     private String returnUrl;
     // URL to redirect if PayPal payment is cancelled
     private String cancelUrl;
+    // Name of the buyer for receipt generation
+    private String buyerName;
 }

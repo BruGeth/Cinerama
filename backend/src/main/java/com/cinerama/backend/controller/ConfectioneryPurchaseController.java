@@ -57,21 +57,21 @@ public class ConfectioneryPurchaseController {
             List<ConfectioneryOrderItem> orderItems = new ArrayList<>();
             for (ConfectioneryPurchaseItemRequest item : request.getItems()) {
                 ConfectioneryProduct product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new RuntimeException("Product not found: " + item.getProductId()));
+                        .orElseThrow(() -> new RuntimeException("Product not found: " + item.getProductId()));
                 if (product.getStock() < item.getQuantity()) {
                     return ResponseEntity.badRequest().body("Insufficient stock for: " + product.getName());
                 }
                 totalAmountPEN += product.getPrice() * item.getQuantity();
                 product.setStock(product.getStock() - item.getQuantity());
                 productRepository.save(product);
-            // Create the confectionery item for the order
+                // Create the confectionery item for the order
                 ConfectioneryOrderItem orderItem = ConfectioneryOrderItem.builder()
-                    .product(product)
-                    .productName(product.getName())
-                    .quantity(item.getQuantity())
-                    .unitPrice(product.getPrice())
-                    .totalPrice(product.getPrice() * item.getQuantity())
-                    .build();
+                        .product(product)
+                        .productName(product.getName())
+                        .quantity(item.getQuantity())
+                        .unitPrice(product.getPrice())
+                        .totalPrice(product.getPrice() * item.getQuantity())
+                        .build();
                 orderItems.add(orderItem);
             }
 
@@ -80,17 +80,21 @@ public class ConfectioneryPurchaseController {
 
             // Get buyer's email from security context (JWT principal)
             String payerEmail = null;
+            String payerName = null;
             if (SecurityContextHolder.getContext().getAuthentication() != null) {
                 payerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
             }
+            // Use the buyer name from the request, or default if not provided
+            payerName = request.getBuyerName() != null ? request.getBuyerName() : "Usuario Cinerama";
 
-           // Create a paid order in USD and associate the confectionery items
+            // Create a paid order in USD and associate the confectionery items
             Order order = new Order();
             order.setStatus("pagada");
             order.setTimestamp(LocalDateTime.now());
             order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
             order.setPayerEmail(payerEmail);
+            order.setPayerName(payerName);
             order.setConfectioneryItems(orderItems);
             for (ConfectioneryOrderItem orderItem : orderItems) {
                 orderItem.setOrder(order);
@@ -100,10 +104,10 @@ public class ConfectioneryPurchaseController {
             confectioneryOrderItemRepository.saveAll(orderItems);
 
             return ResponseEntity.ok(Map.of(
-                "message", "Purchase completed successfully",
-                "totalPEN", totalAmountPEN,
-                "totalUSD", totalAmountUSD
-            ));
+                    "message", "Purchase completed successfully",
+                    "orderId", order.getId(),
+                    "totalPEN", totalAmountPEN,
+                    "totalUSD", totalAmountUSD));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -215,16 +219,62 @@ public class ConfectioneryPurchaseController {
             if (captureResponse.getStatusCode().is2xxSuccessful()) {
                 // Update local order status to paid
                 order.setStatus("pagada");
-                // Get PayPal payer email from capture response
+                // Get PayPal payer email and name from capture response
                 String payerEmail = null;
+                String payerName = null;
                 Object body = captureResponse.getBody();
                 if (body instanceof Map) {
-                    Object emailObj = ((Map<?, ?>) body).get("payer");
-                    if (emailObj != null) {
-                        payerEmail = emailObj.toString();
+                    Map<?, ?> responseMap = (Map<?, ?>) body;
+                    // Check if this is a duplicate order response
+                    Object statusObj = responseMap.get("status");
+                    Object codeObj = responseMap.get("code");
+
+                    if ("already_completed".equals(statusObj) && "DUPLICATE_ORDER".equals(codeObj)) {
+                        System.out.println("🔍 Debug: Detected duplicate order - using existing payer data");
+                        // For duplicate orders, PayPal doesn't send payer data, so we keep existing
+                        // data
+                        payerEmail = order.getPayerEmail(); // Keep existing email
+                        payerName = order.getPayerName(); // Keep existing name
+                    } else {
+                        // Get email
+                        Object emailObj = responseMap.get("payer");
+                        if (emailObj != null) {
+                            payerEmail = emailObj.toString();
+                        }
+
+                        // Get name from PayPal response
+                        Object nameObj = responseMap.get("payer_name");
+                        if (nameObj != null) {
+                            payerName = nameObj.toString();
+                        } else {
+                            // Fallback: try to get name from other fields
+                            Object firstNameObj = responseMap.get("payer_first_name");
+                            Object lastNameObj = responseMap.get("payer_last_name");
+                            if (firstNameObj != null || lastNameObj != null) {
+                                String firstName = firstNameObj != null ? firstNameObj.toString() : "";
+                                String lastName = lastNameObj != null ? lastNameObj.toString() : "";
+                                payerName = (firstName + " " + lastName).trim();
+                            }
+                        }
+
+                        // Try other possible field names
+                        for (Object key : responseMap.keySet()) {
+                            if (key.toString().toLowerCase().contains("name")) {
+                                System.out.println(
+                                        "🔍 Debug: Found name-related field: " + key + " = " + responseMap.get(key));
+                            }
+                        }
                     }
                 }
-                order.setPayerEmail(payerEmail); // Save the PayPal payer's email
+
+                // Only update if we have new data or if it's a duplicate order (keep existing
+                // data)
+                if (payerEmail != null) {
+                    order.setPayerEmail(payerEmail);
+                }
+                if (payerName != null) {
+                    order.setPayerName(payerName);
+                }
                 orderRepository.save(order);
                 // Deduct stock for each confectionery product in the order
                 for (ConfectioneryOrderItem item : order.getConfectioneryItems()) {
@@ -235,6 +285,7 @@ public class ConfectioneryPurchaseController {
                 }
                 return ResponseEntity.ok(Map.of(
                         "message", "Purchase completed successfully",
+                        "orderId", order.getId(),
                         "paymentId", paymentId,
                         "status", "completed"));
             } else {
@@ -242,6 +293,54 @@ public class ConfectioneryPurchaseController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    /**
+     * Retrieves order details for PDF generation.
+     * Returns order information including purchased items, user details, and
+     * totals.
+     * This endpoint is used by the frontend to generate purchase receipts.
+     */
+    @GetMapping("/confectionery-order/{orderId}")
+    public ResponseEntity<?> getOrderDetails(@PathVariable Long orderId) {
+        try {
+            System.out.println("🔍 Debug: Fetching order with ID: " + orderId);
+
+            Order order = orderRepository.findById(orderId)
+                    .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+
+            System.out.println("🔍 Debug: Order found: " + order.getId());
+
+            // Get confectionery items for this order
+            List<ConfectioneryOrderItem> items = confectioneryOrderItemRepository.findByOrderId(orderId);
+
+            System.out.println("🔍 Debug: Found " + items.size() + " confectionery items");
+
+            // Calculate totals
+            double totalPEN = items.stream()
+                    .mapToDouble(item -> item.getTotalPrice())
+                    .sum();
+
+            double totalUSD = paymentService.convertSolesToDollars(totalPEN);
+            Map<String, Object> orderDetails = Map.of(
+                    "orderId", order.getId(),
+                    "timestamp", order.getTimestamp(),
+                    "status", order.getStatus(),
+                    "payerEmail", order.getPayerEmail() != null ? order.getPayerEmail() : "",
+                    "payerName", order.getPayerName() != null ? order.getPayerName() : "",
+                    "items", items.stream().map(item -> Map.of(
+                            "productName", item.getProductName(),
+                            "quantity", item.getQuantity(),
+                            "unitPrice", item.getUnitPrice(),
+                            "totalPrice", item.getTotalPrice())).collect(java.util.stream.Collectors.toList()),
+                    "totalPEN", totalPEN,
+                    "totalUSD", totalUSD);
+
+            return ResponseEntity.ok(orderDetails);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }
 }
