@@ -2,7 +2,6 @@ package com.cinerama.backend.controller;
 
 import com.cinerama.backend.dto.ShowtimeRequest;
 import com.cinerama.backend.dto.ShowtimeResponse;
-import com.cinerama.backend.entity.Showtime;
 import com.cinerama.backend.service.ShowtimeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

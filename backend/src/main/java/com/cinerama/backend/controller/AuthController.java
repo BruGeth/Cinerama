@@ -6,6 +6,7 @@ import com.cinerama.backend.dto.RegisterRequest;
 import com.cinerama.backend.dto.VerificationRequest;
 import com.cinerama.backend.entity.User;
 import com.cinerama.backend.service.AuthService;
+import com.cinerama.backend.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+
+    private final JwtUtil jwtUtil;
 
     /**
      * Registers a new user in the system.
@@ -177,5 +180,35 @@ public class AuthController {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse loginResponse = authService.login(request);
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @GetMapping("/refresh-token")
+    public ResponseEntity<LoginResponse> refreshToken(
+            @RequestHeader("Authorization") String authHeader) {
+
+        //  Verifica formato del encabezado
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.badRequest().build(); // o lanzar una excepción personalizada
+        }
+
+        //  Extrae el token de la cabecera
+        String token = authHeader.substring(7);
+
+        //  Valida que el token aún sea válido
+        if (!jwtUtil.validateToken(token)) {
+            return ResponseEntity.status(401).body(null);
+        }
+
+        //  Extrae email y rol del token existente
+        String email = jwtUtil.extractEmail(token);
+        String role = jwtUtil.extractRole(token);
+
+        //  Genera nuevo token con la misma info pero tiempo renovado
+        String newToken = jwtUtil.generateToken(email, role);
+
+        //  Empaqueta respuesta como en el login
+        LoginResponse response = new LoginResponse(newToken, email);
+
+        return ResponseEntity.ok(response);
     }
 }

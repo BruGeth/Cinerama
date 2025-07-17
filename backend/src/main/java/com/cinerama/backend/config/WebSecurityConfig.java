@@ -101,8 +101,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints for authentication, registration, and some resources
                         .requestMatchers("/api/auth/**", "/api/seats/available**", "/api/user/register"
-                                         ,"/api/events","/api/festarama","/api/specialfunctions","/api/advertising" ).permitAll()
-                        // Public GET endpoints for genres, movies, showtimes, confectionery, and orders
+                                         ,"/api/events","/api/festarama","/api/specialfunctions","/api/advertising", "/api/movies/update-status" ).permitAll()
+                        // Public access to genre, movie, showtime, and confectionery category endpoints
                         .requestMatchers(HttpMethod.GET, "/api/genres/**",
                                               "/api/movies/**","/api/showtimes/**",
                                                 "/api/confectionery-categories/**",

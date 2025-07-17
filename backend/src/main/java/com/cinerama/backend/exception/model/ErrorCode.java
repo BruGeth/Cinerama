@@ -17,5 +17,6 @@ public enum ErrorCode {
     EXPIRED_TOKEN,
     PASSWORDS_NOT_MATCH,
     UNAUTHORIZED,
-    UNKNOWN_ERROR
+    UNKNOWN_ERROR,
+    USER_ALREADY_EXISTS // Añadido para validar registros duplicados
 }
