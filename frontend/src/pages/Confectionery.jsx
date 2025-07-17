@@ -10,6 +10,8 @@ Cinerama Confectionery Page - React Component
 import { useState, useEffect } from 'react';
 import '../styles/Confectionery.css';
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 // Main component for the confectionery page
 const Confectionery = () => {
@@ -43,6 +45,9 @@ const Confectionery = () => {
   // Show success modal after successful purchase
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // Store the last order ID for PDF generation
+  const [lastOrderId, setLastOrderId] = useState(null);
+
   // Show loading indicator for PayPal processing
   const [showPayPalLoading, setShowPayPalLoading] = useState(false);
 
@@ -51,6 +56,12 @@ const Confectionery = () => {
 
   // React Router navigation hook
   const navigate = useNavigate();
+  
+  // Retrieve user name from browser's local storage
+  const userName = localStorage.getItem("userName");
+
+  // Retrieve user email from browser's local storage  
+  const userEmail = localStorage.getItem("userEmail");
 
   // --- Fetch categories from API on mount ---
   useEffect(() => {
@@ -182,11 +193,12 @@ const Confectionery = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: selectedItems.map(item => ({
-            productId: item.id, // or "id" depending on backend
+            productId: item.id,
             quantity: item.quantity
           })),
           returnUrl,
-          cancelUrl
+          cancelUrl,
+          buyerName: userName
         })
       });
 
@@ -218,11 +230,13 @@ const Confectionery = () => {
         body: JSON.stringify({ paymentId, payerId })
       });
 
+      const data = await response.json();
       if (response.ok) {
+        setLastOrderId(data.orderId); // Guardar el orderId
         // Refresh products to update stock
         const res = await fetch("/api/confectionery-products");
-        const data = await res.json();
-        setProducts(data);
+        const productsData = await res.json();
+        setProducts(productsData);
         setSelectedItems([]); // Clear cart
         setShowSummary(false); // Close summary modal
         setShowSuccess(true);  // Show success modal
@@ -231,6 +245,61 @@ const Confectionery = () => {
       }
     } catch (error) {
       alert("Error completing purchase: " + error.message);
+    }
+  };
+
+
+  // --- Generate PDF receipt (pending implementation) ---
+  const handleGeneratePDF = async () => {
+    if (!lastOrderId) {
+      alert("No se encontró la orden para generar el comprobante.");
+      return;
+    }
+
+    try {
+      // Get the actual order data from the backend
+      const response = await fetch(`/api/confectionery-order/${lastOrderId}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert("No se pudo obtener la información de la orden.");
+        return;
+      }
+
+      // Generate PDF with real data
+      const doc = new jsPDF();
+
+      // Title
+      doc.setFontSize(18);
+      doc.text("Comprobante de Compra - Cinerama", 14, 20);
+
+      // Order data with real information
+      doc.setFontSize(12);
+      doc.text(`Fecha: ${new Date(data.timestamp).toLocaleString()}`, 14, 30);
+      doc.text(`Usuario: ${data.payerName || userName || "N/A"}`, 14, 38);
+      doc.text(`Email: ${data.payerEmail || userEmail || "N/A"}`, 14, 46);
+
+      // Product table with real data
+      doc.autoTable({
+        startY: 54,
+        head: [["Producto", "Cantidad", "Precio"]],
+        body: data.items.map(item => [
+          item.productName,
+          item.quantity,
+          `S/. ${item.unitPrice.toFixed(2)}`
+        ])
+      });
+
+      // Totals with real data
+      const finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : 54;
+      doc.text(`Total: S/. ${data.totalPEN.toFixed(2)}   (≈ USD ${data.totalUSD.toFixed(2)})`, 14, finalY + 10);
+
+      // Final message
+      doc.text("¡Gracias por tu compra en Cinerama!", 14, finalY + 20);
+
+      doc.save("comprobante-cinerama.pdf");
+    } catch (error) {
+      alert("Error generando el PDF: " + error.message);
     }
   };
 
@@ -381,6 +450,9 @@ const Confectionery = () => {
               }}
             >
               Cerrar
+            </button>
+            <button className="register-btn" onClick={handleGeneratePDF}>
+              Descargar comprobante PDF
             </button>
           </div>
         </div>
