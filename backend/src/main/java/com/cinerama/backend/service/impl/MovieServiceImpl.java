@@ -50,9 +50,13 @@ public class MovieServiceImpl implements MovieService {
         movie.setDescriptionMovie(movieRequest.getDescriptionMovie());
         movie.setRating(movieRequest.getRating());
         movie.setGenre(genreRepository.findById(movieRequest.getGenreId()).orElse(null));
-        movie.setImageUrl(movieRequest.getImageUrl());
+        movie.setPosterUrl(movieRequest.getImageUrl());
         movie.setDuration(movieRequest.getDuration());
         movie.setTrailerUrl(movieRequest.getTrailerUrl());
+        movie.setDirector(movieRequest.getDirector());
+        movie.setCast(movieRequest.getCast());
+        movie.setReleaseDate(movieRequest.getReleaseDate());
+        movie.setStatus(movieRequest.getStatus() != null ? movieRequest.getStatus() : com.cinerama.backend.enums.MovieStatus.NOW_PLAYING);
 
         Movie updated = movieRepository.save(movie);
         return toMovieResponse(updated);
@@ -71,9 +75,16 @@ public class MovieServiceImpl implements MovieService {
         dto.setDescriptionMovie(movie.getDescriptionMovie());
         dto.setRating(movie.getRating());
         dto.setGenreName(movie.getGenre() != null ? movie.getGenre().getName() : null);
-        dto.setImageUrl(movie.getImageUrl());
+        dto.setGenreId(movie.getGenre() != null ? movie.getGenre().getId() : null);
+        dto.setImageUrl(movie.getPosterUrl());
         dto.setDuration(movie.getDuration());
         dto.setTrailerUrl(movie.getTrailerUrl());
+        dto.setDirector(movie.getDirector());
+        dto.setCast(movie.getCast());
+        dto.setReleaseDate(movie.getReleaseDate());
+        dto.setStatus(movie.getStatus());
+        dto.setCreatedAt(movie.getCreatedAt());
+        dto.setUpdatedAt(movie.getUpdatedAt());
         return dto;
     }
 
@@ -85,9 +96,13 @@ public class MovieServiceImpl implements MovieService {
         movie.setRating(dto.getRating());
         // Debes buscar el Genre por id o nombre según lo que recibas en MovieRequest
         movie.setGenre(genreRepository.findById(dto.getGenreId()).orElse(null));
-        movie.setImageUrl(dto.getImageUrl());
+        movie.setPosterUrl(dto.getImageUrl());
         movie.setDuration(dto.getDuration());
         movie.setTrailerUrl(dto.getTrailerUrl());
+        movie.setDirector(dto.getDirector());
+        movie.setCast(dto.getCast());
+        movie.setReleaseDate(dto.getReleaseDate());
+        movie.setStatus(dto.getStatus() != null ? dto.getStatus() : com.cinerama.backend.enums.MovieStatus.NOW_PLAYING);
         return movie;
     }
 }

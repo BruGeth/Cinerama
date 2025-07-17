@@ -4,10 +4,10 @@ import com.cinerama.backend.dto.TicketPurchaseRequest;
 import com.cinerama.backend.dto.TicketPurchaseResponse;
 import com.cinerama.backend.entity.Booking;
 import com.cinerama.backend.entity.Seat;
-import com.cinerama.backend.entity.Show;
+import com.cinerama.backend.entity.Showtime;
 import com.cinerama.backend.repository.BookingRepository;
 import com.cinerama.backend.repository.SeatRepository;
-import com.cinerama.backend.repository.ShowRepository;
+import com.cinerama.backend.repository.ShowtimeRepository;
 import com.cinerama.backend.service.TicketService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +20,14 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class TicketServiceImpl implements TicketService {
-    private final ShowRepository showRepository;
+    private final ShowtimeRepository showtimeRepository;
     private final SeatRepository seatRepository;
     private final BookingRepository bookingRepository;
 
     @Transactional
     public TicketPurchaseResponse purchaseTicket(Long userId, TicketPurchaseRequest request) {
-        Show show = showRepository.findById(request.getShowId())
-                .orElseThrow(() -> new IllegalArgumentException("Show not found"));
+        Showtime showtime = showtimeRepository.findById(request.getShowtimeId())
+                .orElseThrow(() -> new IllegalArgumentException("Showtime not found"));
 
         List<Seat> availableSeats = seatRepository.findAllByIdInAndAvailableTrue(request.getSeatIds());
 
@@ -40,7 +40,7 @@ public class TicketServiceImpl implements TicketService {
 
         Booking booking = new Booking();
         booking.setUserId(userId);
-        booking.setShow(show);
+        booking.setShowtime(showtime);
         booking.setBookingTime(LocalDateTime.now());
         booking.setConfirmationCode(UUID.randomUUID().toString());
         booking.setSeats(availableSeats);
@@ -50,7 +50,7 @@ public class TicketServiceImpl implements TicketService {
         return TicketPurchaseResponse.builder()
                 .confirmationCode(booking.getConfirmationCode())
                 .bookingId(booking.getId())
-                .showId(show.getId())
+                .showtimeId(showtime.getId())
                 .bookingTime(booking.getBookingTime())
                 .seats(availableSeats.stream().map(Seat::getSeatNumber).toList())
                 .message("Ticket purchase successful")
