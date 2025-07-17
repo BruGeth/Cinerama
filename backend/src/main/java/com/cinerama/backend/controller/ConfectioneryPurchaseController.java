@@ -19,6 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.context.SecurityContextHolder;
+import com.cinerama.backend.service.PdfService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfWriter;
+import org.springframework.stereotype.Service;
 
 /**
  * Controller for handling confectionery purchases, including direct and PayPal
@@ -41,6 +47,7 @@ public class ConfectioneryPurchaseController {
     private final PaymentServiceImpl paymentService;
     private final OrderRepository orderRepository;
     private final ConfectioneryOrderItemRepository confectioneryOrderItemRepository;
+    private final PdfService pdfService;
 
     /**
      * Handles direct confectionery purchases (non-PayPal).
@@ -88,8 +95,8 @@ public class ConfectioneryPurchaseController {
             payerName = request.getBuyerName() != null ? request.getBuyerName() : "Usuario Cinerama";
 
             // Create a paid order in USD and associate the confectionery items
+            // Suponiendo que tienes el objeto payment disponible aquí
             Order order = new Order();
-            order.setStatus("pagada");
             order.setTimestamp(LocalDateTime.now());
             order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
@@ -152,7 +159,7 @@ public class ConfectioneryPurchaseController {
 
             // Create a local pending order in USD and associate the confectionery items
             Order order = new Order();
-            order.setStatus("pendiente");
+            // NO asignar estado aquí, el estado se asigna en el servicio cuando se captura el pago
             order.setTimestamp(LocalDateTime.now());
             order.setCurrency("USD");
             order.setAmount(BigDecimal.valueOf(totalAmountUSD));
@@ -206,7 +213,7 @@ public class ConfectioneryPurchaseController {
             Order order = orderRepository.findByPaypalOrderId(paymentId)
                     .orElseThrow(() -> new RuntimeException("Order not found for paymentId: " + paymentId));
 
-            if ("pagada".equals(order.getStatus())) {
+            if ("COMPLETED".equalsIgnoreCase(order.getStatus())) {
                 // If already paid, return success (idempotent)
                 return ResponseEntity.ok(Map.of(
                         "message", "Purchase was already processed",
@@ -217,14 +224,13 @@ public class ConfectioneryPurchaseController {
             // If not paid, attempt to capture the payment
             ResponseEntity<?> captureResponse = paymentService.capturePayment(paymentId, payerId);
             if (captureResponse.getStatusCode().is2xxSuccessful()) {
-                // Update local order status to paid
-                order.setStatus("pagada");
-                // Get PayPal payer email and name from capture response
+                // NO actualizar el estado aquí; el servicio ya lo hizo
+                // Solo actualizar datos del comprador si es necesario
                 String payerEmail = null;
                 String payerName = null;
-                Object body = captureResponse.getBody();
-                if (body instanceof Map) {
-                    Map<?, ?> responseMap = (Map<?, ?>) body;
+                Object captureBody = captureResponse.getBody();
+                if (captureBody instanceof Map) {
+                    Map<?, ?> responseMap = (Map<?, ?>) captureBody;
                     // Check if this is a duplicate order response
                     Object statusObj = responseMap.get("status");
                     Object codeObj = responseMap.get("code");
@@ -341,6 +347,26 @@ public class ConfectioneryPurchaseController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/confectionery-order/{orderId}/pdf")
+    public ResponseEntity<byte[]> downloadOrderPdf(@PathVariable Long orderId) {
+        try {
+            Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+            byte[] pdfBytes = pdfService.generateConfectioneryOrderPdf(orderId);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("attachment", "recibo-cinerama-" + orderId + ".pdf");
+
+            return ResponseEntity.ok()
+                .headers(headers)
+                .body(pdfBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
         }
     }
 }
