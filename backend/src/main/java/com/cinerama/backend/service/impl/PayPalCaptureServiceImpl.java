@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PayPalCaptureServiceImpl implements PayPalCaptureService {
-
     @Autowired
     private APIContext apiContext;
 
