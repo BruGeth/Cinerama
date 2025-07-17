@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../styles/AdminLayout.css";
@@ -8,10 +8,39 @@ function AdminLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar si es dispositivo móvil
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarOpen(false); // Cerrar sidebar en móvil por defecto
+      } else {
+        setSidebarOpen(true); // Abrir sidebar en desktop por defecto
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
     navigate("/login");
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebarOnMobile = () => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
   };
 
   const menuItems = [
@@ -26,8 +55,16 @@ function AdminLayout({ children }) {
 
   return (
     <div className="admin-layout">
+      {/* Overlay para móviles */}
+      {isMobile && sidebarOpen && (
+        <div 
+          className="sidebar-overlay" 
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`admin-sidebar ${sidebarOpen ? "open" : "closed"}`}>
+      <aside className={`admin-sidebar ${sidebarOpen ? "open" : "closed"} ${isMobile ? "mobile" : ""}`}>
         <div className="sidebar-header">
           <div className="admin-logo">
             {sidebarOpen ? (
@@ -41,7 +78,7 @@ function AdminLayout({ children }) {
           </div>
           <button
             className="sidebar-toggle"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={toggleSidebar}
           >
             {sidebarOpen ? "←" : "→"}
           </button>
@@ -55,6 +92,7 @@ function AdminLayout({ children }) {
               className={`nav-item ${
                 location.pathname === item.path ? "active" : ""
               }`}
+              onClick={closeSidebarOnMobile}
             >
               <span className="nav-icon">{item.icon}</span>
               {sidebarOpen && <span className="nav-label">{item.label}</span>}
@@ -90,7 +128,17 @@ function AdminLayout({ children }) {
       {/* Main Content */}
       <div className="admin-main">
         <header className="admin-header">
-          <h1>Panel de Administración</h1>
+          <div className="header-left">
+            {isMobile && (
+              <button 
+                className="mobile-menu-btn" 
+                onClick={toggleSidebar}
+              >
+                ☰
+              </button>
+            )}
+            <h1>Panel de Administración</h1>
+          </div>
           <div className="header-actions">
             <Link to="/" className="view-site-btn">
               Ver Sitio
