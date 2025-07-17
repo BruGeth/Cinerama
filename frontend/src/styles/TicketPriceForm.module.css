@@ -1,0 +1,334 @@
+/* TicketPriceForm Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: slideIn 0.3s ease-out;
+}
+
+.ticketPriceModal {
+  max-width: 650px;
+}
+
+.modalHeader {
+  padding: 24px 32px 0;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modalHeader h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #4a4a4a;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.closeBtn:hover {
+  color: #1a1a1a;
+}
+
+/* Form Styles */
+.ticketPriceForm {
+  padding: 0 32px 32px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+.formGroup select,
+.formGroup input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: white;
+}
+
+.formGroup select:focus,
+.formGroup input:focus {
+  outline: none;
+  border-color: #e30000;
+  box-shadow: 0 0 0 3px rgba(227, 0, 0, 0.1);
+}
+
+.formGroup .error {
+  border-color: #ef4444;
+}
+
+.formGroup .error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.errorMessage {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+/* Price Input Wrapper */
+.priceInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency {
+  position: absolute;
+  left: 12px;
+  color: #2d2d2d;
+  font-weight: 600;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.priceInputWrapper input {
+  padding-left: 35px;
+}
+
+/* Preview Section */
+.previewSection {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 24px 0;
+}
+
+.previewSection h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+}
+
+.previewSection h4::before {
+  content: "👁️";
+  margin-right: 8px;
+}
+
+.previewDetails {
+  display: grid;
+  gap: 12px;
+}
+
+.previewItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.previewItem:last-child {
+  border-bottom: none;
+}
+
+.previewLabel {
+  font-weight: 600;
+  color: #2d2d2d;
+  font-size: 14px;
+}
+
+.previewValue {
+  color: #1a1a1a;
+  font-size: 14px;
+  text-align: right;
+  max-width: 60%;
+  word-break: break-word;
+  font-weight: 500;
+}
+
+.previewPrice {
+  color: #155724;
+  font-weight: 700;
+  font-size: 16px;
+  background: #d4edda;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #c3e6cb;
+}
+
+/* Action Buttons */
+.formActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.formActions button {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn {
+  background-color: #f9fafb;
+  color: #1a1a1a;
+  border: 1px solid #d1d5db;
+}
+
+.cancelBtn:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.saveBtn {
+  background-color: #e30000;
+  color: white;
+}
+
+.saveBtn:hover {
+  background-color: #c50000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(227, 0, 0, 0.4);
+}
+
+.saveBtn:active {
+  transform: translateY(0);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modalContent {
+    width: 95%;
+    margin: 20px;
+    max-height: calc(100vh - 40px);
+  }
+
+  .modalHeader {
+    padding: 20px 24px 0;
+  }
+
+  .ticketPriceForm {
+    padding: 0 24px 24px;
+  }
+
+  .modalHeader h3 {
+    font-size: 1.25rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .previewValue {
+    max-width: 50%;
+    font-size: 13px;
+  }
+
+  .formActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .formActions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .modalHeader {
+    padding: 16px 20px 0;
+  }
+
+  .ticketPriceForm {
+    padding: 0 20px 20px;
+  }
+
+  .previewSection {
+    padding: 16px;
+  }
+
+  .previewItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .previewValue {
+    max-width: 100%;
+    text-align: left;
+  }
+}
