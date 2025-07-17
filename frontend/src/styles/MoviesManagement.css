@@ -148,7 +148,7 @@
 }
 
 .movie-info {
-  padding: 1.5rem;
+  padding: 1.2rem;
 }
 
 .movie-info h3 {
@@ -387,6 +387,7 @@
     padding: 1rem;
     margin: 0 auto;
     max-width: 100%;
+    min-height: 650px;
   }
 
   /* POSTER MÁS GRANDE PARA MÓVIL */
@@ -394,7 +395,6 @@
   .movie-poster-placeholder {
     height: 320px; /* Aumentado significativamente de 200px */
     border-radius: 8px;
-    margin-bottom: 1rem;
   }
 
   .movie-poster img {
