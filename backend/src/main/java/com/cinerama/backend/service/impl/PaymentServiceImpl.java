@@ -16,7 +16,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -25,8 +24,14 @@ import java.util.Map;
 import java.io.IOException;
 
 /**
- * Service responsible for handling the PayPal payment process for tickets.
- * Includes Micrometer metrics for monitoring.
+ * Service implementation for handling PayPal payments in the confectionery module.
+ *
+ * Main responsibilities and improvements:
+ * - Integrates PayPal payment creation and capture for confectionery purchases.
+ * - Ensures all PayPal transactions are processed in USD, converting from PEN if necessary.
+ * - Prevents duplicate payment processing by checking for existing PayPal order IDs before saving.
+ * - Provides robust error handling and detailed logging for all payment operations.
+ * - Saves successful payment and order details to the database for tracking and reconciliation.
  */
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -45,7 +50,25 @@ public class PaymentServiceImpl implements PaymentService {
     private Counter successCounter;
     private Counter errorCounter;
 
-    // Constructor with dependency injection
+    /**
+     * Converts an amount in Peruvian Soles (PEN) to US Dollars (USD) using a fixed exchange rate.
+     * This ensures that all PayPal transactions are processed in USD, as required by PayPal.
+     *
+     * @param amountInSoles the amount in Peruvian Soles
+     * @return the equivalent amount in US Dollars, rounded to two decimals
+     */
+    public Double convertSolesToDollars(Double amountInSoles) {
+        double exchangeRate = 0.2818;
+        return Math.round(amountInSoles * exchangeRate * 100.0) / 100.0;
+    }
+
+    /**
+     * Constructs the PaymentServiceImpl with dependencies for order and capture services and the order repository.
+     *
+     * @param orderService    service for creating PayPal orders
+     * @param captureService  service for capturing PayPal payments
+     * @param orderRepository repository for persisting order data
+     */
     public PaymentServiceImpl(PayPalOrderServiceImpl orderService,
                               PayPalCaptureServiceImpl captureService,
                               OrderRepository orderRepository,
@@ -72,13 +95,19 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Creates a payment order in PayPal.
+     * Creates a PayPal payment order for the specified amount and currency.
      *
-     * @param amount    Amount to pay
-     * @param currency  Currency
-     * @param returnUrl Return URL after payment
-     * @param cancelUrl Cancel URL
-     * @return ResponseEntity with the result
+     * Flow:
+     * 1. Converts the amount to USD if necessary (PayPal only accepts USD).
+     * 2. Delegates the order creation to PayPalOrderServiceImpl.
+     * 3. Returns the approval URL and payment ID for frontend redirection.
+     * 4. Handles and logs any errors that occur during the process.
+     *
+     * @param amount     the payment amount (in PEN or USD)
+     * @param currency   the currency code ("PEN" or "USD")
+     * @param returnUrl  the URL to redirect to after payment approval
+     * @param cancelUrl  the URL to redirect to if payment is cancelled
+     * @return ResponseEntity containing the approval URL and payment ID, or error details
      */
     @Timed(value = "payment.ticket.order.creation.duration", description = "Duration for creating ticket order")
     @Override
@@ -118,11 +147,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     /**
-     * Captures the payment of a PayPal order.
+     * Captures an approved PayPal payment and saves the order details to the database.
      *
-     * @param paymentId Payment ID
-     * @param payerId   Payer ID
-     * @return ResponseEntity with the result
+     * Flow:
+     * 1. Executes the payment capture using PayPalCaptureServiceImpl.
+     * 2. Checks if the PayPal order ID already exists to prevent duplicate processing.
+     * 3. If not a duplicate, saves the order details (amount, currency, status, payer email, timestamp).
+     * 4. Returns the payment status and relevant information to the frontend.
+     * 5. Handles PayPal-specific and unexpected errors with detailed logging and responses.
+     *
+     * @param paymentId  the PayPal payment/order ID
+     * @param payerId    the PayPal payer/user ID
+     * @return ResponseEntity containing the payment status and order info, or error details
      */
     @Timed(value = "payment.ticket.capture.duration", description = "Duration for capturing ticket payment")
     @Override
@@ -133,22 +169,61 @@ public class PaymentServiceImpl implements PaymentService {
             // Execute the payment capture in PayPal
             Payment payment = captureService.executePayment(paymentId, payerId);
 
-            // Check if the order was already captured
-            if (orderRepository.existsByPaypalOrderId(payment.getId())) {
-                logger.warn("⚠️ Duplicate order capture attempt detected: {}", payment.getId());
-                return ResponseEntity.status(409).body(Map.of(
-                        "code", "DUPLICATE_ORDER",
-                        "message", "This PayPal order has already been captured."
-                ));
+            // Check if the order already exists by PayPal order ID
+            Order order = orderRepository.findByPaypalOrderId(payment.getId()).orElse(null);
+            if (order != null) {
+                // Update existing order with PayPal payer email and status
+                order.setPayerEmail(payment.getPayer().getPayerInfo().getEmail());
+                
+                // Try to get payer name from PayPal response
+                String payerName = null;
+                if (payment.getPayer() != null && payment.getPayer().getPayerInfo() != null) {
+                    String firstName = payment.getPayer().getPayerInfo().getFirstName();
+                    String lastName = payment.getPayer().getPayerInfo().getLastName();
+                    if (firstName != null || lastName != null) {
+                        payerName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+                        payerName = payerName.trim();
+                        order.setPayerName(payerName);
+                    }
+                }
+                
+                order.setStatus(payment.getState());
+                order.setCurrency(payment.getTransactions().get(0).getAmount().getCurrency()); // <-- Actualiza la moneda
+                orderRepository.save(order);
+                logger.info("✅ Updated existing order with PayPal payer email: {}", order.getPayerEmail());
+                
+                Map<String, Object> response = new HashMap<>();
+                response.put("code", "DUPLICATE_ORDER");
+                response.put("message", "This PayPal order has already been captured.");
+                response.put("status", "already_completed");
+                response.put("payer", payment.getPayer().getPayerInfo().getEmail());
+                if (payerName != null) {
+                    response.put("payer_name", payerName);
+                }
+                
+                return ResponseEntity.ok(response);
             }
 
-            // Build and save the order in the database
-            Order order = Order.builder()
+            // Save new order details to the database
+            String payerName = null;
+            if (payment.getPayer() != null && payment.getPayer().getPayerInfo() != null) {
+                String firstName = payment.getPayer().getPayerInfo().getFirstName();
+                String lastName = payment.getPayer().getPayerInfo().getLastName();
+                if (firstName != null || lastName != null) {
+                    payerName = (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
+                    payerName = payerName.trim();
+                }
+            }
+            
+            order = Order.builder()
+
                     .paypalOrderId(payment.getId())
                     .amount(new BigDecimal(payment.getTransactions().get(0).getAmount().getTotal()))
                     .currency(payment.getTransactions().get(0).getAmount().getCurrency())
                     .status(payment.getState())
+                    // Include buyer's email and name for better tracking and auditability
                     .payerEmail(payment.getPayer().getPayerInfo().getEmail())
+                    .payerName(payerName)
                     .timestamp(LocalDateTime.now())
                     .build();
 
@@ -159,6 +234,14 @@ public class PaymentServiceImpl implements PaymentService {
             // Generate the PDF summary
             byte[] pdfBytes = pdfService.generateTicketSummary(order);
 
+            Map<String, String> response = new HashMap<>();
+            response.put("status", payment.getState());
+            response.put("paypalOrderId", payment.getId());
+            response.put("payer", payment.getPayer().getPayerInfo().getEmail());
+            if (payerName != null) {
+                response.put("payer_name", payerName);
+            }
+
             // Return the PDF as a response
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=order_" + order.getId() + ".pdf")
@@ -166,7 +249,9 @@ public class PaymentServiceImpl implements PaymentService {
                     .body(pdfBytes);
 
         } catch (PayPalRESTException ex) {
-            // Handle PayPal-specific errors
+
+            // Handle PayPal-specific errors with detailed information
+
             Error paypalError = ex.getDetails();
             String code = paypalError != null ? paypalError.getName() : "UNKNOWN_ERROR";
             String message = paypalError != null ? paypalError.getMessage() : ex.getMessage();
@@ -187,6 +272,7 @@ public class PaymentServiceImpl implements PaymentService {
                     "message", "Failed to generate purchase summary PDF"
             ));
         } catch (Exception e) {
+
             // Handle other unexpected errors
             logger.error("Unexpected error during capture:", e);
             errorCounter.increment();

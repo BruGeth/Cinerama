@@ -59,11 +59,24 @@ public class Order {
     private String payerEmail;
 
     /**
+     * Name of the payer for order tracking and receipt generation.
+     */
+    @Column(nullable = true)
+    private String payerName;
+
+    /**
      * List of items included in the order. Each CartItem is linked back to this order.
      * Cascade operations and orphan removal are enabled to manage persistence automatically.
      */
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cart;
+
+    /**
+     * List of confectionery items included in the order. Each ConfectioneryOrderItem is linked back to this order.
+     * Cascade operations and orphan removal are enabled to manage persistence automatically.
+     */
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConfectioneryOrderItem> confectioneryItems;
 /**
  * Calculates the total cost of all items in the order based on quantity and price.
  * This ensures that the amount charged matches the cart contents.

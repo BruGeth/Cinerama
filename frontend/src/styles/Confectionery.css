@@ -1,14 +1,20 @@
+/* ===========================
+Cinerama Confectionery Section Styles
+=========================== */
+
 /* Main container for the confectionery section */
 .confectionery-container {
   max-width: 1200px; /* Limits the width of the container */
   margin: 0 auto; /* Centers the container horizontally */
   padding: 40px 20px; /* Adds padding inside the container */
-  font-family: 'Segoe UI', sans-serif; /* Font style */
+  font-family: 'Segoe UI', sans-serif; /* Font style for the section */
+  color: #333; /* Main text color */
 }
+
 /* Title of the section */
 .confectionery-container .confectionery-title {
   text-align: center; /* Center the text */
-  color: #d70000; /* Red color */
+  color: #d70000; /* Red color for the title */
   font-size: 2.5rem; /* Large font size */
   font-weight: 800; /* Very bold text */
   margin-bottom: 10px; /* Space below the title */
@@ -59,16 +65,6 @@
   display: grid; /* CSS grid layout */
   gap: 24px; /* Space between grid items */
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
-}
-
-/* Horizontal layout used when a category is selected */
-.confectionery-container .product-grid.horizontal {
-  display: flex; /* Flex layout instead of grid */
-  flex-wrap: nowrap; /* No wrapping, horizontal scrolling */
-  overflow-x: auto; /* Enable horizontal scroll */
-  gap: 16px; /* Space between items */
-  padding-bottom: 1rem; /* Bottom padding for scroll space */
-  scroll-snap-type: x mandatory; /* Snap to item horizontally */
 }
 
 /* Individual card settings in horizontal mode */
@@ -139,7 +135,7 @@
   box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3); /* Subtle red shadow */
 }
 
-/* Glowing shimmer background effect */
+/* Glowing shimmer background effect for product button */
 .confectionery-container .product-button::before {
   content: "";
   position: absolute;
@@ -165,13 +161,263 @@
   box-shadow: 0 8px 18px rgba(255, 0, 0, 0.5); /* Stronger shadow */
 }
 
-/* Click effect */
+/* Click effect for product button */
 .confectionery-container .product-button:active {
   transform: scale(0.95); /* Slight shrink on click */
   box-shadow: 0 2px 6px rgba(255, 0, 0, 0.3); /* Lighter shadow */
 }
 
-/* Shimmer keyframe animation */
+/* Right side panel for the ticket/summary */
+.side-panel {
+  position: fixed; /* Fixed to the right */
+  top: 100px;
+  right: 0;
+  width: 340px;
+  max-width: 95vw;
+  background: #fffbe6; /* Light yellow background */
+  border-left: 2px solid #ffe08a; /* Yellow border */
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+  box-shadow: -4px 0 16px rgba(215, 0, 0, 0.08); /* Subtle shadow */
+  z-index: 200;
+  padding: 1.5rem 1.2rem;
+  animation: ticketFadeIn 0.5s; /* Fade in animation */
+  transition: box-shadow 0.3s;
+}
+
+/* Responsive: side panel becomes static and full width on small screens */
+@media (max-width: 900px) {
+  .side-panel {
+    position: static;
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+    border-left: none;
+  }
+}
+
+/* Each item row inside the side panel */
+.panel-item {
+  display: flex; /* Horizontal layout */
+  justify-content: space-between; /* Space between name and controls */
+  align-items: center; /* Vertically centered */
+  margin: 0.7rem 0; /* More vertical spacing */
+  padding: 0.5rem 0.2rem; /* Padding for touch area */
+  border-radius: 6px; /* Slightly rounded corners */
+  background: rgba(255, 246, 246, 0.7); /* Subtle background on item */
+  transition: background 0.3s; /* Smooth background on hover */
+}
+
+/* Highlight item row on hover */
+.panel-item:hover {
+  background: #ffeaea; /* Highlight on hover */
+}
+
+/* Notice for ticket information in the side panel */
+.ticket-notice {
+  font-size: 1rem; /* Slightly larger text */
+  color: #d70000; /* Main red color for text */
+  background: linear-gradient(90deg, #fffbe6 0%, #fff6b3 100%); /* Soft yellow gradient background */
+  padding: 1rem 1.2rem; /* More spacious padding */
+  margin-bottom: 1.5rem; /* More space below the notice */
+  border-radius: 10px; /* More rounded corners */
+  border-left: 5px solid #d70000; /* Thicker red accent border */
+  box-shadow: 0 4px 16px rgba(215, 0, 0, 0.09); /* Slightly stronger shadow */
+  transition: background 0.4s, color 0.4s, box-shadow 0.4s; /* Smooth transitions */
+  font-weight: 700; /* Bolder text */
+  letter-spacing: 0.03em; /* Slightly more letter spacing */
+}
+
+/* Hover effect for ticket notice */
+.ticket-notice:hover {
+  background: linear-gradient(90deg, #fff6b3 0%, #fffbe6 100%); /* Invert yellow gradient on hover */
+  color: #b30000; /* Slightly darker red */
+  box-shadow: 0 8px 24px rgba(215, 0, 0, 0.13); /* Stronger shadow */
+}
+
+/* Total price styling at the bottom of the side panel */
+.total {
+  font-weight: bold; /* Bold text */
+  font-size: 1.2rem; /* Larger font size */
+  margin-top: 2rem; /* More space above */
+  color: #d70000; /* Red color for emphasis */
+  text-align: right; /* Align to the right */
+  letter-spacing: 0.02em; /* Slight letter spacing */
+  transition: color 0.3s; /* Smooth color transition */
+}
+
+/* Modal for login warning: centered popup with dark background overlay */
+.login-warning-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45); /* Semi-transparent black overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000; /* Above all content */
+}
+
+/* Content box for the login modal */
+.modal-content {
+  background: #fff; /* White background */
+  border-radius: 12px; /* Rounded corners */
+  padding: 2rem 2.5rem; /* Spacious padding */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18); /* Strong shadow */
+  text-align: center; /* Centered text */
+  min-width: 320px; /* Minimum width for modal */
+}
+
+/* General button style inside modal */
+.modal-content button {
+  margin: 0 0.5rem;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Register button: yellow gradient and brown text */
+.modal-content .register-btn {
+  background: linear-gradient(90deg, #ffe08a, #ffd600); /* Yellow gradient */
+  color: #7a5a00; /* Brown text */
+}
+
+/* Register button hover effect: solid yellow */
+.modal-content .register-btn:hover {
+  background: #ffd600; /* Solid yellow */
+}
+
+/* Cancel button: red gradient and white text */
+.modal-content .cancel-btn {
+  background: linear-gradient(90deg, #ff4e4e, #cc0000); /* Red gradient */
+  color: #fff; /* White text */
+}
+
+/* Cancel button hover effect: solid red */
+.modal-content .cancel-btn:hover {
+  background: #cc0000; /* Solid red */
+}
+
+/* Ticket chat panel (legacy, now replaced by side-panel) */
+.ticket-chat-panel {
+  position: fixed;
+  bottom: 32px;
+  left: 32px;
+  width: 340px;
+  max-width: 90vw;
+  background: #fffbe6;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(215,0,0,0.13);
+  border: 2px solid #ffe08a;
+  z-index: 200;
+  padding: 1.5rem 1.2rem;
+  animation: ticketFadeIn 0.5s;
+  transition: box-shadow 0.3s;
+}
+
+/* Animation for ticket panel appearance */
+@keyframes ticketFadeIn {
+  from { opacity: 0; transform: translateY(40px);} 
+  to { opacity: 1; transform: translateY(0);}
+}
+
+/* Quantity controls styling for product selection */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Button for increasing/decreasing quantity */
+.quantity-btn {
+  background: #ffd600;
+  color: #7a5a00;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* Disabled state for quantity button */
+.quantity-btn:disabled {
+  background: #eee;
+  color: #bbb;
+  cursor: not-allowed;
+}
+
+/* Display for the quantity count */
+.quantity-count {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Button to finalize the purchase */
+.finalize-btn {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: linear-gradient(90deg, #ffe08a, #ffd600);
+  color: #7a5a00;
+  border: none;
+  border-radius: 999px;
+  padding: 1rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  cursor: pointer;
+  z-index: 2100;
+  transition: background 0.2s;
+}
+
+/* Hover effect for finalize button */
+.finalize-btn:hover {
+  background: #ffd600;
+}
+
+/* Row for displaying both PEN and USD totals in a single line */
+.total-row {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between amounts and separator */
+  justify-content: flex-end; /* Align to the right (optional) */
+  margin-top: 2rem;
+  margin-bottom: 10px;
+}
+
+/* Style for the PEN total */
+.total-row .total {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #d70000;
+  margin: 0;
+}
+
+/* Separator between totals */
+.total-row .total-separator {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* Style for the USD total */
+.total-row .total-usd {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: blue; /* You can change this to #666 for gray if you prefer */
+  margin: 0;
+}
+
+/* Shimmer keyframe animation for glowing button effect */
 @keyframes shimmer {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);

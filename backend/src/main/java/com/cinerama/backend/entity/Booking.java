@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +25,8 @@ public class Booking {
     private String confirmationCode;
 
     @ManyToOne
-    @JoinColumn(name = "show_id", nullable = false)
-    private Show show;
+    @JoinColumn(name = "showtime_id", nullable = false)
+    private Showtime showtime;
 
     @ManyToMany
     @JoinTable(
@@ -44,7 +43,7 @@ public class Booking {
                 ", userId=" + userId +
                 ", bookingTime=" + bookingTime +
                 ", confirmationCode='" + confirmationCode + '\'' +
-                ", show=" + show +
+                ", showtime=" + showtime +
                 ", seats=" + seats +
                 '}';
     }

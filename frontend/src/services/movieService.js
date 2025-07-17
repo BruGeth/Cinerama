@@ -16,6 +16,13 @@ export const fetchMovies = async () => {
   return await res.json();
 };
 
+// Obtain a single movie by ID (for editing - includes all fields)
+export const fetchMovieById = async (id) => {
+  const res = await fetch(`${API_BASE_URL}/${id}`);
+  if (!res.ok) throw new Error("Error fetching movie");
+  return await res.json();
+};
+
 // Create a new movie
 export const createMovie = async (movieData) => {
   const res = await fetch(API_BASE_URL, {
