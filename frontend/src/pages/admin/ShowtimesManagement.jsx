@@ -3,14 +3,14 @@ import AdminLayout from "../../layouts/AdminLayout";
 import ShowtimeForm from "../../components/admin/ShowtimeForm";
 import TicketPriceForm from "../../components/admin/TicketPriceForm";
 import {
-  getMockShowtimes,
+  fetchShowtimes,
   createShowtime,
   updateShowtime,
   deleteShowtime,
 } from "../../services/showtimesService";
 import { ticketPricesService, getTicketTypes } from "../../services/ticketPricesService";
 import { fetchMovies } from "../../services/movieService";
-import { getMockCinemas } from "../../services/cinemasService";
+import { fetchCinemas } from "../../services/cinemasService";
 import styles from "../../styles/ShowtimesManagement.module.css";
 
 function ShowtimesManagement() {
@@ -24,6 +24,7 @@ function ShowtimesManagement() {
   const [editingShowtime, setEditingShowtime] = useState(null);
   const [editingTicketPrice, setEditingTicketPrice] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("showtimes"); // "showtimes" | "prices"
   const [filters, setFilters] = useState({
     movieId: "",
@@ -37,11 +38,12 @@ function ShowtimesManagement() {
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
     try {
       const [showtimesData, moviesData, cinemasData, ticketPricesData] = await Promise.all([
-        getMockShowtimes(),
+        fetchShowtimes(),
         fetchMovies(),
-        getMockCinemas(),
+        fetchCinemas(),
         ticketPricesService.fetchTicketPrices(),
       ]);
       setShowtimes(showtimesData);
@@ -51,9 +53,21 @@ function ShowtimesManagement() {
       setTicketTypes(getTicketTypes());
     } catch (error) {
       console.error("Error fetching data:", error);
+      setError("Error al cargar los datos. Verifique que el servidor backend esté ejecutándose.");
     } finally {
       setLoading(false);
     }
+  };
+
+  // Función para formatear los nombres de formatos de manera más legible
+  const formatDisplayName = (format) => {
+    const formatMap = {
+      'TWO_D': '2D',
+      'THREE_D': '3D',
+      'IMAX': 'IMAX',
+      'FOUR_D_X': '4DX'
+    };
+    return formatMap[format] || format;
   };
 
   const handleAddShowtime = () => {
@@ -180,15 +194,15 @@ function ShowtimesManagement() {
   const filteredShowtimes = showtimes.filter((showtime) => {
     if (
       filters.movieId &&
-      showtime.movie.id !== Number.parseInt(filters.movieId)
+      showtime.movie?.id !== Number.parseInt(filters.movieId)
     )
       return false;
     if (
       filters.cinemaId &&
-      showtime.cinema.id !== Number.parseInt(filters.cinemaId)
+      showtime.cinema?.id !== Number.parseInt(filters.cinemaId)
     )
       return false;
-    if (filters.date && showtime.date !== filters.date) return false;
+    if (filters.date && showtime.showDate !== filters.date) return false;
     return true;
   });
 
@@ -196,6 +210,20 @@ function ShowtimesManagement() {
     return (
       <AdminLayout>
         <div className={styles.loading}>Cargando horarios...</div>
+      </AdminLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <AdminLayout>
+        <div className={styles.error}>
+          <h3>Error de conexión</h3>
+          <p>{error}</p>
+          <button onClick={fetchData} className={styles.retryBtn}>
+            Reintentar
+          </button>
+        </div>
       </AdminLayout>
     );
   }
@@ -312,11 +340,11 @@ function ShowtimesManagement() {
                 <tbody>
                   {filteredShowtimes.map((showtime) => (
                     <tr key={showtime.id}>
-                      <td className={styles.movieTitle}>{showtime.movie.title}</td>
-                      <td className={styles.cinemaName}>{showtime.cinema.name}</td>
+                      <td className={styles.movieTitle}>{showtime.movie?.title || 'N/A'}</td>
+                      <td className={styles.cinemaName}>{showtime.cinema?.name || 'N/A'}</td>
                       <td className={styles.roomName}>
-                        {showtime.room.name}
-                        {showtime.room.type !== "Standard" && (
+                        {showtime.room?.name || 'N/A'}
+                        {showtime.room?.type && showtime.room.type !== "STANDARD" && (
                           <span
                             className={`${styles.roomTypeBadge} ${styles[showtime.room.type.toLowerCase()]}`}
                           >
@@ -324,13 +352,13 @@ function ShowtimesManagement() {
                           </span>
                         )}
                       </td>
-                      <td className={styles.showtimeDate}>{showtime.date}</td>
-                      <td className={styles.showtimeTime}>{showtime.time}</td>
+                      <td className={styles.showtimeDate}>{showtime.showDate}</td>
+                      <td className={styles.showtimeTime}>{showtime.showTime}</td>
                       <td className={styles.formatCell}>
                         <span
-                          className={`${styles.formatBadge} ${styles[showtime.format.toLowerCase()]}`}
+                          className={`${styles.formatBadge} ${styles[showtime.format?.toLowerCase()]}`}
                         >
-                          {showtime.format}
+                          {formatDisplayName(showtime.format)}
                         </span>
                       </td>
                       <td className={styles.language}>{showtime.language}</td>
@@ -364,7 +392,7 @@ function ShowtimesManagement() {
                               : styles.low
                           }`}
                         >
-                          {showtime.availableSeats}/{showtime.room.capacity}
+                          {showtime.availableSeats}/{showtime.room?.capacity || 'N/A'}
                         </span>
                       </td>
                       <td className={styles.actions}>
@@ -427,11 +455,11 @@ function ShowtimesManagement() {
 
                     return (
                       <tr key={ticketPrice.id}>
-                        <td className={styles.movieTitle}>{showtime.movie.title}</td>
-                        <td className={styles.cinemaName}>{showtime.cinema.name}</td>
-                        <td className={styles.roomName}>{showtime.room.name}</td>
-                        <td className={styles.showtimeDate}>{showtime.date}</td>
-                        <td className={styles.showtimeTime}>{showtime.time}</td>
+                        <td className={styles.movieTitle}>{showtime.movie?.title || 'N/A'}</td>
+                        <td className={styles.cinemaName}>{showtime.cinema?.name || 'N/A'}</td>
+                        <td className={styles.roomName}>{showtime.room?.name || 'N/A'}</td>
+                        <td className={styles.showtimeDate}>{showtime.showDate}</td>
+                        <td className={styles.showtimeTime}>{showtime.showTime}</td>
                         <td className={styles.ticketType}>
                           <span className={styles.typeIcon}>{typeOption?.icon}</span>
                           {typeOption?.label}

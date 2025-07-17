@@ -437,10 +437,42 @@
 
 .loading {
     text-align: center;
-    padding: 3rem;
+    padding: 2rem;
     font-size: 1.2rem;
-    color: #4a4a4a;
-    font-weight: 500;
+    color: #6c757d;
+}
+
+.error {
+    text-align: center;
+    padding: 2rem;
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    margin: 2rem 0;
+}
+
+.error h3 {
+    color: #721c24;
+    margin-bottom: 1rem;
+}
+
+.error p {
+    color: #721c24;
+    margin-bottom: 1.5rem;
+}
+
+.retryBtn {
+    background-color: #e30000;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.retryBtn:hover {
+    background-color: #c50000;
 }
 
 .language {
