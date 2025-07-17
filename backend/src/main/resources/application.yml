@@ -47,3 +47,19 @@ paypal:
   client-secret: ${PAYPAL_CLIENT_SECRET}
   mode: sandbox
   api-url: https://api-m.sandbox.paypal.com
+management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, prometheus
+    endpoint:
+      prometheus:
+        enabled: true
+    metrics:
+      web:
+        server:
+          auto-time-requests: true
+metrics:
+    export:
+      prometheus:
+        enabled: true

@@ -6,6 +6,10 @@ import com.cinerama.backend.service.PaymentService;
 import com.paypal.api.payments.Payment;
 import com.paypal.api.payments.Error;
 import com.paypal.base.rest.PayPalRESTException;
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +37,10 @@ public class PaymentServiceImpl implements PaymentService {
     private final PayPalOrderServiceImpl orderService;
     private final PayPalCaptureServiceImpl captureService;
     private final OrderRepository orderRepository;
+    private final MeterRegistry meterRegistry;
+
+    private Counter successCounter;
+    private Counter errorCounter;
 
     /**
      * Converts an amount in Peruvian Soles (PEN) to US Dollars (USD) using a fixed exchange rate.
@@ -53,10 +61,24 @@ public class PaymentServiceImpl implements PaymentService {
      * @param captureService  service for capturing PayPal payments
      * @param orderRepository repository for persisting order data
      */
-    public PaymentServiceImpl(PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService, OrderRepository orderRepository) {
+    public PaymentServiceImpl(PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService,
+                              OrderRepository orderRepository, MeterRegistry meterRegistry) {
+
         this.orderService = orderService;
         this.captureService = captureService;
         this.orderRepository = orderRepository;
+        this.meterRegistry = meterRegistry;
+    }
+
+    @PostConstruct
+    public void initCounters() {
+        successCounter = meterRegistry.counter("payment.ticket.success.total");
+        errorCounter = meterRegistry.counter("payment.ticket.error.total");
+    }
+
+    private Double convertSolesToDollars(Double amountInSoles) {
+        double exchangeRate = 0.2818;
+        return Math.round(amountInSoles * exchangeRate * 100.0) / 100.0;
     }
 
     /**
@@ -74,32 +96,33 @@ public class PaymentServiceImpl implements PaymentService {
      * @param cancelUrl  the URL to redirect to if payment is cancelled
      * @return ResponseEntity containing the approval URL and payment ID, or error details
      */
+    @Timed(value = "payment.ticket.order.creation.duration", description = "Duración al crear orden de boletos")
     @Override
     public ResponseEntity<?> createPayment(Double amount, String currency, String returnUrl, String cancelUrl) {
         try {
             logger.info("Creating payment order: {} {}", amount, currency);
 
-            Double amountUSD;
-            if ("USD".equalsIgnoreCase(currency)) {
-                amountUSD = amount;
-                logger.info("Amount in USD: {}", amountUSD);
-            } else {
-                amountUSD = convertSolesToDollars(amount);
-                logger.info("Converted to USD: {} (original: {} {})", amountUSD, amount, currency);
-            }
+            Double amountUSD = "USD".equalsIgnoreCase(currency)
+                    ? amount
+                    : convertSolesToDollars(amount);
+            logger.info("Amount in USD: {}", amountUSD);
 
             Map<String, String> result = orderService.createOrder(amountUSD, "USD", returnUrl, cancelUrl);
 
             if (result == null || !result.containsKey("approval_url") || !result.containsKey("payment_id")) {
                 logger.error("Missing approval_url or payment_id from PayPalOrderService");
+                errorCounter.increment();
                 return ResponseEntity.status(500).body(Map.of("error", "Failed to create PayPal approval link."));
             }
 
-            logger.info("✅ Order created successfully. paymentId={}, approvalUrl={}", result.get("payment_id"), result.get("approval_url"));
+            logger.info("✅ Order created successfully. paymentId={}, approvalUrl={}",
+                    result.get("payment_id"), result.get("approval_url"));
+            successCounter.increment();
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
             logger.error("❌ Error creating PayPal payment: {}", e.getMessage(), e);
+            errorCounter.increment();
             return ResponseEntity.status(500).body(Map.of(
                     "code", "PAYPAL_ERROR",
                     "message", e.getMessage()
@@ -121,6 +144,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @param payerId    the PayPal payer/user ID
      * @return ResponseEntity containing the payment status and order info, or error details
      */
+    @Timed(value = "payment.ticket.capture.duration", description = "Duración al capturar pago de boletos")
     @Override
     public ResponseEntity<?> capturePayment(String paymentId, String payerId) {
         try {
@@ -188,7 +212,9 @@ public class PaymentServiceImpl implements PaymentService {
             orderRepository.save(order);
             logger.info("✅ Order saved successfully: {}", order.getId());
 
-            Map<String, Object> response = new HashMap<>();
+            successCounter.increment();
+
+            Map<String, String> response = new HashMap<>();
             response.put("status", payment.getState());
             response.put("paypalOrderId", payment.getId());
             response.put("payer", payment.getPayer().getPayerInfo().getEmail());
@@ -206,6 +232,7 @@ public class PaymentServiceImpl implements PaymentService {
             String info = paypalError != null ? paypalError.getInformationLink() : "https://developer.paypal.com/";
 
             logger.error("PayPal error - code: {}, message: {}", code, message, ex);
+            errorCounter.increment();
             return ResponseEntity.status(400).body(Map.of(
                     "code", code,
                     "message", message,
@@ -214,6 +241,7 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (Exception e) {
             // Handle unexpected errors
             logger.error("Unexpected error during capture:", e);
+            errorCounter.increment();
             return ResponseEntity.status(500).body(Map.of(
                     "code", "CAPTURE_ERROR",
                     "message", e.getMessage()
