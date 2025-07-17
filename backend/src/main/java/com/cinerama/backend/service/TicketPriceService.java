@@ -1,5 +1,6 @@
 package com.cinerama.backend.service;
 
+import com.cinerama.backend.dto.TicketPriceBatchRequest;
 import com.cinerama.backend.dto.TicketPriceRequest;
 import com.cinerama.backend.dto.TicketPriceResponse;
 import com.cinerama.backend.enums.TicketType;
@@ -81,4 +82,12 @@ public interface TicketPriceService {
      * @return List of created ticket price responses
      */
     List<TicketPriceResponse> createTicketPricesForShowtime(List<TicketPriceRequest> ticketPriceRequests);
+    
+    /**
+     * Creates multiple ticket prices using batch request.
+     * 
+     * @param batchRequest The batch request containing showtime ID and ticket price requests
+     * @return List of created ticket price responses
+     */
+    List<TicketPriceResponse> createBatchTicketPrices(TicketPriceBatchRequest batchRequest);
 }
