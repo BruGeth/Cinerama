@@ -247,6 +247,66 @@
     font-size: 1.1rem;
 }
 
+/* Summary Section Styles */
+.summarySection {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.summarySection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #e30000 0%, #c50000 100%);
+}
+
+.summarySection h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-left: 1rem;
+}
+
+.summaryDetails {
+    padding-left: 1rem;
+}
+
+.summaryDetails p {
+    margin: 0.5rem 0;
+    color: #495057;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.summaryDetails p strong {
+    color: #2c3e50;
+    font-weight: 600;
+    min-width: 120px;
+    font-size: 0.9rem;
+}
+
+.summaryDetails p:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 0.25rem 0;
+}
+
 .formActions {
     display: flex;
     gap: 1rem;
