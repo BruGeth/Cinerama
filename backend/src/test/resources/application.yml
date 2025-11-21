@@ -1,0 +1,26 @@
+management:
+  health:
+    mail:
+      enabled: false
+
+spring:
+  mail:
+    host: smtp.test.com
+    port: 587
+    username: test@test.com
+    password: test-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+paypal:
+  client-id: test-client-id
+  client-secret: test-client-secret
+  mode: sandbox
+
+jwt:
+  secret: test-secret-key-for-testing-purposes-only-minimum-256-bits
+  expiration: 3600000
