@@ -173,8 +173,10 @@ public class ConfectioneryPurchaseController {
                     cancelUrl);
             Map<String, String> result = null;
             Object body = paymentResponse.getBody();
-            if (body instanceof Map) {
-                result = (Map<String, String>) body;
+            if (body instanceof Map<?, ?> map) {
+                @SuppressWarnings("unchecked")
+                Map<String, String> stringMap = (Map<String, String>) map;
+                result = stringMap;
             }
             if (result == null || !result.containsKey("payment_id")) {
                 return ResponseEntity.status(500).body(Map.of("error", "Could not create PayPal order"));
