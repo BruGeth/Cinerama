@@ -17,7 +17,7 @@ spring:
         format_sql: true
 
   datasource:
-    url: ${DB_URL}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:cinerama_db}?useSSL=false&serverTimezone=${DB_TIMEZONE:America/Lima}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver

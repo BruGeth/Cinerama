@@ -3,7 +3,14 @@ server:
 
 spring:
   datasource:
-    url: your-db-url
+    # Option 1: Use complete URL
+    url: jdbc:mysql://your-db-host:your-db-port/your-db-name?useSSL=false&serverTimezone=America/Lima
+    
+    # Option 2: Or use environment variables (recommended)
+    # host: your-db-host (default: localhost)
+    # port: your-db-port (default: 3306)
+    # name: your-db-name (default: cinerama_db)
+    
     username: your-db-user
     password: your-db-password
 
