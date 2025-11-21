@@ -69,9 +69,7 @@ public class TmdbServiceImpl implements TmdbService {
     public TmdbSearchResultDTO searchMoviesFromTmdb(String query, Integer page) {
         log.info("🔍 Searching movies in TMDB with query: '{}', page: {}", query, page);
         
-        if (page == null || page < 1) {
-            page = 1;
-        }
+        final Integer finalPage = (page == null || page < 1) ? 1 : page;
         
         try {
             TmdbSearchResultDTO result = tmdbWebClient.get()
@@ -80,7 +78,7 @@ public class TmdbServiceImpl implements TmdbService {
                             .queryParam("api_key", apiKey)
                             .queryParam("language", language)
                             .queryParam("query", query)
-                            .queryParam("page", page)
+                            .queryParam("page", finalPage)
                             .queryParam("include_adult", false)
                             .build())
                     .retrieve()
@@ -90,7 +88,7 @@ public class TmdbServiceImpl implements TmdbService {
             log.info("✅ Search completed. Found {} results", 
                     result != null ? result.getTotalResults() : 0);
             return result != null ? result : TmdbSearchResultDTO.builder()
-                    .page(page)
+                    .page(finalPage)
                     .results(java.util.Collections.emptyList())
                     .totalResults(0)
                     .totalPages(0)
@@ -99,7 +97,7 @@ public class TmdbServiceImpl implements TmdbService {
         } catch (Exception e) {
             log.error("❌ Error searching movies in TMDB: {}", e.getMessage(), e);
             return TmdbSearchResultDTO.builder()
-                    .page(page)
+                    .page(finalPage)
                     .results(java.util.Collections.emptyList())
                     .totalResults(0)
                     .totalPages(0)
@@ -111,9 +109,7 @@ public class TmdbServiceImpl implements TmdbService {
     public TmdbSearchResultDTO getPopularMovies(Integer page) {
         log.info("🌟 Fetching popular movies from TMDB, page: {}", page);
         
-        if (page == null || page < 1) {
-            page = 1;
-        }
+        final Integer finalPage = (page == null || page < 1) ? 1 : page;
         
         try {
             TmdbSearchResultDTO result = tmdbWebClient.get()
@@ -121,7 +117,7 @@ public class TmdbServiceImpl implements TmdbService {
                             .path("/movie/popular")
                             .queryParam("api_key", apiKey)
                             .queryParam("language", language)
-                            .queryParam("page", page)
+                            .queryParam("page", finalPage)
                             .build())
                     .retrieve()
                     .bodyToMono(TmdbSearchResultDTO.class)
@@ -129,11 +125,11 @@ public class TmdbServiceImpl implements TmdbService {
             
             log.info("✅ Fetched {} popular movies", 
                     result != null && result.getResults() != null ? result.getResults().size() : 0);
-            return result != null ? result : createEmptyResult(page);
+            return result != null ? result : createEmptyResult(finalPage);
             
         } catch (Exception e) {
             log.error("❌ Error fetching popular movies from TMDB: {}", e.getMessage(), e);
-            return createEmptyResult(page);
+            return createEmptyResult(finalPage);
         }
     }
     
@@ -141,9 +137,7 @@ public class TmdbServiceImpl implements TmdbService {
     public TmdbSearchResultDTO getNowPlayingMovies(Integer page) {
         log.info("🎥 Fetching now playing movies from TMDB, page: {}", page);
         
-        if (page == null || page < 1) {
-            page = 1;
-        }
+        final Integer finalPage = (page == null || page < 1) ? 1 : page;
         
         try {
             TmdbSearchResultDTO result = tmdbWebClient.get()
@@ -151,7 +145,7 @@ public class TmdbServiceImpl implements TmdbService {
                             .path("/movie/now_playing")
                             .queryParam("api_key", apiKey)
                             .queryParam("language", language)
-                            .queryParam("page", page)
+                            .queryParam("page", finalPage)
                             .build())
                     .retrieve()
                     .bodyToMono(TmdbSearchResultDTO.class)
@@ -159,11 +153,11 @@ public class TmdbServiceImpl implements TmdbService {
             
             log.info("✅ Fetched {} now playing movies", 
                     result != null && result.getResults() != null ? result.getResults().size() : 0);
-            return result != null ? result : createEmptyResult(page);
+            return result != null ? result : createEmptyResult(finalPage);
             
         } catch (Exception e) {
             log.error("❌ Error fetching now playing movies from TMDB: {}", e.getMessage(), e);
-            return createEmptyResult(page);
+            return createEmptyResult(finalPage);
         }
     }
     
@@ -171,9 +165,7 @@ public class TmdbServiceImpl implements TmdbService {
     public TmdbSearchResultDTO getUpcomingMovies(Integer page) {
         log.info("📅 Fetching upcoming movies from TMDB, page: {}", page);
         
-        if (page == null || page < 1) {
-            page = 1;
-        }
+        final Integer finalPage = (page == null || page < 1) ? 1 : page;
         
         try {
             TmdbSearchResultDTO result = tmdbWebClient.get()
@@ -181,7 +173,7 @@ public class TmdbServiceImpl implements TmdbService {
                             .path("/movie/upcoming")
                             .queryParam("api_key", apiKey)
                             .queryParam("language", language)
-                            .queryParam("page", page)
+                            .queryParam("page", finalPage)
                             .build())
                     .retrieve()
                     .bodyToMono(TmdbSearchResultDTO.class)
@@ -189,11 +181,11 @@ public class TmdbServiceImpl implements TmdbService {
             
             log.info("✅ Fetched {} upcoming movies", 
                     result != null && result.getResults() != null ? result.getResults().size() : 0);
-            return result != null ? result : createEmptyResult(page);
+            return result != null ? result : createEmptyResult(finalPage);
             
         } catch (Exception e) {
             log.error("❌ Error fetching upcoming movies from TMDB: {}", e.getMessage(), e);
-            return createEmptyResult(page);
+            return createEmptyResult(finalPage);
         }
     }
     
