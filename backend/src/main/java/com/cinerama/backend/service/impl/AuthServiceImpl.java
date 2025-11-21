@@ -12,8 +12,6 @@ import com.cinerama.backend.exception.user.UserNotFoundException;
 import com.cinerama.backend.repository.RoleRepository;
 import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.service.AuthService;
-import com.cinerama.backend.service.MailService;
-import com.cinerama.backend.util.CodeGenerator;
 import com.cinerama.backend.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +36,7 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final MailService mailService;
     private final VerificationTokenServiceImpl verificationTokenService;
-    private final CodeGenerator codeGenerator;
     private final JwtUtil jwtUtil;
 
     /**

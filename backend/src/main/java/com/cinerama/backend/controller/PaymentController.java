@@ -1,7 +1,5 @@
 package com.cinerama.backend.controller;
 
-import com.cinerama.backend.service.impl.PayPalOrderServiceImpl;
-import com.cinerama.backend.service.impl.PayPalCaptureServiceImpl;
 import com.cinerama.backend.service.impl.PaymentServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,20 +12,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/payment")
 public class PaymentController {
 
-    private final PayPalOrderServiceImpl orderService;
-    private final PayPalCaptureServiceImpl captureService;
     private final PaymentServiceImpl paymentServiceImpl;
 
 /**
-     * Constructs the PaymentController with dependencies for order and capture services.
+     * Constructs the PaymentController with dependencies for payment operations.
      *
      * @param paymentServiceImpl  service for handling payment operations
-     * @param orderService    service for creating PayPal orders
-     * @param captureService  service for capturing PayPal payments
      */
-    public PaymentController(PaymentServiceImpl paymentServiceImpl, PayPalOrderServiceImpl orderService, PayPalCaptureServiceImpl captureService) {
-        this.orderService = orderService;
-        this.captureService = captureService;
+    public PaymentController(PaymentServiceImpl paymentServiceImpl) {
         this.paymentServiceImpl = paymentServiceImpl;
     }
 

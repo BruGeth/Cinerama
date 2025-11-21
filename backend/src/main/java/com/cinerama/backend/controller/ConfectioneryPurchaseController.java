@@ -22,9 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.cinerama.backend.service.PdfService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.PdfWriter;
-import org.springframework.stereotype.Service;
 
 /**
  * Controller for handling confectionery purchases, including direct and PayPal
@@ -351,7 +348,7 @@ public class ConfectioneryPurchaseController {
     @GetMapping("/confectionery-order/{orderId}/pdf")
     public ResponseEntity<byte[]> downloadOrderPdf(@PathVariable Long orderId) {
         try {
-            Order order = orderRepository.findById(orderId)
+            orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
             byte[] pdfBytes = pdfService.generateConfectioneryOrderPdf(orderId);
 
