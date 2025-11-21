@@ -3,7 +3,6 @@ package com.cinerama.backend.service;
 import com.cinerama.backend.dto.tmdb.TmdbMovieDTO;
 import com.cinerama.backend.dto.tmdb.TmdbSearchResultDTO;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
