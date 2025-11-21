@@ -4,7 +4,6 @@ import com.cinerama.backend.entity.ConfectioneryOrderItem;
 import com.cinerama.backend.entity.Order;
 import com.cinerama.backend.repository.OrderRepository;
 import com.cinerama.backend.service.PdfService;
-import com.cinerama.backend.service.impl.PaymentServiceImpl;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;

@@ -7,7 +7,6 @@ import com.cinerama.backend.repository.UserRepository;
 import com.cinerama.backend.exception.user.UserNotFoundException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -26,7 +25,6 @@ public class MailServiceImpl implements MailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Autowired
     public MailServiceImpl(JavaMailSender mailSender, MailContentBuilder contentBuilder, UserRepository userRepository) {
         this.mailSender = mailSender;
         this.contentBuilder = contentBuilder;

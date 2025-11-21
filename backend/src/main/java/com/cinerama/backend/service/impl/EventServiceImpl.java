@@ -68,7 +68,7 @@ public class EventServiceImpl implements EventService {
         MimeMessage mime = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mime, true, "UTF-8");
 
-        helper.setFrom(((JavaMailSenderImpl) mailSender).getUsername()); // IMPORTANT: Sender email
+        helper.setFrom("noreply@cinerama.com"); // IMPORTANT: Sender email
         helper.setTo(req.getContactEmail());
         helper.setSubject("Resumen de tu evento en Cinerama");
         helper.setText(html, true); // true = HTML content

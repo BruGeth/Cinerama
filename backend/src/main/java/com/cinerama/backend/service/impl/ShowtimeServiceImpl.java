@@ -2,7 +2,6 @@ package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.*;
 import com.cinerama.backend.entity.Showtime;
-import com.cinerama.backend.enums.ShowtimeFormat;
 import com.cinerama.backend.repository.CinemaRepository;
 import com.cinerama.backend.repository.RoomRepository;
 import com.cinerama.backend.repository.ShowtimeRepository;

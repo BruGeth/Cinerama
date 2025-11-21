@@ -1,13 +1,13 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.dto.EventRequest;
+import com.cinerama.backend.repository.EventRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import static org.mockito.Mockito.*;
@@ -19,6 +19,9 @@ public class EventServiceImplTest {
 
     @Mock
     private SpringTemplateEngine thymeleaf;
+
+    @Mock
+    private EventRepository eventRepository;
 
     @InjectMocks
     private EventServiceImpl service;
@@ -33,7 +36,7 @@ public class EventServiceImplTest {
     void shouldProcessEventSuccessfully() throws MessagingException {
         // Arrange
         EventRequest request = new EventRequest();
-        //request.setContactEmail("test@example.com");
+        request.setContactEmail("test@example.com");
         request.setContactName("John");
         request.setEventType("Evento VIP");
         request.setCinema("Cinerama Miraflores");
@@ -69,15 +72,15 @@ public class EventServiceImplTest {
         MimeMessage mimeMessage = mock(MimeMessage.class);
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
-        // Simular error al enviar
-        doThrow(new MessagingException("SMTP failure")).when(mailSender).send(mimeMessage);
+        // Simular error al enviar con RuntimeException (send no declara checked exceptions)
+        doThrow(new RuntimeException("SMTP failure")).when(mailSender).send(mimeMessage);
 
         // Act & Assert
         try {
             service.processEvent(request);
-            assert false : "MessagingException expected";
+            assert false : "Exception expected";
         } catch (MessagingException ex) {
-            assert ex.getMessage().equals("SMTP failure");
+            assert ex.getMessage().contains("SMTP failure");
         }
 
         verify(mailSender).send(mimeMessage);

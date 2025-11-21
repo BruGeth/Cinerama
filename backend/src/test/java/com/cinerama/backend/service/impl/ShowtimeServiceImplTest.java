@@ -6,7 +6,6 @@ import com.cinerama.backend.repository.ShowtimeRepository;
 import com.cinerama.backend.repository.MovieRepository;
 import com.cinerama.backend.repository.CinemaRepository;
 import com.cinerama.backend.repository.RoomRepository;
-import com.cinerama.backend.repository.TicketPriceRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -22,14 +21,13 @@ class ShowtimeServiceImplTest {
         MovieRepository mockMovieRepo = mock(MovieRepository.class);
         CinemaRepository mockCinemaRepo = mock(CinemaRepository.class);
         RoomRepository mockRoomRepo = mock(RoomRepository.class);
-        TicketPriceRepository mockTicketPriceRepo = mock(TicketPriceRepository.class);
         
         Showtime showtime1 = new Showtime();
         Showtime showtime2 = new Showtime();
         when(mockRepo.findAll()).thenReturn(Arrays.asList(showtime1, showtime2));
 
         ShowtimeServiceImpl service = new ShowtimeServiceImpl(mockRepo, mockMovieRepo, 
-                mockCinemaRepo, mockRoomRepo, mockTicketPriceRepo);
+                mockCinemaRepo, mockRoomRepo);
 
         List<ShowtimeResponse> result = service.getAllShowtimes();
 

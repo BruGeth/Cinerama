@@ -3,7 +3,6 @@ package com.cinerama.backend.controller;
 import com.cinerama.backend.dto.ConfectioneryCategoryRequest;
 import com.cinerama.backend.dto.ConfectioneryCategoryResponse;
 import com.cinerama.backend.service.ConfectioneryCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,6 @@ public class ConfectioneryCategoryController {
 
     private final ConfectioneryCategoryService categoryService;
 
-    @Autowired
     public ConfectioneryCategoryController(ConfectioneryCategoryService categoryService) {
         this.categoryService = categoryService;
     }

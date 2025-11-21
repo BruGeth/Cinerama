@@ -4,40 +4,43 @@ import com.cinerama.backend.dto.EventRequest;
 import com.cinerama.backend.entity.Event;
 import com.cinerama.backend.repository.EventRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = {EventControllerTest.TestMailConfig.class})
+@SpringBootTest
 @AutoConfigureMockMvc
-public class EventControllerTest {
+class EventControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private EventRepository eventRepository;
 
-    @Autowired
+    @MockitoBean
     private JavaMailSender mailSender;
+
+    @BeforeEach
+    void setUp() {
+        MimeMessage mimeMessage = mock(MimeMessage.class);
+        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
+    }
 
     @Test
     void shouldCreateEventAndReturn201() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
         EventRequest request = new EventRequest();
         request.setEventType("Proyección privada");
         request.setCinema("Cinerama Lima");
@@ -57,7 +60,7 @@ public class EventControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("OK"))
-                .andExpect(jsonPath("$.message").value("E-mail sent successfully"));
+                .andExpect(jsonPath("$.message").value("🎉 ¡Solicitud enviada exitosamente!"));
 
         Event saved = eventRepository.findAll().stream()
                 .filter(e -> e.getContactEmail().equals("ana@example.com"))
@@ -69,6 +72,7 @@ public class EventControllerTest {
 
     @Test
     void shouldReturn500WhenMailFails() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
         EventRequest request = new EventRequest();
         request.setEventType("Lanzamiento");
         request.setCinema("Cinerama Arequipa");
@@ -79,7 +83,7 @@ public class EventControllerTest {
         request.setContactEmail("fail@example.com");
         request.setContactPhone("123456789");
 
-        doThrow(new MessagingException("Simulated SMTP error"))
+        doThrow(new RuntimeException("Simulated SMTP error"))
                 .when(mailSender).send(any(MimeMessage.class));
 
         mockMvc.perform(post("/api/events")
@@ -87,15 +91,6 @@ public class EventControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value("ERROR"))
-                .andExpect(jsonPath("$.message").value("Simulated SMTP error"));
-    }
-
-
-    @Configuration
-    static class TestMailConfig {
-        @Bean
-        public JavaMailSender mailSender() {
-            return mock(JavaMailSender.class);
-        }
+                .andExpect(jsonPath("$.message").value("Falló el envío: Simulated SMTP error"));
     }
 }

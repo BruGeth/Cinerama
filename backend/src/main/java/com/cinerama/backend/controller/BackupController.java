@@ -3,7 +3,7 @@ package com.cinerama.backend.controller;
 import com.cinerama.backend.service.BackupService;
 import com.cinerama.backend.service.ScheduledBackupService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.core.io.InputStreamResource;
@@ -23,7 +23,6 @@ public class BackupController {
     private final ObjectMapper mapper = new ObjectMapper();
     private static final String CONFIG_PATH = "config/backup-config.json";
 
-    @Autowired
     public BackupController(BackupService backupService, ScheduledBackupService scheduledBackupService) {
         this.backupService = backupService;
         this.scheduledBackupService = scheduledBackupService;
@@ -59,7 +58,8 @@ public class BackupController {
         Map<String, String> response = new HashMap<>();
 
         try {
-            Map<String, String> config = mapper.readValue(new File(CONFIG_PATH), Map.class);
+            Map<String, String> config = mapper.readValue(new File(CONFIG_PATH), 
+                    new TypeReference<Map<String, String>>() {});
 
             String folderPath = config.getOrDefault("folderPath", "backups");
             String fileName   = config.getOrDefault("fileName", "backup.sql");
@@ -134,7 +134,8 @@ public class BackupController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getBackupConfig() {
         try {
-            Map<String, String> config = mapper.readValue(new File(CONFIG_PATH), Map.class);
+            Map<String, String> config = mapper.readValue(new File(CONFIG_PATH), 
+                    new TypeReference<Map<String, String>>() {});
             return ResponseEntity.ok(config);
         } catch (IOException e) {
             Map<String, String> error = new HashMap<>();

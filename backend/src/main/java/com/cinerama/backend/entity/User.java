@@ -184,6 +184,7 @@ public class User {
      * </ul>
      */
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean enabled = false;
 
