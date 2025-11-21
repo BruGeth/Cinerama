@@ -47,6 +47,12 @@ paypal:
   client-secret: ${PAYPAL_CLIENT_SECRET}
   mode: sandbox
   api-url: https://api-m.sandbox.paypal.com
+
+tmdb:
+  api-key: ${TMDB_API_KEY}
+  base-url: https://api.themoviedb.org/3
+  language: es-MX
+
 management:
     endpoints:
       web:
