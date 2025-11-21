@@ -4,6 +4,7 @@ import com.cinerama.backend.dto.MovieResponse;
 import com.cinerama.backend.entity.Movie;
 import com.cinerama.backend.repository.MovieRepository;
 import com.cinerama.backend.repository.GenreRepository;
+import com.cinerama.backend.service.TmdbService;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,11 +18,12 @@ class MovieServiceImplTest {
     void getAllMovies_returnsAllMovies() {
         MovieRepository mockRepo = mock(MovieRepository.class);
         GenreRepository mockGenreRepo = mock(GenreRepository.class);
+        TmdbService mockTmdbService = mock(TmdbService.class);
         Movie movie1 = new Movie();
         Movie movie2 = new Movie();
         when(mockRepo.findAll()).thenReturn(Arrays.asList(movie1, movie2));
 
-        MovieServiceImpl service = new MovieServiceImpl(mockRepo, mockGenreRepo);
+        MovieServiceImpl service = new MovieServiceImpl(mockRepo, mockGenreRepo, mockTmdbService);
 
         List<MovieResponse> result = service.getAllMovies();
 
