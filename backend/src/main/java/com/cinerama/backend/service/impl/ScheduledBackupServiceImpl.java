@@ -1,10 +1,11 @@
 package com.cinerama.backend.service.impl;
 
 import com.cinerama.backend.service.BackupService;
+import com.cinerama.backend.service.ScheduledBackupService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.cinerama.backend.service.ScheduledBackupService;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +28,8 @@ public class ScheduledBackupServiceImpl implements ScheduledBackupService {
     @Scheduled(cron = "0 * * * * *")
     public void checkAndRunBackup() {
         try {
-            Map<String, String> config = mapper.readValue(new File(CONFIG_PATH), Map.class);
+            Map<String, String> config = mapper.readValue(new File(CONFIG_PATH), 
+                    new TypeReference<Map<String, String>>() {});
 
             String configuredTime = config.getOrDefault("autoTime", "00:00");
             String currentTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
