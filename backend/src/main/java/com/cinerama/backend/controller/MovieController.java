@@ -92,16 +92,30 @@ public class MovieController {
     
     /**
      * Searches movies in TMDB external API.
+     * Supports both 'query' and 'q' parameters for frontend compatibility.
      * 
-     * @param query Search query string
+     * @param query Search query string (alternative parameter name)
+     * @param q Search query string (frontend expected parameter)
      * @param page Page number (optional, default: 1)
      * @return TMDB search results
      */
-    @GetMapping("/tmdb/search")
-    public TmdbSearchResultDTO searchMoviesInTmdb(
-            @RequestParam String query,
+    @GetMapping("/search")
+    public TmdbSearchResultDTO searchMovies(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "1") Integer page) {
-        return movieService.searchMoviesFromTmdb(query, page);
+        
+        String searchQuery = q != null ? q : query;
+        if (searchQuery == null || searchQuery.trim().isEmpty()) {
+            return TmdbSearchResultDTO.builder()
+                    .page(1)
+                    .results(List.of())
+                    .totalResults(0)
+                    .totalPages(0)
+                    .build();
+        }
+        
+        return movieService.searchMoviesFromTmdb(searchQuery, page);
     }
     
     /**
@@ -110,21 +124,20 @@ public class MovieController {
      * @param page Page number (optional, default: 1)
      * @return Popular movies from TMDB
      */
-    @GetMapping("/tmdb/popular")
-    public TmdbSearchResultDTO getPopularMoviesFromTmdb(
-            @RequestParam(defaultValue = "1") Integer page) {
+    @GetMapping("/popular")
+    public TmdbSearchResultDTO getPopularMovies(@RequestParam(defaultValue = "1") Integer page) {
         return movieService.getPopularMoviesFromTmdb(page);
     }
     
     /**
      * Gets now playing movies from TMDB.
+     * Frontend expects this endpoint for current theater releases.
      * 
      * @param page Page number (optional, default: 1)
      * @return Now playing movies from TMDB
      */
-    @GetMapping("/tmdb/now-playing")
-    public TmdbSearchResultDTO getNowPlayingMoviesFromTmdb(
-            @RequestParam(defaultValue = "1") Integer page) {
+    @GetMapping("/now_playing")
+    public TmdbSearchResultDTO getNowPlayingMovies(@RequestParam(defaultValue = "1") Integer page) {
         return movieService.getNowPlayingMoviesFromTmdb(page);
     }
     
@@ -134,6 +147,32 @@ public class MovieController {
      * @param page Page number (optional, default: 1)
      * @return Upcoming movies from TMDB
      */
+    @GetMapping("/upcoming")
+    public TmdbSearchResultDTO getUpcomingMovies(@RequestParam(defaultValue = "1") Integer page) {
+        return movieService.getUpcomingMoviesFromTmdb(page);
+    }
+    
+    // Legacy TMDB endpoints (kept for backward compatibility)
+    
+    @GetMapping("/tmdb/search")
+    public TmdbSearchResultDTO searchMoviesInTmdb(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") Integer page) {
+        return movieService.searchMoviesFromTmdb(query, page);
+    }
+    
+    @GetMapping("/tmdb/popular")
+    public TmdbSearchResultDTO getPopularMoviesFromTmdb(
+            @RequestParam(defaultValue = "1") Integer page) {
+        return movieService.getPopularMoviesFromTmdb(page);
+    }
+    
+    @GetMapping("/tmdb/now-playing")
+    public TmdbSearchResultDTO getNowPlayingMoviesFromTmdb(
+            @RequestParam(defaultValue = "1") Integer page) {
+        return movieService.getNowPlayingMoviesFromTmdb(page);
+    }
+    
     @GetMapping("/tmdb/upcoming")
     public TmdbSearchResultDTO getUpcomingMoviesFromTmdb(
             @RequestParam(defaultValue = "1") Integer page) {
