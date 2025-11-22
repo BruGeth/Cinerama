@@ -63,16 +63,24 @@
     </appender>
 
     <!-- Logger for Spring Framework -->
-    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework" level="WARN"/>
+
+    <!-- Logger for Hibernate (reduce SQL logging) -->
+    <logger name="org.hibernate" level="WARN"/>
+    <logger name="org.hibernate.SQL" level="WARN"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="WARN"/>
+    <logger name="org.hibernate.orm" level="WARN"/>
+
+    <!-- Logger for HikariCP connection pool -->
+    <logger name="com.zaxxer.hikari" level="WARN"/>
 
     <!-- Logger for the application -->
-    <logger name="com.cinerama" level="DEBUG"/>
+    <logger name="com.cinerama" level="INFO"/>
 
     <!-- Root Logger -->
-    <root level="DEBUG">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="INFO_FILE"/>
-        <appender-ref ref="DEBUG_FILE"/>
         <appender-ref ref="ERROR_FILE"/>
     </root>
 
