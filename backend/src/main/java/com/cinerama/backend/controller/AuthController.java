@@ -75,10 +75,10 @@ public class AuthController {
      * Gets the current authenticated user's profile.
      *
      * @param authentication Spring Security authentication object
-     * @return ResponseEntity with user data wrapped in { user: {...} }
+     * @return ResponseEntity with AuthResponse { user: {...} }
      */
     @GetMapping("/me")
-    public ResponseEntity<AuthResponse.UserData> getCurrentUser(Authentication authentication) {
+    public ResponseEntity<AuthResponse> getCurrentUser(Authentication authentication) {
         String email = (String) authentication.getPrincipal();
         
         User user = userRepository.findByEmail(email)
@@ -92,7 +92,11 @@ public class AuthController {
                 .avatarUrl(null)
                 .build();
         
-        return ResponseEntity.ok(userData);
+        AuthResponse response = AuthResponse.builder()
+                .user(userData)
+                .build();
+        
+        return ResponseEntity.ok(response);
     }
 
     /**

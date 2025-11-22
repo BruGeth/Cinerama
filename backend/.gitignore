@@ -37,3 +37,4 @@ build/
 
 # sensitive user config
 src/main/resources/application-local.yml
+.env
