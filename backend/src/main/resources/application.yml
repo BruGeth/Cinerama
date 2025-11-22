@@ -11,10 +11,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        '[format_sql]': true
+        '[format_sql]': false
+        '[use_sql_comments]': false
 
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:cinerama_db}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=${DB_TIMEZONE:America/Lima}
@@ -39,8 +40,11 @@ jwt:
   expiration: ${JWT_EXPIRATION}
 logging:
   level:
-    '[org.springframework]': INFO
-    '[com.cinerama]': DEBUG
+    '[org.springframework]': WARN
+    '[com.cinerama]': INFO
+    '[org.hibernate]': WARN
+    '[com.zaxxer.hikari]': WARN
+    '[reactor.netty]': WARN
 
 paypal:
   client-id: ${PAYPAL_CLIENT_ID}
