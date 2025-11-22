@@ -2,6 +2,7 @@ package com.cinerama.backend.config;
 
 import com.cinerama.backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,6 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuration class for Spring Security.
@@ -47,6 +49,21 @@ import java.util.Arrays;
 public class WebSecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+
+    @Value("${cors.allowed-origins}")
+    private String allowedOrigins;
+
+    @Value("${cors.allowed-methods}")
+    private String allowedMethods;
+
+    @Value("${cors.allowed-headers}")
+    private String allowedHeaders;
+
+    @Value("${cors.allow-credentials}")
+    private Boolean allowCredentials;
+
+    @Value("${cors.max-age}")
+    private Long maxAge;
 
     /**
      * Configures the security filter chain for the application.
@@ -138,33 +155,38 @@ public class WebSecurityConfig {
      * backend API from different origins, which is essential for modern web applications
      * where frontend and backend are served from different domains or ports.</p>
      *
-     * <h3>Current CORS Configuration:</h3>
+     * <h3>CORS Configuration (from application.yml):</h3>
      * <ul>
-     *   <li><strong>Allowed Origins:</strong> http://localhost:3000 (React development server)</li>
-     *   <li><strong>Allowed Methods:</strong> GET, POST, PUT, DELETE, OPTIONS</li>
-     *   <li><strong>Allowed Headers:</strong> Authorization, Content-Type</li>
-     *   <li><strong>Credentials:</strong> Enabled for JWT token transmission</li>
-     *   <li><strong>Preflight Cache:</strong> 1 hour (3600 seconds)</li>
+     *   <li><strong>Allowed Origins:</strong> Configured via cors.allowed-origins property</li>
+     *   <li><strong>Allowed Methods:</strong> Configured via cors.allowed-methods property</li>
+     *   <li><strong>Allowed Headers:</strong> Configured via cors.allowed-headers property</li>
+     *   <li><strong>Credentials:</strong> Configured via cors.allow-credentials property</li>
+     *   <li><strong>Preflight Cache:</strong> Configured via cors.max-age property</li>
      * </ul>
      *
-     * <h3>Environment Considerations:</h3>
+     * <h3>Supported Clients:</h3>
      * <ul>
-     *   <li><strong>Development:</strong> localhost:3000 for React development</li>
-     *   <li><strong>Production:</strong> Should be configured with actual domain</li>
-     *   <li><strong>Staging:</strong> Should use staging domain</li>
+     *   <li><strong>React Web App:</strong> http://localhost:3000 (development)</li>
+     *   <li><strong>Expo Mobile App:</strong> exp://your-ip:8081 (development)</li>
+     *   <li><strong>Mobile Emulator:</strong> http://localhost:19006</li>
+     *   <li><strong>Production:</strong> https://yourdomain.com</li>
      * </ul>
+     *
+     * <h3>Configuration Examples:</h3>
+     * <pre>
+     * # Development (multiple origins)
+     * cors.allowed-origins=http://localhost:3000,exp://192.168.1.100:8081
+     *
+     * # Production
+     * cors.allowed-origins=https://yourdomain.com,https://www.yourdomain.com
+     * </pre>
      *
      * <p><strong>Security Note:</strong> In production, allowed origins should be
-     * restricted to only trusted domains to prevent unauthorized cross-origin requests.</p>
+     * restricted to only trusted domains to prevent unauthorized cross-origin requests.
+     * Use environment-specific configuration files (application-{profile}.yml) to manage
+     * different CORS settings per environment.</p>
      *
      * @return the {@link CorsConfigurationSource} with the defined CORS settings
-     *
-     * @todo Move allowed origins to application properties for environment-specific configuration:
-     * <ul>
-     *   <li>Development: localhost:3000</li>
-     *   <li>Production: actual production domain</li>
-     *   <li>Staging: staging environment domain</li>
-     * </ul>
      *
      * @see CorsConfiguration for detailed CORS configuration options
      * @see UrlBasedCorsConfigurationSource for URL-based CORS configuration
@@ -173,23 +195,23 @@ public class WebSecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Configure allowed origins for different environments
-        // TODO: Extract to application.yml for different environments
-        // Development: localhost:3000, Production: actual domain
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        // Parse allowed origins from comma-separated string
+        List<String> origins = Arrays.asList(allowedOrigins.split(","));
+        configuration.setAllowedOrigins(origins);
 
-        // Configure allowed HTTP methods for API operations
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Parse allowed methods from comma-separated string
+        List<String> methods = Arrays.asList(allowedMethods.split(","));
+        configuration.setAllowedMethods(methods);
 
-        // Configure allowed headers for JWT authentication and content negotiation
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        // Parse allowed headers from comma-separated string
+        List<String> headers = Arrays.asList(allowedHeaders.split(","));
+        configuration.setAllowedHeaders(headers);
 
-        // Allow credentials for JWT token transmission in Authorization header
-        configuration.setAllowCredentials(true);
+        // Configure credentials support for JWT tokens
+        configuration.setAllowCredentials(allowCredentials);
 
-        // Cache preflight requests for 1 hour to improve performance
-        // Reduces OPTIONS requests from browser for same-origin policy
-        configuration.setMaxAge(3600L);
+        // Configure preflight request cache duration
+        configuration.setMaxAge(maxAge);
 
         // Apply CORS configuration to all endpoints
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
