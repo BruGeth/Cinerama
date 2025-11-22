@@ -1,10 +1,9 @@
 package com.cinerama.backend.service;
 
+import com.cinerama.backend.dto.AuthResponse;
 import com.cinerama.backend.dto.LoginRequest;
-import com.cinerama.backend.dto.LoginResponse;
 import com.cinerama.backend.dto.RegisterRequest;
 import com.cinerama.backend.dto.VerificationRequest;
-import com.cinerama.backend.entity.User;
 
 /**
  * Authentication service contract for user registration, verification, and login operations.
@@ -15,30 +14,31 @@ import com.cinerama.backend.entity.User;
 public interface AuthService {
 
     /**
-     * Registers a new user account with email verification required.
+     * Registers a new user account and returns authentication token.
      *
      * @param request user registration details including password confirmation
-     * @return the created user entity with verification code generated
+     * @return AuthResponse with JWT token and user data
      * @throws IllegalArgumentException if passwords don't match or email already exists
      */
-    User register(RegisterRequest request);
+    AuthResponse register(RegisterRequest request);
 
     /**
-     * Activates a user account using the emailed verification code.
+     * Activates a user account using the emailed verification code and returns token.
      *
      * @param request email and verification code pair
+     * @return AuthResponse with JWT token and user data
      * @throws IllegalArgumentException if user not found or code is invalid
      */
-    void verify(VerificationRequest request);
+    AuthResponse verify(VerificationRequest request);
 
     /**
      * Authenticates user credentials and returns JWT token for session management.
      *
      * @param request user login credentials
-     * @return login response containing username and JWT token
+     * @return AuthResponse with JWT token and user data
      * @throws IllegalArgumentException if credentials are invalid
      * @throws IllegalStateException if account is not verified
      */
-    LoginResponse login(LoginRequest request);
+    AuthResponse login(LoginRequest request);
 
 }
