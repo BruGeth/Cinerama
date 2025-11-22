@@ -1,0 +1,82 @@
+{
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key used for signing JWT tokens. Must be at least 256 bits for HS256 algorithm."
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Long",
+      "description": "JWT token expiration time in milliseconds. Default: 86400000 (24 hours)."
+    },
+    {
+      "name": "paypal.client-id",
+      "type": "java.lang.String",
+      "description": "PayPal REST API client ID for payment processing."
+    },
+    {
+      "name": "paypal.client-secret",
+      "type": "java.lang.String",
+      "description": "PayPal REST API client secret for payment processing."
+    },
+    {
+      "name": "paypal.mode",
+      "type": "java.lang.String",
+      "description": "PayPal mode: 'sandbox' for testing or 'live' for production.",
+      "defaultValue": "sandbox"
+    },
+    {
+      "name": "paypal.api-url",
+      "type": "java.lang.String",
+      "description": "PayPal API base URL.",
+      "defaultValue": "https://api-m.sandbox.paypal.com"
+    },
+    {
+      "name": "tmdb.api-key",
+      "type": "java.lang.String",
+      "description": "The Movie Database (TMDB) API key for accessing movie data."
+    },
+    {
+      "name": "tmdb.base-url",
+      "type": "java.lang.String",
+      "description": "TMDB API base URL.",
+      "defaultValue": "https://api.themoviedb.org/3"
+    },
+    {
+      "name": "tmdb.language",
+      "type": "java.lang.String",
+      "description": "Default language for TMDB API responses (ISO 639-1 code with optional region).",
+      "defaultValue": "es-MX"
+    },
+    {
+      "name": "cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed origins for CORS. Example: http://localhost:3000,exp://192.168.1.100:8081"
+    },
+    {
+      "name": "cors.allowed-methods",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed HTTP methods for CORS.",
+      "defaultValue": "GET,POST,PUT,DELETE,OPTIONS"
+    },
+    {
+      "name": "cors.allowed-headers",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of allowed headers for CORS.",
+      "defaultValue": "Authorization,Content-Type"
+    },
+    {
+      "name": "cors.allow-credentials",
+      "type": "java.lang.Boolean",
+      "description": "Whether to allow credentials (cookies, authorization headers) in CORS requests.",
+      "defaultValue": true
+    },
+    {
+      "name": "cors.max-age",
+      "type": "java.lang.Long",
+      "description": "Maximum age (in seconds) of CORS preflight request cache.",
+      "defaultValue": 3600
+    }
+  ]
+}

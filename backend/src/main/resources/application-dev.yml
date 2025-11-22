@@ -44,7 +44,7 @@ cors:
 
 logging:
   level:
-    org.springframework: ${LOG_LEVEL_SPRING:INFO}
-    com.cinerama: ${LOG_LEVEL_APP:DEBUG}
+    '[org.springframework]': ${LOG_LEVEL_SPRING:INFO}
+    '[com.cinerama]': ${LOG_LEVEL_APP:DEBUG}
   file:
     name: ${LOG_FILE_PATH:logs/cinerama-dev.log}
