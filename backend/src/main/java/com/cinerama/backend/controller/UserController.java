@@ -1,20 +1,24 @@
 package com.cinerama.backend.controller;
 
-import com.cinerama.backend.dto.UserProfileResponse;
-import com.cinerama.backend.entity.User;
-import com.cinerama.backend.repository.UserRepository;
-import com.cinerama.backend.service.UserService;
+import com.cinerama.backend.dto.*;
+import com.cinerama.backend.entity.*;
 import com.cinerama.backend.exception.user.UserNotFoundException;
+import com.cinerama.backend.repository.*;
+import com.cinerama.backend.service.UserService;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for handling user-related operations.
@@ -22,18 +26,6 @@ import java.util.List;
  * <p>This controller manages user profile operations for authenticated users
  * in the Cinerama cinema booking system. All endpoints require valid JWT authentication
  * as configured in the WebSecurityConfig.</p>
- *
- * <h2>Security Context:</h2>
- * <ul>
- *   <li>All endpoints require valid JWT authentication</li>
- *   <li>User information is extracted from SecurityContext</li>
- *   <li>Email from JWT token is used to identify the authenticated user</li>
- * </ul>
- *
- * <h2>Available Operations:</h2>
- * <ul>
- *   <li>Get current authenticated user profile</li>
- * </ul>
  *
  * @author Cinerama Development Team
  */
@@ -43,96 +35,254 @@ import java.util.List;
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
+    private final FavoriteRepository favoriteRepository;
+    private final MovieRepository movieRepository;
+    private final DeviceRepository deviceRepository;
+    private final NotificationRepository notificationRepository;
 
     /**
      * Retrieves the profile information of the currently authenticated user.
-     *
-     * <p>This endpoint returns the complete user profile based on the JWT token
-     * provided in the Authorization header. The user's email is extracted from
-     * the SecurityContext and used to fetch the user details from the database.</p>
-     *
-     * <h3>Authentication Flow:</h3>
-     * <ol>
-     *   <li>Client sends request with JWT token in Authorization header</li>
-     *   <li>JwtAuthenticationFilter validates the token</li>
-     *   <li>User email is stored in SecurityContext</li>
-     *   <li>This method extracts email from SecurityContext</li>
-     *   <li>User details are fetched from database using email</li>
-     * </ol>
-     *
-     * <h3>Response Data:</h3>
-     * <p>Returns complete User entity including:</p>
-     * <ul>
-     *   <li>User ID and personal information</li>
-     *   <li>Email address and verification status</li>
-     *   <li>Account creation and modification timestamps</li>
-     *   <li>User role and permissions</li>
-     * </ul>
-     *
-     * <p><strong>Security Note:</strong> Sensitive information like password hashes
-     * should be excluded from the response in production systems.</p>
-     *
-     * @return ResponseEntity containing the authenticated user's profile information
-     *
-     * @todo Add proper exception handling and @throws documentation:
-     * <ul>
-     *   <li>UserNotFoundException if the authenticated user is not found in database</li>
-     *   <li>AuthenticationException if SecurityContext doesn't contain valid user information</li>
-     *   <li>DataAccessException if there's an error accessing the user repository</li>
-     * </ul>
-     *
-     * @todo Consider security improvements:
-     * <ul>
-     *   <li>Create UserProfileResponse DTO to exclude sensitive fields</li>
-     *   <li>Add input validation for SecurityContext data</li>
-     *   <li>Implement proper error responses instead of generic RuntimeException</li>
-     * </ul>
-     *
-     * @see User for the complete user entity structure
-     * @see UserRepository#findByEmail(String) for the database query used
-     * @see SecurityContextHolder for Spring Security context management
      */
     @GetMapping("/me")
     public ResponseEntity<UserProfileResponse> getCurrentUser(Authentication authentication) {
-        //  Extrae el email desde el JWT ya validado
         String email = (String) authentication.getPrincipal();
 
-        //  Busca el usuario en la base de datos
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        //  Crea el objeto DTO para devolver solo los datos necesarios
         UserProfileResponse response = new UserProfileResponse(
                 user.getName(),
                 user.getEmail(),
                 user.getRole().getName()
         );
 
-        //  Devuelve el DTO con código 200
         return ResponseEntity.ok(response);
     }
 
+    // ========== FAVORITES ENDPOINTS ==========
+
     /**
-     * Retrieves a list of all users in the system.
+     * Gets all favorite movies for the authenticated user.
      *
-     * <p>This endpoint is restricted to users with the ADMIN role.</p>
-     *
-     * @return ResponseEntity containing a list of all User entities
+     * @param authentication Spring Security authentication object
+     * @return ResponseEntity with favorites wrapped in { favorites: [...] }
      */
+    @GetMapping("/me/favorites")
+    public ResponseEntity<Map<String, Object>> getUserFavorites(Authentication authentication) {
+        String email = (String) authentication.getPrincipal();
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        List<Favorite> favorites = favoriteRepository.findByUserId(user.getId());
+        
+        List<MovieResponse> movieResponses = favorites.stream()
+                .map(favorite -> convertToMovieResponse(favorite.getMovie()))
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(Map.of("favorites", movieResponses));
+    }
+
+    /**
+     * Adds a movie to user's favorites.
+     *
+     * @param request containing movieId
+     * @param authentication Spring Security authentication object
+     * @return ResponseEntity with 201 status and success response
+     */
+    @PostMapping("/me/favorites")
+    @Transactional
+    public ResponseEntity<SuccessResponse> addFavorite(
+            @Valid @RequestBody AddFavoriteRequest request,
+            Authentication authentication) {
+        
+        String email = (String) authentication.getPrincipal();
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        Movie movie = movieRepository.findById(request.getMovieId())
+                .orElseThrow(() -> new IllegalArgumentException("Movie not found"));
+        
+        // Check if already favorited
+        if (favoriteRepository.existsByUserIdAndMovieId(user.getId(), movie.getId())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(SuccessResponse.of(false, "Movie already in favorites"));
+        }
+        
+        Favorite favorite = Favorite.builder()
+                .user(user)
+                .movie(movie)
+                .build();
+        
+        favoriteRepository.save(favorite);
+        
+        MovieResponse movieResponse = convertToMovieResponse(movie);
+        
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(SuccessResponse.of(true, "Movie added to favorites", 
+                        Map.of("favorite", movieResponse)));
+    }
+
+    /**
+     * Removes a movie from user's favorites.
+     *
+     * @param movieId the movie ID to remove
+     * @param authentication Spring Security authentication object
+     * @return ResponseEntity with success response
+     */
+    @DeleteMapping("/me/favorites/{movieId}")
+    @Transactional
+    public ResponseEntity<SuccessResponse> removeFavorite(
+            @PathVariable Long movieId,
+            Authentication authentication) {
+        
+        String email = (String) authentication.getPrincipal();
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        if (!favoriteRepository.existsByUserIdAndMovieId(user.getId(), movieId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(SuccessResponse.of(false, "Favorite not found"));
+        }
+        
+        favoriteRepository.deleteByUserIdAndMovieId(user.getId(), movieId);
+        
+        return ResponseEntity.ok(SuccessResponse.of(true, "Movie removed from favorites"));
+    }
+
+    // ========== DEVICE/PUSH TOKEN ENDPOINTS ==========
+
+    /**
+     * Registers a push notification device token for the user.
+     *
+     * @param request containing provider, token, and platform
+     * @param authentication Spring Security authentication object
+     * @return ResponseEntity with 201 status and device data
+     */
+    @PostMapping("/me/devices")
+    @Transactional
+    public ResponseEntity<SuccessResponse> registerDevice(
+            @Valid @RequestBody DeviceRequest request,
+            Authentication authentication) {
+        
+        String email = (String) authentication.getPrincipal();
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        // Check if device already registered
+        if (deviceRepository.existsByUserIdAndToken(user.getId(), request.getToken())) {
+            Device existingDevice = deviceRepository.findByUserIdAndToken(user.getId(), request.getToken())
+                    .orElseThrow();
+            
+            Map<String, Object> deviceData = Map.of(
+                    "id", existingDevice.getId(),
+                    "provider", existingDevice.getProvider(),
+                    "token", existingDevice.getToken(),
+                    "platform", existingDevice.getPlatform()
+            );
+            
+            return ResponseEntity.ok(SuccessResponse.of(true, "Device already registered", 
+                    Map.of("device", deviceData)));
+        }
+        
+        Device device = Device.builder()
+                .user(user)
+                .provider(request.getProvider())
+                .token(request.getToken())
+                .platform(request.getPlatform())
+                .build();
+        
+        Device savedDevice = deviceRepository.save(device);
+        
+        Map<String, Object> deviceData = Map.of(
+                "id", savedDevice.getId(),
+                "provider", savedDevice.getProvider(),
+                "token", savedDevice.getToken(),
+                "platform", savedDevice.getPlatform()
+        );
+        
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(SuccessResponse.of(true, "Device registered successfully", 
+                        Map.of("device", deviceData)));
+    }
+
+    /**
+     * Removes a device token from the user's registered devices.
+     *
+     * @param deviceId the device ID to remove
+     * @param authentication Spring Security authentication object
+     * @return ResponseEntity with success response
+     */
+    @DeleteMapping("/me/devices/{deviceId}")
+    @Transactional
+    public ResponseEntity<SuccessResponse> removeDevice(
+            @PathVariable Long deviceId,
+            Authentication authentication) {
+        
+        String email = (String) authentication.getPrincipal();
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        Device device = deviceRepository.findById(deviceId)
+                .orElseThrow(() -> new IllegalArgumentException("Device not found"));
+        
+        // Verify device belongs to user
+        if (!device.getUser().getId().equals(user.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(SuccessResponse.of(false, "Access denied"));
+        }
+        
+        deviceRepository.delete(device);
+        
+        return ResponseEntity.ok(SuccessResponse.of(true, "Device removed successfully"));
+    }
+
+    // ========== NOTIFICATIONS ENDPOINTS ==========
+
+    /**
+     * Gets all notifications for the authenticated user.
+     *
+     * @param authentication Spring Security authentication object
+     * @return ResponseEntity with notifications wrapped in { notifications: [...] }
+     */
+    @GetMapping("/me/notifications")
+    public ResponseEntity<Map<String, Object>> getUserNotifications(Authentication authentication) {
+        String email = (String) authentication.getPrincipal();
+        
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+        
+        List<Map<String, Object>> notificationData = notifications.stream()
+                .map(notification -> {
+                    Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("id", notification.getId());
+                    map.put("title", notification.getTitle());
+                    map.put("message", notification.getMessage());
+                    map.put("type", notification.getType());
+                    map.put("isRead", notification.getIsRead());
+                    map.put("createdAt", notification.getCreatedAt().toString());
+                    map.put("data", notification.getData() != null ? notification.getData() : "");
+                    return map;
+                })
+                .collect(Collectors.toList());
+        
+        return ResponseEntity.ok(Map.of("notifications", notificationData));
+    }
+
+    // ========== ADMIN ENDPOINTS ==========
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
         return ResponseEntity.ok(users);
     }
-
-    /**
-     * Retrieves a list of all users in the system as Users.
-     *
-     * <p>This endpoint is restricted to users with the ADMIN role.</p>
-     *
-     * @return ResponseEntity containing a list of Users
-     */
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/export")
@@ -143,14 +293,6 @@ public class UserController {
                 .body(new InputStreamResource(excelStream));
     }
 
-    /**
-     * Registers a new user in the system.
-     *
-     * <p>This endpoint is restricted to users with the ADMIN role.</p>
-     *
-     * @param user The User entity containing registration details
-     * @return ResponseEntity indicating success or failure of registration
-     */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
@@ -161,5 +303,28 @@ public class UserController {
         userRepository.save(user);
 
         return ResponseEntity.ok("User registered successfully.");
+    }
+
+    // ========== HELPER METHODS ==========
+
+    private MovieResponse convertToMovieResponse(Movie movie) {
+        MovieResponse response = new MovieResponse();
+        response.setId(movie.getId());
+        response.setTitle(movie.getTitle());
+        response.setDescriptionShowtimes(movie.getDescriptionShowtimes());
+        response.setDescriptionMovie(movie.getDescriptionMovie());
+        response.setDuration(movie.getDuration());
+        response.setImageUrl(movie.getPosterUrl());
+        response.setTrailerUrl(movie.getTrailerUrl());
+        response.setReleaseDate(movie.getReleaseDate());
+        response.setStatus(movie.getStatus());
+        response.setRating(movie.getRating());
+        response.setDirector(movie.getDirector());
+        response.setCast(movie.getCast());
+        response.setGenreName(movie.getGenre() != null ? movie.getGenre().getName() : null);
+        response.setGenreId(movie.getGenre() != null ? movie.getGenre().getId() : null);
+        response.setCreatedAt(movie.getCreatedAt());
+        response.setUpdatedAt(movie.getUpdatedAt());
+        return response;
     }
 }

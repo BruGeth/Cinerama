@@ -1,12 +1,16 @@
 package com.cinerama.backend.service.impl;
 
+import com.cinerama.backend.dto.MovieEnrichedResponse;
 import com.cinerama.backend.dto.MovieRequest;
 import com.cinerama.backend.dto.MovieResponse;
+import com.cinerama.backend.dto.tmdb.TmdbMovieDTO;
+import com.cinerama.backend.dto.tmdb.TmdbSearchResultDTO;
 import com.cinerama.backend.entity.Movie;
 import com.cinerama.backend.enums.MovieStatus;
 import com.cinerama.backend.repository.MovieRepository;
 import com.cinerama.backend.repository.GenreRepository;
 import com.cinerama.backend.service.MovieService;
+import com.cinerama.backend.service.TmdbService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final GenreRepository genreRepository;
+    private final TmdbService tmdbService;
 
     @Override
     public List<MovieResponse> getAllMovies() {
@@ -127,6 +132,82 @@ public class MovieServiceImpl implements MovieService {
         log.info("✅ Actualización completada: {} películas actualizadas de {} total", 
             updatedCount, movies.size());
     }
+    
+    // ========== NEW METHODS FOR TMDB INTEGRATION ==========
+    
+    @Override
+    public Optional<MovieEnrichedResponse> getEnrichedMovieById(Long localId, Long tmdbId) {
+        log.info("🎬 Getting enriched movie data - localId: {}, tmdbId: {}", localId, tmdbId);
+        
+        // Try to get local movie
+        Optional<Movie> localMovie = localId != null ? movieRepository.findById(localId) : Optional.empty();
+        
+        // Try to get TMDB data
+        Optional<TmdbMovieDTO> tmdbMovie = tmdbId != null ? tmdbService.getMovieFromTmdb(tmdbId) : Optional.empty();
+        
+        // Build enriched response based on available data
+        if (localMovie.isPresent() && tmdbMovie.isPresent()) {
+            log.info("✅ Combining local and TMDB data for movie: {}", localMovie.get().getTitle());
+            MovieResponse localResponse = toMovieResponse(localMovie.get());
+            return Optional.of(MovieEnrichedResponse.fromHybrid(localResponse, tmdbMovie.get()));
+            
+        } else if (localMovie.isPresent()) {
+            log.info("✅ Returning local data only for movie: {}", localMovie.get().getTitle());
+            MovieResponse localResponse = toMovieResponse(localMovie.get());
+            return Optional.of(MovieEnrichedResponse.fromLocal(localResponse));
+            
+        } else if (tmdbMovie.isPresent()) {
+            log.info("✅ Returning TMDB data only for movie: {}", tmdbMovie.get().getTitle());
+            return Optional.of(MovieEnrichedResponse.fromTmdb(tmdbMovie.get()));
+            
+        } else {
+            log.warn("⚠️ No movie data found - localId: {}, tmdbId: {}", localId, tmdbId);
+            return Optional.empty();
+        }
+    }
+    
+    @Override
+    public List<MovieEnrichedResponse> getAllEnrichedMovies() {
+        log.info("🎬 Getting all enriched movies");
+        
+        List<Movie> localMovies = movieRepository.findAll();
+        
+        return localMovies.stream()
+                .map(movie -> {
+                    MovieResponse localResponse = toMovieResponse(movie);
+                    // For now, return local data only
+                    // In the future, you could store tmdbId in Movie entity to enrich automatically
+                    return MovieEnrichedResponse.fromLocal(localResponse);
+                })
+                .collect(Collectors.toList());
+    }
+    
+    @Override
+    public TmdbSearchResultDTO searchMoviesFromTmdb(String query, Integer page) {
+        log.info("🔍 Searching movies in TMDB: query='{}', page={}", query, page);
+        return tmdbService.searchMoviesFromTmdb(query, page);
+    }
+    
+    @Override
+    public TmdbSearchResultDTO getPopularMoviesFromTmdb(Integer page) {
+        log.info("🌟 Getting popular movies from TMDB: page={}", page);
+        return tmdbService.getPopularMovies(page);
+    }
+    
+    @Override
+    public TmdbSearchResultDTO getNowPlayingMoviesFromTmdb(Integer page) {
+        log.info("🎥 Getting now playing movies from TMDB: page={}", page);
+        return tmdbService.getNowPlayingMovies(page);
+    }
+    
+    @Override
+    public TmdbSearchResultDTO getUpcomingMoviesFromTmdb(Integer page) {
+        log.info("📅 Getting upcoming movies from TMDB: page={}", page);
+        return tmdbService.getUpcomingMovies(page);
+    }
+    
+    // ========== EXISTING HELPER METHODS ==========
+    
     private MovieResponse toMovieResponse(Movie movie) {
         MovieResponse dto = new MovieResponse();
         dto.setId(movie.getId());

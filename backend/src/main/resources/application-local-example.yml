@@ -1,20 +1,66 @@
+# Example configuration file for local profile
+# Copy this file and configure with your actual values
+# ALL values must be provided via environment variables
+
+# ============================================
+# REQUIRED ENVIRONMENT VARIABLES
+# ============================================
+# Create a .env file in the backend directory with:
+#
+# SERVER_PORT=8080
+#
+# DB_HOST=localhost
+# DB_PORT=3306
+# DB_NAME=cinerama_db_test4
+# DB_TIMEZONE=America/Lima
+# DB_USERNAME=root
+# DB_PASSWORD=your_password
+#
+# EMAIL_USERNAME=your.email@gmail.com
+# EMAIL_PASSWORD=your_gmail_app_password
+#
+# JWT_SECRET=your_jwt_secret_key
+# JWT_EXPIRATION=86400000
+#
+# PAYPAL_CLIENT_ID=your_paypal_client_id
+# PAYPAL_CLIENT_SECRET=your_paypal_client_secret
+#
+# TMDB_API_KEY=your_tmdb_api_key
+#
+# CORS_ALLOWED_ORIGINS=http://localhost:3000,exp://192.168.1.100:8081
+# CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE,OPTIONS
+# CORS_ALLOWED_HEADERS=Authorization,Content-Type,X-Requested-With
+# CORS_ALLOW_CREDENTIALS=true
+# CORS_MAX_AGE=3600
+# ============================================
+
 server:
-  port: your-application-port
+  port: ${SERVER_PORT}
 
 spring:
   datasource:
-    url: your-db-url
-    username: your-db-user
-    password: your-db-password
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=false&serverTimezone=${DB_TIMEZONE}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   mail:
-    username: your.email@gmail.com
-    password: your-gmail-app-password
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
 
 jwt:
-  secret: your-jwt-secret-key
-  expiration: your-jwt-expiration-time
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION}
 
 paypal:
-    client-id: your-paypal-client-id
-    client-secret: your-paypal-client-secret
+  client-id: ${PAYPAL_CLIENT_ID}
+  client-secret: ${PAYPAL_CLIENT_SECRET}
+
+tmdb:
+  api-key: ${TMDB_API_KEY}
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS}
+  allowed-methods: ${CORS_ALLOWED_METHODS}
+  allowed-headers: ${CORS_ALLOWED_HEADERS}
+  allow-credentials: ${CORS_ALLOW_CREDENTIALS}
+  max-age: ${CORS_MAX_AGE}

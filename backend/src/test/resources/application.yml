@@ -24,3 +24,15 @@ paypal:
 jwt:
   secret: test-secret-key-for-testing-purposes-only-minimum-256-bits
   expiration: 3600000
+
+tmdb:
+  api-key: test-api-key-for-testing-only
+  base-url: https://api.themoviedb.org/3
+  language: es-MX
+
+cors:
+  allowed-origins: http://localhost:3000,http://localhost:8080
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: Authorization,Content-Type,X-Requested-With
+  allow-credentials: true
+  max-age: 3600

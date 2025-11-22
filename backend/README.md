@@ -42,33 +42,82 @@ This is the backend service for the **Cinerama** project, built with **Spring Bo
 
 Create a database named `cinerama_db` (or update the name in your configuration).
 
-### 3. Local Configuration
+### 3. Environment Configuration
 
-Create a file at `src/main/resources/application-local.yml` with the following structure:
+**⚠️ IMPORTANT: All configurations now use environment variables - no hardcoded values!**
 
-```yaml
-server:
-    port: 8080 # Change if needed
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:PORT/cinerama_db?useSSL=false&serverTimezone=America/Lima # Adjust the URL as needed
-    username: your_mysql_user
-    password: your_mysql_password
+#### Step 1: Create your `.env` file
 
-  mail:
-    username: your_email@gmail.com
-    password: your_gmail_app_password
-    
-jwt:
-    secret: your_jwt_secret
-paypal:
-  client-id: tu_paypal_client_id
-  client-secret: tu_paypal_client_secret
+```bash
+# In the backend/ directory
+cp .env.example .env
 ```
 
->Do not commit this file. It is ignored by `.gitignore` for security.
+#### Step 2: Configure your environment variables
 
-You can use the provided `application-local-example.yml` as a template.
+Edit the `.env` file with your actual values:
+
+```bash
+# Server
+SERVER_PORT=8080
+
+# Database
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=cinerama_db
+DB_TIMEZONE=America/Lima
+DB_USERNAME=root
+DB_PASSWORD=your_password
+
+# Email (Gmail SMTP)
+EMAIL_USERNAME=your.email@gmail.com
+EMAIL_PASSWORD=your_gmail_app_password
+
+# JWT
+JWT_SECRET=your_jwt_secret_key_min_256_bits
+JWT_EXPIRATION=86400000
+
+# PayPal
+PAYPAL_CLIENT_ID=your_paypal_client_id
+PAYPAL_CLIENT_SECRET=your_paypal_client_secret
+
+# TMDB API
+TMDB_API_KEY=your_tmdb_api_key
+
+# CORS (comma-separated)
+CORS_ALLOWED_ORIGINS=http://localhost:3000,exp://192.168.1.100:8081
+CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE,OPTIONS
+CORS_ALLOWED_HEADERS=Authorization,Content-Type,X-Requested-With
+CORS_ALLOW_CREDENTIALS=true
+CORS_MAX_AGE=3600
+```
+
+> **Security Note**: Never commit your `.env` file! It's already in `.gitignore`.
+
+### 4. Choose Your Profile
+
+The application supports multiple profiles for different environments:
+
+#### **Local Profile** (Individual Development)
+For your personal machine:
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
+
+#### **Dev Profile** (Team Development)
+For shared development environment:
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+```
+
+**Profile Differences:**
+| Feature | Local | Dev |
+|---------|-------|-----|
+| JPA DDL | update | validate |
+| Show SQL | true | false |
+| Logs | console | console + file |
+
+📖 **Full documentation**: See [ENVIRONMENT_PROFILES.md](./ENVIRONMENT_PROFILES.md)
 
 ---
 
@@ -84,11 +133,19 @@ The backend will send real verification emails during user registration.
 
 ## ▶️ Running the Application
 
+### Quick Start
+
 ```bash
+# With local profile (default in application.yml)
 mvn spring-boot:run
+
+# With specific profile
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+# or
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-The API will be available at `http://localhost:8080`.
+The API will be available at `http://localhost:8080` (or your configured `SERVER_PORT`).
 
 ---
 

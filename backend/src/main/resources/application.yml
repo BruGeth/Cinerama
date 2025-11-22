@@ -14,10 +14,10 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
+        '[format_sql]': true
 
   datasource:
-    url: ${DB_URL}
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:cinerama_db}?useSSL=false&serverTimezone=${DB_TIMEZONE:America/Lima}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -39,27 +39,33 @@ jwt:
   expiration: ${JWT_EXPIRATION}
 logging:
   level:
-    org.springframework: INFO
-    com.cinerama: DEBUG
+    '[org.springframework]': INFO
+    '[com.cinerama]': DEBUG
 
 paypal:
   client-id: ${PAYPAL_CLIENT_ID}
   client-secret: ${PAYPAL_CLIENT_SECRET}
   mode: sandbox
   api-url: https://api-m.sandbox.paypal.com
+
+tmdb:
+  api-key: ${TMDB_API_KEY}
+  base-url: https://api.themoviedb.org/3
+  language: es-MX
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+  allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+  allowed-headers: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type}
+  allow-credentials: ${CORS_ALLOW_CREDENTIALS:true}
+  max-age: ${CORS_MAX_AGE:3600}
+
 management:
     endpoints:
       web:
         exposure:
           include: health, info, prometheus
-    endpoint:
-      prometheus:
-        enabled: true
-    metrics:
-      web:
-        server:
-          auto-time-requests: true
-metrics:
-    export:
-      prometheus:
-        enabled: true
+    prometheus:
+      metrics:
+        export:
+          enabled: true
